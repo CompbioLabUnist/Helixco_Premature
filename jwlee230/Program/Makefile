@@ -24,10 +24,6 @@ Docker/Tools/Mothur.zip: | Docker/Tools
 	wget "https://github.com/mothur/mothur/releases/download/v1.44.2/Mothur.Ubuntu_18.zip" -O $@
 TOOLS += Docker/Tools/Mothur.zip
 
-Docker/Tools/FastQC.zip: | Docker/Tools
-	wget "https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip" -O $@
-TOOLS += Docker/Tools/FastQC.zip
-#
 # Docker
 TOOLS += $(wildcard Docker/*)
 build.log: Docker/Dockerfile $(TOOLS) | log Output
