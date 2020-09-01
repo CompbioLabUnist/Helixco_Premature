@@ -77,3 +77,13 @@ Output/Demux/%.qza: Output/Manifest/%.tsv | Output/Demux build.log
 
 step02: Output/Demux/whole.qza
 .PHONY += step02
+
+# Step 03 (Quality filter)
+Output/Filter:
+	mkdir -p $@
+
+Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Filter build.log
+	$(DOCKER) qiime quality-filter q-score --i-demux $(addprefix /,$<) --o-filtered-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-filter-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
+
+step03: Output/Filter/whole.seq.qza
+.PHONY += step03
