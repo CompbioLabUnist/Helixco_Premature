@@ -54,4 +54,26 @@ run: tmp.sh | log Output
 	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Premature_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) $<
 .PHONY += run
 
+# Actual
+latest: step02
+.PHONY += latest
+
 # Step 01 (Make manifest files)
+Output/Manifest:
+	mkdir -p $@
+
+Output/Manifest/whole.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step01: Output/Manifest/whole.tsv
+.PHONY += step01
+
+# Step 02 (De-multiplexing)
+Output/Demux:
+	mkdir -p $@
+
+Output/Demux/%.qza: Output/Manifest/%.tsv | Output/Demux build.log
+	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step02: Output/Demux/whole.qza
+.PHONY += step02
