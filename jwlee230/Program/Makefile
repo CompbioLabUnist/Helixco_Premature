@@ -55,7 +55,7 @@ run: tmp.sh | log Output
 .PHONY += run
 
 # Actual
-latest: step02
+latest: step05
 .PHONY += latest
 
 # Step 01 (Make manifest files)
@@ -75,7 +75,10 @@ Output/Demux:
 Output/Demux/%.qza: Output/Manifest/%.tsv | Output/Demux build.log
 	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/whole.qza
+Output/Demux/%.qzv: Output/Demux/%.qza | build.log
+	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step02: Output/Demux/whole.qza Output/Demux/whole.qzv
 .PHONY += step02
 
 # Step 03 (Quality filter)
@@ -87,3 +90,23 @@ Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Fi
 
 step03: Output/Filter/whole.seq.qza
 .PHONY += step03
+
+# Step 04 (DADA2 Denoising)
+Output/DADA2:
+	mkdir -p $@
+
+Output/DADA2/%.table.qza Output/DADA2/%.seq.qza Output/DADA2/%.stat.qza: Output/Demux/%.qza | Output/DADA2 build.log
+	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 265 --p-trunc-len-r 265 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
+
+step04: Output/DADA2/whole.seq.qza
+.PHONY += step04
+
+# Step 05 (Deblur Denoising)
+Output/Deblur:
+	mkdir -p $@
+
+Output/Deblur/%.table.qza Output/Deblur/%.seq.qza Output/Deblur/%.stat.qza: Output/Filter/%.seq.qza | Output/Deblur build.log
+	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 265 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
+
+step05: Output/Deblur/whole.seq.qza
+.PHONY += step05
