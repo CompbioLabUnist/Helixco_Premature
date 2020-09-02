@@ -1,3 +1,6 @@
+"""
+step01: make manifest file
+"""
 import sys
 
 f = sys.argv[1:]
