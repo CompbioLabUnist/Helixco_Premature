@@ -146,7 +146,7 @@ Output/Metadata/whole.tsv: Python/step07.py $(wildcard Data/RawData/*.fastq.gz) 
 step07: Output/Metadata/whole.tsv
 .PHONY += step07
 
-# Step 08 (RUun ANCOM)
+# Step 08 (Run ANCOM)
 Output/ANCOM:
 	mkdir -p $@
 
@@ -174,3 +174,41 @@ Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 
 step08: Output/ANCOM/whole.DADA2.gg.composition/ancom.tsv Output/ANCOM/whole.DADA2.silva.composition/ancom.tsv Output/ANCOM/whole.Deblur.gg.composition/ancom.tsv Output/ANCOM/whole.Deblur.silva.composition/ancom.tsv
 .PHONY += step08
+
+# Step 09 (Get TSV)
+Output/TSV:
+	mkdir -p $@
+
+Output/TSV/raw.DADA2.gg.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/whole.DADA2.gg.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/raw.DADA2.silva.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/whole.DADA2.silva.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/raw.Deblur.gg.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/whole.Deblur.gg.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/raw.Deblur.silva.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/whole.Deblur.silva.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/raw.Deblur.gg.tsv Output/TSV/raw.Deblur.silva.tsv
