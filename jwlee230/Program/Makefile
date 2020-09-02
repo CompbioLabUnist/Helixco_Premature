@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 20
+CPUS = 10
 MEMS = 100G
 PWD := $(shell pwd)
 TOOLS = 
@@ -55,7 +55,7 @@ run: tmp.sh | log Output
 .PHONY += run
 
 # Actual
-latest: step05
+latest: step06
 .PHONY += latest
 
 # Step 01 (Make manifest files)
@@ -110,3 +110,34 @@ Output/Deblur/%.table.qza Output/Deblur/%.seq.qza Output/Deblur/%.stat.qza: Outp
 
 step05: Output/Deblur/whole.seq.qza
 .PHONY += step05
+
+# Step 06 (Taxonomy information)
+Output/Taxonomy:
+	mkdir -p $@
+
+Output/Taxonomy/silva.qza: | Output/Taxonomy build.log
+	wget "https://data.qiime2.org/2020.6/common/silva-138-99-nb-classifier.qza" -O $@
+
+Output/Taxonomy/gg.qza: | Output/Taxonomy build.log
+	wget "https://data.qiime2.org/2020.6/common/gg-13-8-99-nb-classifier.qza" -O $@
+
+Output/Taxonomy/%.DADA2.silva.qza: Output/Taxonomy/silva.qza Output/DADA2/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@)
+
+Output/Taxonomy/%.DADA2.gg.qza: Output/Taxonomy/gg.qza Output/DADA2/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@)
+
+Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@)
+
+Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@)
+
+step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza Output/Taxonomy/whole.Deblur.silva.qza Output/Taxonomy/whole.Deblur.gg.qza
+.PHONY += step06
+
+# Step 07 (Build Metadata)
+Output/Metadata:
+	mkdir -p $@
+
+Output/Metadata/whole.tsv: 
