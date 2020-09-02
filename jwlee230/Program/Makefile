@@ -219,3 +219,4 @@ Output/TSV/ready.%.tsv: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole
 	$(DOCKER) python3 $(addprefix /,$^)
 
 step10: Output/TSV/ready.DADA2.gg.tsv
+.PHONY += step10
