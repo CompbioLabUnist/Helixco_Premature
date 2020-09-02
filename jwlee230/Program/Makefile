@@ -140,4 +140,8 @@ step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza
 Output/Metadata:
 	mkdir -p $@
 
-Output/Metadata/whole.tsv: 
+Output/Metadata/whole.tsv: Python/step07.py $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step07: Output/Metadata/whole.tsv
+.PHONY += step07
