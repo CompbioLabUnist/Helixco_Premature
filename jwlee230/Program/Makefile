@@ -55,7 +55,7 @@ run: tmp.sh | log Output
 .PHONY += run
 
 # Actual
-latest: step08
+latest: step09
 .PHONY += latest
 
 # Step 01 (Make manifest files)
@@ -212,3 +212,10 @@ Output/TSV/raw.Deblur.silva.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/w
 	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
 
 step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/raw.Deblur.gg.tsv Output/TSV/raw.Deblur.silva.tsv
+.PHONY += step09
+
+# Step 10 (Select & Clearify TSV)
+Output/TSV/ready.%.tsv: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole.%.composition/ancom.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^)
+
+step10: Output/TSV/ready.DADA2.gg.tsv
