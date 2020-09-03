@@ -220,3 +220,20 @@ Output/TSV/ready.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/wh
 
 step10: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz
 .PHONY += step10
+
+# Step 11 (Making t-SNE)
+Output/TSNE:
+	mkdir -p $@
+
+Output/TSNE/tsne.%.tar.gz: Python/step11.py Output/TSV/ready.%.tar.gz | Output/TSNE build.log
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) --cpu $(CPUS)
+
+step11: Output/TSNE/tsne.DADA2.gg.tar.gz Output/TSNE/tsne.DADA2.silva.tar.gz Output/TSNE/tsne.Deblur.gg.tar.gz Output/TSNE/tsne.Deblur.silva.tar.gz
+.PHONY += step11
+
+# Step 12 (Drawing t-SNE)
+Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz | build.log
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+
+step12: Output/TSNE/tsne.DADA2.gg.png Output/TSNE/tsne.DADA2.silva.png Output/TSNE/tsne.Deblur.gg.png Output/TSNE/tsne.Deblur.silva.png
+.PHONY += step12

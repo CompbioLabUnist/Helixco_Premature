@@ -50,8 +50,8 @@ def make_pickle(path: str, data: typing.Any) -> None:
             f.write(key)
 
         with tarfile.open(path, "w:gz") as tar:
-            tar.add(os.path.join(tmp_dir, "data.pkl"))
-            tar.add(os.path.join(tmp_dir, "key.txt"))
+            tar.add(os.path.join(tmp_dir, "data.pkl"), arcname="data.pkl")
+            tar.add(os.path.join(tmp_dir, "key.txt"), arcname="key.txt")
 
 
 def read_pickle(path: str) -> typing.Any:
