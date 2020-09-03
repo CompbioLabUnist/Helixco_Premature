@@ -19,6 +19,7 @@ if __name__ == "__main__":
         raise ValueError("CPU must be greater than zero")
 
     raw_data = step00.read_pickle(args.input[0])
+
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpu).fit_transform(raw_data), columns=["TSNE1", "TSNE2"])
 
     for column in tsne_data.columns:

@@ -166,10 +166,10 @@ Output/ANCOM/%.composition.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%.site.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site+Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site_premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
@@ -241,7 +241,7 @@ step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Out
 .PHONY += step11
 
 # Step 12 (Drawing t-SNE)
-Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz | build.log
+Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/whole.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
 step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png
