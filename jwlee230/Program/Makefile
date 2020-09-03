@@ -168,6 +168,9 @@ Output/ANCOM/%.composition.qza: Output/ANCOM/%.qza | build.log
 Output/ANCOM/%.site.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site+Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
@@ -218,6 +221,9 @@ step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/ra
 Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole.%.site/ancom.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
+Output/TSV/site_premature.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole.%.site_premature/ancom.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+
 Output/TSV/whole.%.tar.gz: Python/step10-2.py Output/TSV/raw.%.tsv
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
@@ -228,7 +234,7 @@ step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Outpu
 Output/TSNE:
 	mkdir -p $@
 
-Output/TSNE/site.%.tar.gz: Python/step11.py Output/TSV/site.%.tar.gz | Output/TSNE build.log
+Output/TSNE/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/TSNE build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) --cpu $(CPUS)
 
 step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Output/TSNE/site.Deblur.gg.tar.gz Output/TSNE/site.Deblur.silva.tar.gz
@@ -238,5 +244,5 @@ step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Out
 Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/site.Deblur.silva.png
+step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png
 .PHONY += step12

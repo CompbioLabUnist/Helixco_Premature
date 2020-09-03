@@ -25,6 +25,7 @@ if __name__ == "__main__":
     data["Mother"] = list(map(lambda x: x.split("-")[0], data["#SampleID"]))
     data["BabyNumber"] = list(map(lambda x: x.split("-")[1] if len(x.split("-")) == 3 else "1", data["#SampleID"]))
     data["Premature"] = list(map(lambda x: "Premature" if int(x) < 37 else "Normal", list(map(lambda x: list(info_data.loc[(info_data["바코드"].str.startswith(x))]["분만주수"])[0].split("+")[0], data["Mother"]))))
+    data["Site+Premature"] = data["Site"] + "+" + data["Premature"]
     data["Description"] = ""
 
     print("\t".join(data.columns))
