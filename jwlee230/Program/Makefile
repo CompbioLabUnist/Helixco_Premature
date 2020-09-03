@@ -140,7 +140,7 @@ step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza
 Output/Metadata:
 	mkdir -p $@
 
-Output/Metadata/whole.tsv: Python/step07.py $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
+Output/Metadata/whole.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 step07: Output/Metadata/whole.tsv
@@ -165,14 +165,14 @@ Output/ANCOM/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deb
 Output/ANCOM/%.composition.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.qzv: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.site.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
 
-step08: Output/ANCOM/whole.DADA2.gg.composition/ancom.tsv Output/ANCOM/whole.DADA2.silva.composition/ancom.tsv Output/ANCOM/whole.Deblur.gg.composition/ancom.tsv Output/ANCOM/whole.Deblur.silva.composition/ancom.tsv
+step08: Output/ANCOM/whole.DADA2.gg.site/ancom.tsv Output/ANCOM/whole.DADA2.silva.site/ancom.tsv Output/ANCOM/whole.Deblur.gg.site/ancom.tsv Output/ANCOM/whole.Deblur.silva.site/ancom.tsv
 .PHONY += step08
 
 # Step 09 (Get TSV)
@@ -215,25 +215,28 @@ step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/ra
 .PHONY += step09
 
 # Step 10 (Select & Clearify TSV)
-Output/TSV/ready.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole.%.composition/ancom.tsv | build.log
+Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output/ANCOM/whole.%.site/ancom.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-step10: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz
+Output/TSV/whole.%.tar.gz: Python/step10-2.py Output/TSV/raw.%.tsv
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+
+step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
 .PHONY += step10
 
 # Step 11 (Making t-SNE)
 Output/TSNE:
 	mkdir -p $@
 
-Output/TSNE/tsne.%.tar.gz: Python/step11.py Output/TSV/ready.%.tar.gz | Output/TSNE build.log
+Output/TSNE/site.%.tar.gz: Python/step11.py Output/TSV/site.%.tar.gz | Output/TSNE build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) --cpu $(CPUS)
 
-step11: Output/TSNE/tsne.DADA2.gg.tar.gz Output/TSNE/tsne.DADA2.silva.tar.gz Output/TSNE/tsne.Deblur.gg.tar.gz Output/TSNE/tsne.Deblur.silva.tar.gz
+step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Output/TSNE/site.Deblur.gg.tar.gz Output/TSNE/site.Deblur.silva.tar.gz
 .PHONY += step11
 
 # Step 12 (Drawing t-SNE)
 Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-step12: Output/TSNE/tsne.DADA2.gg.png Output/TSNE/tsne.DADA2.silva.png Output/TSNE/tsne.Deblur.gg.png Output/TSNE/tsne.Deblur.silva.png
+step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/site.Deblur.silva.png
 .PHONY += step12
