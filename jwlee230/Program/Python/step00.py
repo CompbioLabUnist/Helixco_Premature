@@ -76,3 +76,10 @@ def read_pickle(path: str) -> typing.Any:
         raise ValueError("Data is not valid")
 
     return pickle.loads(pkl)
+
+
+def consistency_taxonomy(taxonomy: str) -> str:
+    """
+    consistency_taxonomy: make taxonomy information with consistency
+    """
+    return ";".join(list(map(lambda x: x.strip(), taxonomy.split(";"))))
