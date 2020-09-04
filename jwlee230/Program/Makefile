@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 10
+CPUS = 20
 MEMS = 100G
 PWD := $(shell pwd)
 TOOLS = 
@@ -246,3 +246,31 @@ Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/whole.t
 
 step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png
 .PHONY += step12
+
+# Step 13 (Build stability file)
+MOTHUR_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
+Output/Stability:
+	mkdir -p $@
+
+Output/Stability/whole.tsv: Python/step13.py $(wildcard Data/RawData/*.fastq.gz) | Output/Stability build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step13: Output/Stability/whole.tsv
+.PHONY += step13
+
+# Step 14 (Make contigs)
+Output/Contigs:
+	mkdir -p $@
+
+Output/Contigs/whole.trim.contigs.fasta Output/Contigs/whole.contigs.groups: Output/Stability/whole.tsv | Output/Contigs build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.);set.dir(output=.);make.contigs(file=$(addprefix /,$<), processors=$(CPUS))" 1> $@.stdout 2> $@.stderr
+
+step14: Output/Contigs/whole.trim.contigs.fasta
+.PHONY += step14
+
+# Step 15 (Screen sequence)
+Output/Screen:
+	mkdir -p $@
+
+Output/Screen/test: Output/Contigs/whole.trim.contigs.fasta Output/Contigs/whole.contigs.groups | Output/Screen build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.);set.dir(output=.);screen.seqs(fasta=$(addprefix /,$(word 1,$^)), group=$(addprefix /,$(word 2,$^)), maxambig=0, maxlength=265, processors=$(CPUS))"
