@@ -263,7 +263,7 @@ Output/Contigs:
 	mkdir -p $@
 
 Output/Contigs/whole.trim.contigs.fasta Output/Contigs/whole.contigs.groups: Output/Stability/whole.tsv | Output/Contigs build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.);set.dir(output=.);make.contigs(file=$(addprefix /,$<), processors=$(CPUS))" 1> $@.stdout 2> $@.stderr
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); make.contigs(file=$(addprefix /,$(word 1,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
 step14: Output/Contigs/whole.trim.contigs.fasta
 .PHONY += step14
@@ -272,5 +272,18 @@ step14: Output/Contigs/whole.trim.contigs.fasta
 Output/Screen:
 	mkdir -p $@
 
-Output/Screen/test: Output/Contigs/whole.trim.contigs.fasta Output/Contigs/whole.contigs.groups | Output/Screen build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.);set.dir(output=.);screen.seqs(fasta=$(addprefix /,$(word 1,$^)), group=$(addprefix /,$(word 2,$^)), maxambig=0, maxlength=265, processors=$(CPUS))"
+Output/Screen/whole.trim.contigs.good.fasta Output/Screen/whole.contigs.good.groups: Output/Contigs/whole.trim.contigs.fasta | Output/Screen build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));"
+
+step15: Output/Screen/whole.trim.contigs.good.fasta
+.PHONY += step15
+
+# Step 16 (Unique sequence)
+Output/Unique:
+	mkdir -p $@
+
+Output/Unique/whole.trim.contigs.good.unique.fasta Output/Unique/whole.trim.contigs.good.names: Output/Screen/whole.trim.contigs.good.fasta | Output/Unique build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)));"
+
+step16: Output/Unique/whole.trim.contigs.good.unique.fasta
+.PHONY += step16
