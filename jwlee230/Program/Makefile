@@ -287,3 +287,10 @@ Output/Unique/whole.trim.contigs.good.unique.fasta Output/Unique/whole.trim.cont
 
 step16: Output/Unique/whole.trim.contigs.good.unique.fasta
 .PHONY += step16
+
+# Step 17 (Count sequence)
+Output/Count:
+	mkdir -p $@
+
+Output/Count/test: Output/Unique/whole.trim.contigs.good.names | Output/Count build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); count.seqs(name=$(addprefix /,$(word 1,$^)));"
