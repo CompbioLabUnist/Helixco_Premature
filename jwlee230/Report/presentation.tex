@@ -52,6 +52,11 @@
     \section{Methods}
     \begin{frame}
         \frametitle{Qiime 2}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/qiime.png}
+            \caption{QIIME 2 workflow}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
@@ -61,11 +66,67 @@
             \includegraphics[width=0.3 \linewidth]{figures/mothur.png}
             \caption{Mothur}
         \end{figure}
+
+        Note: Still in progress
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Taxonomy Classification}
+
+        \begin{itemize}
+            \item Greengenes \cite{greengenes1}
+            \item SILVA \cite{silva1, silva2}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle[t-SNE]{t-distributed Stochastic Neighbor Embedding}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.6 \linewidth]{figures/tsne.png}
+            \caption{t-SNE with handwritten data \protect \cite{tsne1}}
+        \end{figure}
     \end{frame}
 
     \section{Results}
     \begin{frame}
-        \frametitle{Taxonomy Classification}
+        \frametitle{t-SNE with Site}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/DADA2.gg.png}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/DADA2.silva.png}
+                \\
+                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/Deblur.gg.png}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/Deblur.silva.png}
+                \\
+                \mbox{(a) Deblur + GG} & \mbox{(b) Deblur + SILVA} \\
+            \end{array}$
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{t-SNE with Site + Premature}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/DADA2.gg.png}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/DADA2.silva.png}
+                \\
+                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/Deblur.gg.png}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/Deblur.silva.png}
+                \\
+                \mbox{(a) Deblur + GG} & \mbox{(b) Deblur + SILVA} \\
+            \end{array}$
+        \end{figure}
     \end{frame}
 
     \section{Proceedings}
