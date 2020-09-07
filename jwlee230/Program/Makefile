@@ -244,7 +244,7 @@ step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Out
 Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/whole.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png
+step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/site_premature.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/site_premature.Deblur.gg.png Output/TSNE/site.Deblur.silva.png Output/TSNE/site_premature.Deblur.silva.png
 .PHONY += step12
 
 # Step 13 (Build stability file)
