@@ -423,5 +423,12 @@ Output/Step25:
 Output/Step25/pseudo.%.tar.gz: Python/step25.py Output/TSV/ready.%.tar.gz | Output/Step25 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-step25: Output/Step25/pseudo.DADA2.gg.tar.gz
+Output/Step25/TSNE.%.png: Python/step25-2.py Output/TSV/ready.%.tar.gz Output/Step25/pseudo.%.tar.gz | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+
+step25: Output/Step25/TSNE.DADA2.gg.png
 .PHONY += step25
+
+# Step 26 (Random Forest Classifier)
+Output/Step26:
+	mkdir -p $@
