@@ -112,6 +112,21 @@
     \end{frame}
 
     \section{Results}
+    \begin{frame}
+        \frametitle{t-SNE for Brief Information}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DADA2.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/Deblur.png}
+                \\
+                \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
+            \end{array}$
+            \caption{t-SNE for Brief Information}
+        \end{figure}
+    \end{frame}
+
     \begin{frame}[allowframebreaks]
         \frametitle{t-SNE with Site}
 
@@ -133,6 +148,7 @@
                 \\
                 \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
+            \caption{t-SNE with Site}
         \end{figure}
     \end{frame}
 
@@ -157,6 +173,22 @@
                 \\
                 \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
+            \caption{t-SNE with Site}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Histogram with Clinical Information}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.5 \linewidth]{figures/Histogram/age.png}
+                &
+                \includegraphics[width=0.5 \linewidth]{figures/Histogram/weeks.png}
+                \\
+                \mbox{(a) Age} & \mbox{(b) Weeks} \\
+            \end{array}$
+            \caption{Histogram with Clinical Information}
         \end{figure}
     \end{frame}
 
@@ -167,9 +199,14 @@
         \begin{itemize}
             \item t-SNE plots
             \begin{itemize}
+                \item in Brief
                 \item by Site
                 \item by Site + Premature
-                \item Note: NO significant difference with ONLY premature
+            \end{itemize}
+            \item Histogram
+            \begin{itemize}
+                \item by Age
+                \item by Weeks
             \end{itemize}
         \end{itemize}
     \end{frame}
