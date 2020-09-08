@@ -432,3 +432,9 @@ step25: Output/Step25/TSNE.DADA2.gg.png
 # Step 26 (Random Forest Classifier)
 Output/Step26:
 	mkdir -p $@
+
+Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/ready.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --cpu $(CPUS)
+
+step26: Output/Step26/RF.DADA2.gg.tar.gz Output/Step26/RF.DADA2.silva.tar.gz Output/Step26/RF.Deblur.gg.tar.gz Output/Step26/RF.Deblur.silva.tar.gz
+.PHONY += step26
