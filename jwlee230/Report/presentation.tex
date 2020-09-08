@@ -72,9 +72,12 @@
         \frametitle{Taxonomy Classification}
 
         \begin{itemize}
-            \item Greengenes \cite{greengenes1}
-            \item SILVA \cite{silva1, silva2}
+            \item Greengenes (GG): Kingdom - Species \cite{greengenes1}
+            \item SILVA: Domain - Genus \cite{silva1, silva2}
         \end{itemize}
+
+        “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
+        but performance appears to \textbf{drop} at \textit{species level}” \cite{performance1}
     \end{frame}
 
     \begin{frame}
@@ -89,7 +92,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle[t-SNE]{t-distributed Stochastic Neighbor Embedding}
+        \frametitle[t-SNE]{t-distributed Stochastic Neighbor Embedding (t-SNE)}
 
         \begin{figure}[h!]
             \includegraphics[width=0.6 \linewidth]{figures/tsne.png}
@@ -109,42 +112,50 @@
     \end{frame}
 
     \section{Results}
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{t-SNE with Site}
 
         \begin{figure}[h!]
             $\begin{array}{cc}
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/DADA2.gg.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/DADA2.gg.png}
                 &
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/DADA2.silva.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/DADA2.silva.png}
                 \\
                 \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+            \end{array}$
+        \end{figure}
 
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/Deblur.gg.png}
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/Deblur.gg.png}
                 &
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/Site/Deblur.silva.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/Deblur.silva.png}
                 \\
-                \mbox{(a) Deblur + GG} & \mbox{(b) Deblur + SILVA} \\
+                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{t-SNE with Site + Premature}
 
         \begin{figure}[h!]
             $\begin{array}{cc}
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/DADA2.gg.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/SitePremature/DADA2.gg.png}
                 &
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/DADA2.silva.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/SitePremature/DADA2.silva.png}
                 \\
                 \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+            \end{array}$
+        \end{figure}
 
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/Deblur.gg.png}
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/SitePremature/Deblur.gg.png}
                 &
-                \includegraphics[width=0.25 \linewidth]{figures/TSNE/SitePremature/Deblur.silva.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/SitePremature/Deblur.silva.png}
                 \\
-                \mbox{(a) Deblur + GG} & \mbox{(b) Deblur + SILVA} \\
+                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
         \end{figure}
     \end{frame}
@@ -152,14 +163,33 @@
     \section{Proceedings}
     \begin{frame}[allowframebreaks]
         \frametitle{Yields}
+
+        \begin{itemize}
+            \item t-SNE plots
+            \begin{itemize}
+                \item by Site
+                \item by Site + Premature
+                \item Note: NO significant difference with ONLY premature
+            \end{itemize}
+        \end{itemize}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
         \frametitle{Requirements}
+
+        \begin{itemize}
+            \item More data
+            \item Mothur pipeline
+            \item Classification
+        \end{itemize}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
         \frametitle{Expectations}
+
+        \begin{itemize}
+            \item Classifier result (Statistical values)
+        \end{itemize}
     \end{frame}
 
    	\begin{frame}[allowframebreaks]
