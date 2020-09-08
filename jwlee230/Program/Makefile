@@ -96,6 +96,7 @@ Output/DADA2:
 	mkdir -p $@
 
 Output/DADA2/%.table.qza Output/DADA2/%.seq.qza Output/DADA2/%.stat.qza: Output/Demux/%.qza | Output/DADA2 build.log
+	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 265 --p-trunc-len-r 265 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
 step04: Output/DADA2/whole.seq.qza
@@ -106,6 +107,7 @@ Output/Deblur:
 	mkdir -p $@
 
 Output/Deblur/%.table.qza Output/Deblur/%.seq.qza Output/Deblur/%.stat.qza: Output/Filter/%.seq.qza | Output/Deblur build.log
+	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 265 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
 step05: Output/Deblur/whole.seq.qza
@@ -297,3 +299,54 @@ Output/Count/whole.trim.contigs.good.count_table: Output/Unique/whole.trim.conti
 
 step17: Output/Count/whole.trim.contigs.good.count_table
 .PHONY += step17
+
+# Step 18 (Pseudo-PCR)
+Output/PCR:
+	mkdir -p $@
+
+Output/PCR/silva.seed.tar.gz: | Output/PCR
+	wget "https://mothur.s3.us-east-2.amazonaws.com/wiki/silva.seed_v138.tgz" -O $@
+
+Output/PCR/silva.seed_v138.align Output/PCR/silva.seed_v138.tax: Output/PCR/silva.seed.tar.gz
+	tar -zxvf $<
+	touch $@
+
+Output/PCR/silva.seed_v138.summary: Output/PCR/silva.seed_v138.align | build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));"
+
+Output/PCR/silva.seed_v138.scrap.pcr.align: Output/PCR/silva.seed_v138.align Output/PCR/silva.seed_v138.tax | build.log
+	@echo "You have to check the length manually!!"
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pcr.seqs(fasta=$(addprefix /,$(word 1,$^)), taxonomy=$(addprefix /,$(word 2,$^)), start=1044, end=43116, keepdots=F, processors=$(CPUS));"
+
+step18: Output/PCR/silva.seed_v138.scrap.pcr.align
+.PHONY += step18
+
+# Step 19 (Align to reference)
+Output/Align:
+	mkdir -p $@
+
+Output/Align/whole.trim.contigs.good.unique.align: Output/Unique/whole.trim.contigs.good.unique.fasta Output/PCR/silva.seed_v138.scrap.pcr.align | Output/Align build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); align.seqs(fasta=$(addprefix /,$(word 1,$^)), reference=$(addprefix /,$(word 2,$^)), processors=$(CPUS));"
+
+Output/Align/whole.trim.contigs.good.unique.summary: Output/Align/whole.trim.contigs.good.unique.align Output/Count/whole.trim.contigs.good.count_table | build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), processors=$(CPUS));"
+
+Output/Align/whole.trim.contigs.good.unique.good.align: Output/Align/whole.trim.contigs.good.unique.align Output/Count/whole.trim.contigs.good.count_table Output/Align/whole.trim.contigs.good.unique.summary | build.log
+	@echo "You have to check the length manually!!"
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), summary=$(addprefix /,$(word 3,$^)), start=6388, end=25316, maxhomop=8, processors=$(CPUS));"
+
+Output/Align/whole.trim.contigs.good.unique.good.filter.fasta: Output/Align/whole.trim.contigs.good.unique.good.align | build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); filter.seqs(fasta=$(addprefix /,$(word 1,$^)), vertical=T, trump=., processors=$(CPUS));"
+
+Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/whole.trim.contigs.good.unique.good.filter.count_table: Output/Align/whole.trim.contigs.good.unique.good.filter.fasta Output/Count/whole.trim.contigs.good.count_table
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)))"
+
+step19: Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta
+.PHONY += step19
+
+# Step 20 (Chimera filtering)
+Output/Chimera:
+	mkdir -p $@
+
+Output/Chimera/test: Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/whole.trim.contigs.good.unique.good.filter.count_table | Output/Chimera build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pre.cluster(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), diffs=2, processors=$(CPUS));"
