@@ -383,3 +383,35 @@ Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
 
 step22: Output/Step22/ready.DADA2.gg.png Output/Step22/ready.DADA2.silva.png Output/Step22/ready.Deblur.gg.png Output/Step22/ready.Deblur.silva.png
 .PHONY += step22
+
+# Step 23 (Draw histogram)
+Output/Step23:
+	mkdir -p $@
+
+Output/Step23/age.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "나이"
+
+Output/Step23/weight.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "임신전 몸무게"
+
+Output/Step23/BMI.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "BMI"
+
+step23: Output/Step23/age.png Output/Step23/weight.png Output/Step23/BMI.png
+.PHONY += step23
+
+# Step 24 (Draw histogram with parsing)
+Output/Step24:
+	mkdir -p $@
+
+Output/Step24/weight_now.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 0 "/"
+
+Output/Step24/height.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 1 "/"
+
+Output/Step24/weeks.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) "분만주수" 0 "+"
+
+step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/weeks.png
+.PHONY += step24
