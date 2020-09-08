@@ -237,14 +237,14 @@ Output/TSNE:
 	mkdir -p $@
 
 Output/TSNE/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/TSNE build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) --cpu $(CPUS)
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
 
 step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Output/TSNE/site.Deblur.gg.tar.gz Output/TSNE/site.Deblur.silva.tar.gz
 .PHONY += step11
 
 # Step 12 (Drawing t-SNE)
 Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/whole.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+	$(DOCKER) python3 $(addprefix /,$^ $@)
 
 step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/site_premature.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/site_premature.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/site_premature.Deblur.gg.png Output/TSNE/site.Deblur.silva.png Output/TSNE/site_premature.Deblur.silva.png
 .PHONY += step12
@@ -350,3 +350,24 @@ Output/Chimera:
 
 Output/Chimera/test: Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/whole.trim.contigs.good.unique.good.filter.count_table | Output/Chimera build.log
 	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pre.cluster(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), diffs=2, processors=$(CPUS));"
+# TODO: Here you are start
+
+# Step 21 (Read & clearify raw TSV into pandas)
+Output/TSV/ready.%.tar.gz: Python/step21.py Output/TSV/raw.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@)
+
+step21: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz
+.PHONY += step21
+
+# Step 22 (Making & Draw t-SNE)
+Output/Step22:
+	mkdir -p $@
+
+Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+
+Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@)
+
+step22: Output/Step22/ready.DADA2.gg.png Output/Step22/ready.DADA2.silva.png Output/Step22/ready.Deblur.gg.png Output/Step22/ready.Deblur.silva.png
+.PHONY += step22
