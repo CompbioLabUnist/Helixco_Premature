@@ -164,14 +164,26 @@ Output/ANCOM/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur
 Output/ANCOM/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur.silva.qza | Output/ANCOM build.log
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.composition.qza: Output/ANCOM/%.qza | build.log
+Output/ANCOM/%.CV.qza: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Cervix', 'Vagina')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/%.mouth.qza: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Mouth')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.site.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.site.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.composition.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site_premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/%.CV.premature.qzv: Output/ANCOM/%.CV.pseudocount.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/%.mouth.premature.qzv: Output/ANCOM/%.mouth.pseudocount.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
