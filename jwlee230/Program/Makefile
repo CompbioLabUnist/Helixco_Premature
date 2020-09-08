@@ -415,3 +415,13 @@ Output/Step24/weeks.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Outp
 
 step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/weeks.png
 .PHONY += step24
+
+# Step 25 (Make pseudo-sample)
+Output/Step25:
+	mkdir -p $@
+
+Output/Step25/pseudo.%.tar.gz: Python/step25.py Output/TSV/ready.%.tar.gz | Output/Step25 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@)
+
+step25: Output/Step25/pseudo.DADA2.gg.tar.gz
+.PHONY += step25
