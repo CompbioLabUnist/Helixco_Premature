@@ -28,10 +28,9 @@ if __name__ == "__main__":
 
     real_data = step00.read_pickle(args.real[0])
     metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
+    answer_column = "premature2"
 
     metadata.set_index("#SampleID", inplace=True, verify_integrity=True)
-    real_data = real_data.loc[(metadata["site"] == "Cervix") | (metadata["site"] == "Vagina") | (metadata["site"] == "Mouth")]
-    metadata = metadata.loc[(metadata["site"] == "Cervix") | (metadata["site"] == "Vagina") | (metadata["site"] == "Mouth")]
 
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpu).fit_transform(real_data), columns=["TSNE1", "TSNE2"])
     for column in tsne_data.columns:
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     tsne_data.index = real_data.index
 
     classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0)
-    classifier.fit(real_data, metadata["premature"])
+    classifier.fit(real_data, metadata[answer_column])
     feature_importances = classifier.feature_importances_
     best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, real_data.columns))))[:10]
 
@@ -49,7 +48,7 @@ if __name__ == "__main__":
     fig.savefig(args.output[0] + ".feature_importances.png")
     matplotlib.pyplot.close(fig)
 
-    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(real_data[best_features], metadata["site"], test_size=0.1, random_state=0, shuffle=True, stratify=metadata["site"])
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(real_data[best_features], metadata[answer_column], test_size=0.1, random_state=0, shuffle=True, stratify=metadata[answer_column])
     classifier.fit(x_train, y_train)
     prediction = classifier.predict(x_test)
 
