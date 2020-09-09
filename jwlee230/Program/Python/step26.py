@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     real_data = step00.read_pickle(args.real[0])
     metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
-    answer_column = "premature2"
+    answer_column = "premature"
 
     metadata.set_index("#SampleID", inplace=True, verify_integrity=True)
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0)
     classifier.fit(real_data, metadata[answer_column])
     feature_importances = classifier.feature_importances_
-    best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, real_data.columns))))[:10]
+    best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, real_data.columns), reverse=True)))[:10]
 
     seaborn.set(context="poster", style="whitegrid")
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
@@ -52,4 +52,4 @@ if __name__ == "__main__":
     classifier.fit(x_train, y_train)
     prediction = classifier.predict(x_test)
 
-    print(classifier.score(x_test, y_test), prediction)
+    print(classifier.score(x_test, y_test), list(prediction))

@@ -18,6 +18,6 @@ if __name__ == "__main__":
     data: pandas.DataFrame = step00.read_pickle(args.input[0])
 
     random.seed(a=0)
-    data = data.applymap(lambda x: x * (1 + random.normalvariate(0, args.dev)))
+    data = data.applymap(lambda x: x * (1 + random.normalvariate(0, args.dev) if x > 0 else abs(random.normalvariate(0, args.dev))))
 
     step00.make_pickle(args.output[0], data)
