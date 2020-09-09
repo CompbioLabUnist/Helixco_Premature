@@ -30,12 +30,9 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
     answer_column = "premature"
 
-    metadata.set_index("#SampleID", inplace=True, verify_integrity=True)
-
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpu).fit_transform(real_data), columns=["TSNE1", "TSNE2"])
     for column in tsne_data.columns:
         tsne_data[column] = sklearn.preprocessing.scale(tsne_data[column])
-    tsne_data.index = real_data.index
 
     classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0)
     classifier.fit(real_data, metadata[answer_column])
@@ -48,8 +45,19 @@ if __name__ == "__main__":
     fig.savefig(args.output[0] + ".feature_importances.png")
     matplotlib.pyplot.close(fig)
 
-    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(real_data[best_features], metadata[answer_column], test_size=0.1, random_state=0, shuffle=True, stratify=metadata[answer_column])
-    classifier.fit(x_train, y_train)
-    prediction = classifier.predict(x_test)
+    x_train, x_test, y_train, y_test, tsne_test, tsne_test = sklearn.model_selection.train_test_split(real_data[best_features], metadata[answer_column], tsne_data, test_size=0.1, random_state=0, shuffle=True, stratify=metadata[answer_column])
 
-    print(classifier.score(x_test, y_test), list(prediction))
+    classifier.fit(x_train, y_train)
+    prediction = classifier.predict_proba(x_test)
+
+    seaborn.set(context="poster", style="whitegrid")
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    seaborn.scatterplot(x=list(tsne_test["TSNE1"]), y=list(tsne_test["TSNE2"]), hue=list(prediction[:, 0]), style=list(y_test), legend="brief")
+    fig.savefig(args.output[0] + ".scatter.png")
+    matplotlib.pyplot.close(fig)
+
+    seaborn.set(context="poster", style="whitegrid")
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    seaborn.pairplot(pandas.DataFrame(real_data[best_features].to_numpy()))
+    fig.savefig(args.output[0] + ".pair.png")
+    matplotlib.pyplot.close(fig)
