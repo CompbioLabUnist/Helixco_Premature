@@ -65,20 +65,26 @@ Output/Manifest:
 Output/Manifest/whole.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step01: Output/Manifest/whole.tsv
+Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step01: Output/Manifest/whole.tsv Output/Manifest/EBI.tsv
 .PHONY += step01
 
 # Step 02 (De-multiplexing)
 Output/Demux:
 	mkdir -p $@
 
-Output/Demux/%.qza: Output/Manifest/%.tsv | Output/Demux build.log
+Output/Demux/whole.qza: Output/Manifest/whole.tsv | Output/Demux build.log
 	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Demux/EBI.qza: Output/Manifest/EBI.tsv | Output/Demux build.log
+	$(DOCKER) qiime tools import --type "SampleData[JoinedSequencesWithQuality]" --input-format "SingleEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/whole.qza Output/Demux/whole.qzv
+step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv
 .PHONY += step02
 
 # Step 03 (Quality filter)
