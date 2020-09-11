@@ -190,7 +190,10 @@ Output/ANCOM/%.mouth.qza: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.l
 Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.site.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/whole.%.site.qzv: Output/ANCOM/whole.%.pseudocount.qza Output/Metadata/whole.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/EBI.%.site.qzv: Output/ANCOM/EBI.%.pseudocount.qza Output/Metadata/EBI.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
@@ -209,7 +212,7 @@ Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
 
-step08: Output/ANCOM/whole.DADA2.gg.site/ancom.tsv Output/ANCOM/whole.DADA2.silva.site/ancom.tsv Output/ANCOM/whole.Deblur.gg.site/ancom.tsv Output/ANCOM/whole.Deblur.silva.site/ancom.tsv
+step08: Output/ANCOM/whole.DADA2.gg.site/ancom.tsv Output/ANCOM/whole.DADA2.silva.site/ancom.tsv Output/ANCOM/whole.Deblur.gg.site/ancom.tsv Output/ANCOM/whole.Deblur.silva.site/ancom.tsv Output/ANCOM/EBI.DADA2.gg.site/ancom.tsv Output/ANCOM/EBI.DADA2.silva.site/ancom.tsv Output/ANCOM/EBI.Deblur.gg.site/ancom.tsv Output/ANCOM/EBI.Deblur.silva.site/ancom.tsv
 .PHONY += step08
 
 # Step 09 (Get TSV)
@@ -248,7 +251,39 @@ Output/TSV/raw.Deblur.silva.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/w
 	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
 	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
 
-step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/raw.Deblur.gg.tsv Output/TSV/raw.Deblur.silva.tsv
+Output/TSV/EBI.DADA2.gg.tsv: Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.gg.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/EBI.DADA2.silva.tsv: Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.silva.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/EBI.Deblur.gg.tsv: Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.gg.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+Output/TSV/EBI.Deblur.silva.tsv: Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.silva.qza | Output/TSV build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
+	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
+	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
+	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
+	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
+
+step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/raw.Deblur.gg.tsv Output/TSV/raw.Deblur.silva.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv
 .PHONY += step09
 
 # Step 10 (Select & Clearify TSV)
@@ -261,7 +296,10 @@ Output/TSV/site_premature.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output
 Output/TSV/whole.%.tar.gz: Python/step10-2.py Output/TSV/raw.%.tsv
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
+Output/TSV/EBI.%.tar.gz: Python/step10-2.py Output/TSV/EBI.%.tsv
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+
+step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz
 .PHONY += step10
 
 # Step 11 (Making t-SNE)
@@ -388,7 +426,10 @@ Output/Chimera/test: Output/Align/whole.trim.contigs.good.unique.good.filter.uni
 Output/TSV/ready.%.tar.gz: Python/step21.py Output/TSV/raw.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-step21: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz
+Output/TSV/validate.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@)
+
+step21: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz Output/TSV/validate.DADA2.gg.tar.gz Output/TSV/validate.DADA2.silva.tar.gz Output/TSV/validate.Deblur.gg.tar.gz Output/TSV/validate.Deblur.silva.tar.gz
 .PHONY += step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -401,7 +442,7 @@ Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 bui
 Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-step22: Output/Step22/ready.DADA2.gg.png Output/Step22/ready.DADA2.silva.png Output/Step22/ready.Deblur.gg.png Output/Step22/ready.Deblur.silva.png
+step22: Output/Step22/ready.DADA2.gg.png Output/Step22/ready.DADA2.silva.png Output/Step22/ready.Deblur.gg.png Output/Step22/ready.Deblur.silva.png Output/Step22/validate.DADA2.gg.png Output/Step22/validate.DADA2.silva.png Output/Step22/validate.Deblur.gg.png Output/Step22/validate.Deblur.silva.png
 .PHONY += step22
 
 # Step 23 (Draw histogram)
@@ -453,8 +494,8 @@ step25: Output/Step25/TSNE.DADA2.gg.png
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/ready.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
+Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/ready.%.tar.gz Output/TSV/validate.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --cpu $(CPUS)
 
-step26: Output/Step26/RF.DADA2.gg.tar.gz Output/Step26/RF.DADA2.silva.tar.gz Output/Step26/RF.Deblur.gg.tar.gz Output/Step26/RF.Deblur.silva.tar.gz
+step26: Output/Step26/RF.DADA2.gg.tar.gz# Output/Step26/RF.DADA2.silva.tar.gz Output/Step26/RF.Deblur.gg.tar.gz Output/Step26/RF.Deblur.silva.tar.gz
 .PHONY += step26
