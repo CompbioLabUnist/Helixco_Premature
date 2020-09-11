@@ -63,10 +63,10 @@ Output/Manifest:
 	mkdir -p $@
 
 Output/Manifest/whole.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
 step01: Output/Manifest/whole.tsv Output/Manifest/EBI.tsv
 .PHONY += step01
@@ -79,7 +79,7 @@ Output/Demux/whole.qza: Output/Manifest/whole.tsv | Output/Demux build.log
 	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Demux/EBI.qza: Output/Manifest/EBI.tsv | Output/Demux build.log
-	$(DOCKER) qiime tools import --type "SampleData[JoinedSequencesWithQuality]" --input-format "SingleEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime tools import --type "SampleData[SequencesWithQuality]" --input-format "SingleEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -94,29 +94,37 @@ Output/Filter:
 Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Filter build.log
 	$(DOCKER) qiime quality-filter q-score --i-demux $(addprefix /,$<) --o-filtered-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-filter-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step03: Output/Filter/whole.seq.qza
+step03: Output/Filter/whole.seq.qza Output/Filter/EBI.seq.qza
 .PHONY += step03
 
 # Step 04 (DADA2 Denoising)
 Output/DADA2:
 	mkdir -p $@
 
-Output/DADA2/%.table.qza Output/DADA2/%.seq.qza Output/DADA2/%.stat.qza: Output/Demux/%.qza | Output/DADA2 build.log
+Output/DADA2/whole.table.qza Output/DADA2/whole.seq.qza Output/DADA2/whole.stat.qza: Output/Demux/whole.qza | Output/DADA2 build.log
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 265 --p-trunc-len-r 265 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step04: Output/DADA2/whole.seq.qza
+Output/DADA2/EBI.table.qza Output/DADA2/EBI.seq.qza Output/DADA2/EBI.stat.qza: Output/Demux/EBI.qza | Output/DADA2 build.log
+	@echo "You have to check the length manually!!"
+	$(DOCKER) qiime dada2 denoise-single --i-demultiplexed-seqs $(addprefix /,$<) --p-trunc-len 150 --p-n-threads $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
+
+step04: Output/DADA2/whole.seq.qza Output/DADA2/EBI.seq.qza
 .PHONY += step04
 
 # Step 05 (Deblur Denoising)
 Output/Deblur:
 	mkdir -p $@
 
-Output/Deblur/%.table.qza Output/Deblur/%.seq.qza Output/Deblur/%.stat.qza: Output/Filter/%.seq.qza | Output/Deblur build.log
+Output/Deblur/whole.table.qza Output/Deblur/whole.seq.qza Output/Deblur/whole.stat.qza: Output/Filter/whole.seq.qza | Output/Deblur build.log
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 265 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step05: Output/Deblur/whole.seq.qza
+Output/Deblur/EBI.table.qza Output/Deblur/EBI.seq.qza Output/Deblur/EBI.stat.qza: Output/Filter/EBI.seq.qza | Output/Deblur build.log
+	@echo "You have to check the length manually!!"
+	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 150 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
+
+step05: Output/Deblur/whole.seq.qza Output/Deblur/EBI.seq.qza
 .PHONY += step05
 
 # Step 06 (Taxonomy information)
@@ -141,7 +149,7 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza Output/Taxonomy/whole.Deblur.silva.qza Output/Taxonomy/whole.Deblur.gg.qza
+step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza Output/Taxonomy/whole.Deblur.silva.qza Output/Taxonomy/whole.Deblur.gg.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza
 .PHONY += step06
 
 # Step 07 (Build Metadata)
@@ -149,9 +157,12 @@ Output/Metadata:
 	mkdir -p $@
 
 Output/Metadata/whole.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step07: Output/Metadata/whole.tsv
+Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Metadata build.log
+	@$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step07: Output/Metadata/whole.tsv Output/Metadata/EBI.tsv
 .PHONY += step07
 
 # Step 08 (Run ANCOM)
