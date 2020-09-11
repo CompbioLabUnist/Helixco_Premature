@@ -41,12 +41,37 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Premature}
+        \frametitle{Premature (Preterm Birth)}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.6 \linewidth]{figures/premature.png}
+            \caption{Definitions of Premature \protect \cite{premature1}}
+        \end{figure}
+
+        $\therefore$ Hence, in this study,
+        \begin{itemize}
+            \item Premature: $\textless$ 37 weeks
+            \item Normal: $\ge$ 37 weeks
+        \end{itemize}
     \end{frame}
 
     \section{Materials}
     \begin{frame}
         \frametitle{16s rRNA Sequencing}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Train Data vs. Validate Data}
+
+        Train data
+        \begin{itemize}
+            \item Data collected by Helixco
+        \end{itemize}
+
+        Validate data
+        \begin{itemize}
+            \item Data collected by \shortcite{validate1}
+        \end{itemize}
     \end{frame}
 
     \section{Methods}
@@ -63,8 +88,8 @@
         \frametitle{Denoising Techniques}
 
         \begin{itemize}
-            \item DADA2 \cite{DADA2}
-            \item Deblur \cite{Deblur1}
+            \item DADA2: Amplicon Sequence Variants (ASVs) \cite{DADA2}
+            \item Deblur: Operational Taxonomic Units (OTUs) \cite{Deblur1}
         \end{itemize}
     \end{frame}
 
@@ -72,8 +97,8 @@
         \frametitle{Taxonomy Classification}
 
         \begin{itemize}
-            \item Greengenes (GG): Kingdom - Species \cite{greengenes1}
-            \item SILVA: Domain - Genus \cite{silva1, silva2}
+            \item Greengenes (GG): Kingdom $\leftrightarrow$ Species \cite{greengenes1}
+            \item SILVA: Domain $\leftrightarrow$ Genus \cite{silva1, silva2}
         \end{itemize}
 
         “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
