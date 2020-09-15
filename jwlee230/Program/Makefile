@@ -2,8 +2,8 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 20
-MEMS = 100G
+CPUS = 40
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -68,7 +68,10 @@ Output/Manifest/whole.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) 
 Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Manifest build.log
 	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step01: Output/Manifest/whole.tsv Output/Manifest/EBI.tsv
+Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) | Output/Manifest build.log
+	@$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step01: Output/Manifest/whole.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv
 .PHONY += step01
 
 # Step 02 (De-multiplexing)
@@ -81,10 +84,13 @@ Output/Demux/whole.qza: Output/Manifest/whole.tsv | Output/Demux build.log
 Output/Demux/EBI.qza: Output/Manifest/EBI.tsv | Output/Demux build.log
 	$(DOCKER) qiime tools import --type "SampleData[SequencesWithQuality]" --input-format "SingleEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/Demux/HMP.qza: Output/Manifest/HMP.tsv | Output/Demux build.log
+	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv
+step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv
 .PHONY += step02
 
 # Step 03 (Quality filter)
