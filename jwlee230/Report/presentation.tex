@@ -5,9 +5,23 @@
 \mode<presentation> { \usetheme{Madrid} }
 
 \usepackage{graphicx, graphics}
-\usepackage{apacite}
+\usepackage[doi]{apacite}
 \usepackage[style=iso]{datetime2}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
+
+\AtBeginSection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}
+            \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
 
 \title[Premature]{Microbiome Premature}
 
@@ -65,12 +79,13 @@
 
         Train data
         \begin{itemize}
-            \item Data collected by Helixco
+            \item Helixco: Data collected by Helixco
         \end{itemize}
 
         Validate data
         \begin{itemize}
-            \item Data collected by \shortcite{validate1}
+            \item EBI (European Bioinformatics Institute): Data collected by \shortciteNP{validate1}
+            \item HMP (Human Microbiome Project): Data collected by \shortciteNP{validate2}
         \end{itemize}
     \end{frame}
 
@@ -81,6 +96,53 @@
         \begin{figure}[h!]
             \includegraphics[width=0.8 \linewidth]{figures/qiime.png}
             \caption{QIIME 2 workflow \protect \cite{qiime1, qiime2, qiime3}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Filitering with Quality Score}
+
+        Drawback between:
+        \begin{itemize}
+            \item Longer sequence read
+            \item Higher quality value
+        \end{itemize}
+
+        $\therefore$ I select the length $n$ where:
+        \begin{equation}
+            \begin{array}{c}
+                \forall n_i \in \{ n_k | \mbox{QualityScore} \geq 30 \} \\
+                \exists ! n \in \{n_i\} : n \geq n_i
+            \end{array}
+        \end{equation}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeForward.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeReverse.png}
+                \\
+
+                \mbox{(a) Forward} & \mbox{(b) Reverse}
+            \end{array}$
+            \caption{Sequence Quality Plot from Helixco Data}
+        \end{figure}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
+            \caption{Sequence Quality Plot from EBI}
+        \end{figure}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
+                \\
+
+                \mbox{(a) Forward} & \mbox{(b) Reverse}
+            \end{array}$
+            \caption{Sequence Quality Plot from HMP Data}
         \end{figure}
     \end{frame}
 
