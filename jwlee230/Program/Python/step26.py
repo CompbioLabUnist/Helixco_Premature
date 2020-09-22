@@ -77,6 +77,7 @@ if __name__ == "__main__":
     best_features = best_features[:best_num]
     x_train = x_train[best_features]
     x_test = x_test[best_features]
+    print(best_features)
 
     # Draw scores
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
