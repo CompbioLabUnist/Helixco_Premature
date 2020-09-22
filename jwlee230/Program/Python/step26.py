@@ -33,6 +33,9 @@ if __name__ == "__main__":
     elif not args.output[0].endswith(".tar"):
         raise ValueError("Output file must end with .tar!!")
 
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update({"font.size": 30})
+
     tar_files: typing.List[str] = list()
 
     train_data = step00.read_pickle(args.train[0])
@@ -77,13 +80,14 @@ if __name__ == "__main__":
     best_features = best_features[:best_num]
     x_train = x_train[best_features]
     x_test = x_test[best_features]
-    print(best_features)
+    for f in best_features:
+        print(f)
 
     # Draw scores
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     matplotlib.pyplot.plot(range(1, len(scores) + 1), scores, "o-")
     matplotlib.pyplot.xlabel("Number of Features")
-    matplotlib.pyplot.ylabel("Score")
+    matplotlib.pyplot.ylabel("Accuracy")
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.title("Best Features: %d Features at %.2f" % (best_num, best_score))
     tar_files.append("scores.png")
@@ -94,7 +98,7 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tree = classifier.fit(x_train, y_train)
     sklearn.tree.plot_tree(tree.estimators_[0], ax=ax, feature_names=[list(filter(lambda x: not x.endswith("__"), x))[-1].strip() for x in list(map(lambda x: x.split(";"), best_features))], class_names=["Normal", "Premature"], filled=True)
-    matplotlib.pyplot.title("Score: %.2f" % best_score)
+    matplotlib.pyplot.title("Accuracy: %.2f" % best_score)
     tar_files.append("tree.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
@@ -104,7 +108,7 @@ if __name__ == "__main__":
         data = train_data[["Answer"] + [feature]]
         seaborn.set(context="poster", style="whitegrid")
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
-        seaborn.violinplot(data=data, x="Answer", y=feature, ax=ax)
+        seaborn.violinplot(data=data, x="Answer", y=feature, ax=ax, scale="count", inner="stick")
         matplotlib.pyplot.xlabel("Normal/Premature")
         matplotlib.pyplot.ylabel(list(filter(lambda x: not x.endswith("__"), feature.split(";")))[-1])
         matplotlib.pyplot.title("P-value: %.2f" % scipy.stats.ttest_ind(data.loc[(data["Answer"] == "Normal")][feature], data.loc[(data["Answer"] == "Premature")][feature], equal_var=False)[1])
