@@ -6,6 +6,7 @@ import tarfile
 import typing
 import matplotlib
 import matplotlib.pyplot
+import scipy.stats
 import seaborn
 import sklearn.ensemble
 import sklearn.manifold
@@ -97,11 +98,18 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    tar_files.append("train.tar.gz")
-    step00.make_pickle(tar_files[-1], train_data[best_features + ["Answer"]])
-
-    tar_files.append("normal.tar.gz")
-    step00.make_pickle(tar_files[-1], normal_data[best_features + ["Answer"]])
+    # Draw violin plot
+    for i, feature in enumerate(best_features):
+        data = train_data[["Answer"] + [feature]]
+        seaborn.set(context="poster", style="whitegrid")
+        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+        seaborn.violinplot(data=data, x="Answer", y=feature, ax=ax)
+        matplotlib.pyplot.xlabel("Normal/Premature")
+        matplotlib.pyplot.ylabel(list(filter(lambda x: not x.endswith("__"), feature.split(";")))[-1])
+        matplotlib.pyplot.title("P-value: %.2f" % scipy.stats.ttest_ind(data.loc[(data["Answer"] == "Normal")][feature], data.loc[(data["Answer"] == "Premature")][feature], equal_var=False)[1])
+        tar_files.append("feature_%d.png" % i)
+        fig.savefig(tar_files[-1])
+        matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output[0], "w") as tar:
         for f in tar_files:
