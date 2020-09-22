@@ -48,10 +48,25 @@
     \section{Introduction}
     \begin{frame}
         \frametitle{Microbiome}
+
+        \begin{itemize}
+            \item Microbiota: the microorganisms which live inside \& on humans \cite{micro1}
+            \item Microbiome: $10^{13}$ to $10^{14}$ microorganisms whose which collective genome \cite{micro2}
+        \end{itemize}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.3 \linewidth]{figures/microbiome.jpg}
+            \caption{Concept of a core human microbiome \protect \cite{micro1}}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle[rRNA]{Ribosomal RNA}
+        \frametitle{rRNA}
+
+        \begin{itemize}
+            \item Ribosomal RNA
+            \item Well-known as a key to phylogeny \cite{rrna1}
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -64,7 +79,7 @@
 
         $\therefore$ Hence, in this study,
         \begin{itemize}
-            \item Premature: $\textless$ 37 weeks
+            \item Premature: $<$ 37 weeks
             \item Normal: $\ge$ 37 weeks
         \end{itemize}
     \end{frame}
@@ -77,7 +92,7 @@
     \begin{frame}
         \frametitle{Train Data vs. Validate Data}
 
-        Train data
+        Train/Test data
         \begin{itemize}
             \item Helixco: Data collected by Helixco
         \end{itemize}
@@ -111,7 +126,7 @@
         $\therefore$ I select the length $n$ where:
         \begin{equation}
             \begin{array}{c}
-                \forall n_i \in \{ n_k | \mbox{QualityScore} \geq 30 \} \\
+                \forall n_i \in \{ n_k | \mbox{MedianQualityScore} \geq 30 \} \\
                 \exists ! n \in \{n_i\} : n \geq n_i
             \end{array}
         \end{equation}
