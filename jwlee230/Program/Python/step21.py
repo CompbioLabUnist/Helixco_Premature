@@ -1,5 +1,5 @@
 """
-step21: Read & Clearify raw TSV into pandas
+step21.py: Read & Clearify raw TSV into pandas
 """
 import argparse
 import pandas
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     raw_data = raw_data.T
 
     data = pandas.DataFrame()
-    taxonomy_list = sorted(list(set(map(lambda x: x[0], raw_data.columns))))
+    taxonomy_list = sorted(set(map(lambda x: x[0], raw_data.columns)))
     for taxonomy in taxonomy_list:
         data[taxonomy] = raw_data[list(filter(lambda x: x[0] == taxonomy, raw_data.columns))].sum(axis=1)
 

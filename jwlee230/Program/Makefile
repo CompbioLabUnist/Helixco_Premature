@@ -310,9 +310,6 @@ Output/TSV/site_premature.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv Output
 Output/TSV/whole.%.tar.gz: Python/step10-2.py Output/TSV/raw.%.tsv
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
 
-Output/TSV/EBI.%.tar.gz: Python/step10-2.py Output/TSV/EBI.%.tsv
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
-
 step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz
 .PHONY += step10
 
@@ -437,13 +434,13 @@ Output/Chimera/test: Output/Align/whole.trim.contigs.good.unique.good.filter.uni
 # TODO: Here you are start
 
 # Step 21 (Read & clearify raw TSV into pandas)
-Output/TSV/ready.%.tar.gz: Python/step21.py Output/TSV/raw.%.tsv | build.log
+Output/TSV/helixco.%.tar.gz: Python/step21.py Output/TSV/raw.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-Output/TSV/validate.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
+Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-step21: Output/TSV/ready.DADA2.gg.tar.gz Output/TSV/ready.DADA2.silva.tar.gz Output/TSV/ready.Deblur.gg.tar.gz Output/TSV/ready.Deblur.silva.tar.gz Output/TSV/validate.DADA2.gg.tar.gz Output/TSV/validate.DADA2.silva.tar.gz Output/TSV/validate.Deblur.gg.tar.gz Output/TSV/validate.Deblur.silva.tar.gz
+step21: Output/TSV/helixco.DADA2.gg.tar.gz Output/TSV/helixco.DADA2.silva.tar.gz Output/TSV/helixco.Deblur.gg.tar.gz Output/TSV/helixco.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz
 .PHONY += step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -456,7 +453,10 @@ Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 bui
 Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-step22: Output/Step22/ready.DADA2.gg.png Output/Step22/ready.DADA2.silva.png Output/Step22/ready.Deblur.gg.png Output/Step22/ready.Deblur.silva.png Output/Step22/validate.DADA2.gg.png Output/Step22/validate.DADA2.silva.png Output/Step22/validate.Deblur.gg.png Output/Step22/validate.Deblur.silva.png
+Output/Step22/DB.%.png: Python/step22-2.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz | Output/Step22 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+
+step22: Output/Step22/helixco.DADA2.gg.png Output/Step22/helixco.DADA2.silva.png Output/Step22/helixco.Deblur.gg.png Output/Step22/helixco.Deblur.silva.png Output/Step22/EBI.DADA2.gg.png Output/Step22/EBI.DADA2.silva.png Output/Step22/EBI.Deblur.gg.png Output/Step22/EBI.Deblur.silva.png Output/Step22/DB.DADA2.gg.png Output/Step22/DB.DADA2.silva.png Output/Step22/DB.Deblur.gg.png Output/Step22/DB.Deblur.silva.png
 .PHONY += step22
 
 # Step 23 (Draw histogram)
@@ -495,10 +495,10 @@ step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/week
 Output/Step25:
 	mkdir -p $@
 
-Output/Step25/pseudo.%.tar.gz: Python/step25.py Output/TSV/ready.%.tar.gz | Output/Step25 build.log
+Output/Step25/pseudo.%.tar.gz: Python/step25.py Output/TSV/helixco.%.tar.gz | Output/Step25 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@)
 
-Output/Step25/TSNE.%.png: Python/step25-2.py Output/TSV/ready.%.tar.gz Output/Step25/pseudo.%.tar.gz | build.log
+Output/Step25/TSNE.%.png: Python/step25-2.py Output/TSV/helixco.%.tar.gz Output/Step25/pseudo.%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
 
 step25: Output/Step25/TSNE.DADA2.gg.png
@@ -508,7 +508,7 @@ step25: Output/Step25/TSNE.DADA2.gg.png
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/ready.%.tar.gz Output/TSV/validate.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
+Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --cpu $(CPUS)
 
 step26: Output/Step26/RF.DADA2.gg.tar.gz# Output/Step26/RF.DADA2.silva.tar.gz Output/Step26/RF.Deblur.gg.tar.gz Output/Step26/RF.Deblur.silva.tar.gz

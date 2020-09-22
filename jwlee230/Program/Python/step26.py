@@ -42,7 +42,7 @@ if __name__ == "__main__":
     train_data["Answer"] = list(metadata["premature"])
     normal_data["Answer"] = "Normal"
 
-    classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0)
+    classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0, bootstrap=False)
     classifier.fit(train_data[intersect_columns], train_data["Answer"])
     feature_importances = classifier.feature_importances_
     best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, intersect_columns), reverse=True)))[:10]
@@ -53,5 +53,9 @@ if __name__ == "__main__":
     fig.savefig(args.output[0] + ".feature_importances.png")
     matplotlib.pyplot.close(fig)
 
-    classifier.fit(train_data[best_features], train_data["Answer"])
-    print(classifier.score(normal_data[best_features], normal_data["Answer"]))
+    classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0, bootstrap=False, warm_start=True)
+    for train_index, test_index in sklearn.model_selection.KFold(n_splits=5, random_state=0, shuffle=True).split(train_data):
+        classifier.fit(train_data.iloc[train_index][best_features], train_data.iloc[train_index]["Answer"])
+        print(classifier.score(train_data.iloc[test_index][best_features], train_data.iloc[test_index]["Answer"]))
+
+    print("Final:", classifier.score(normal_data[best_features], normal_data["Answer"]))
