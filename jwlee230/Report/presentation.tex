@@ -86,7 +86,16 @@
 
     \section{Materials}
     \begin{frame}
-        \frametitle{16s rRNA Sequencing}
+        \frametitle{16S rRNA Sequencing}
+
+        \textbf{16S rRNA sequencing} is the \textit{reference method} for bacterial taxonomy \& identification \cite{16S1}
+
+        Reasons \cite{16S2}:
+        \begin{itemize}
+            \item 16S rRNA exists in almost all bacteria
+            \item Functions of the 16S rRNA has not changed over time
+            \item 16S rRNA is large enough for bioinformatics
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -107,13 +116,28 @@
 
         \begin{table}
             \centering
+            \caption{Metadata of Data}
             \input{metadata.tex}
         \end{table}
     \end{frame}
 
     \section{Literature Survey I \protect \cite{validate1}}
+    \begin{frame}[allowframebreaks]
+        \frametitle{EBI Data}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Literature/EBI/title.png}
+        \end{figure}
+    \end{frame}
 
     \section{Literature Survey II \protect \cite{validate2}}
+    \begin{frame}[allowframebreaks]
+        \frametitle{HMP Data}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Literature/HMP/title.png}
+        \end{figure}
+    \end{frame}
 
     \section{Methods}
     \begin{frame}
@@ -153,11 +177,13 @@
             \end{array}$
             \caption{Sequence Quality Plot from Helixco Data}
         \end{figure}
+        Maximum Length: 265
 
         \begin{figure}[h!]
             \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
             \caption{Sequence Quality Plot from EBI}
         \end{figure}
+        Maximum Length: 150
 
         \begin{figure}[h!]
             $\begin{array}{cc}
@@ -170,6 +196,7 @@
             \end{array}$
             \caption{Sequence Quality Plot from HMP Data}
         \end{figure}
+        Maximum Length: 226
     \end{frame}
 
     \begin{frame}
@@ -345,7 +372,7 @@
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/feature.png}
             \caption{Violin Plot of \textit{Leptotrichia}}
         \end{figure}
-        \textit{Bacteria Fusobacteriota Fusobacteriia Fusobacteriales Leptotrichiaceae Leptotrichia}
+        \textit{Fusobacteriota Fusobacteriia Fusobacteriales Leptotrichiaceae Leptotrichia}
     \end{frame}
 
     \section{Proceedings}
@@ -353,24 +380,8 @@
         \frametitle{Yields}
 
         \begin{itemize}
-            \item t-SNE plots
-            \begin{itemize}
-                \item in Brief
-                \item by Site
-                \item by Site + Premature
-            \end{itemize}
-
-            \item Histogram
-            \begin{itemize}
-                \item by Age
-                \item by Weeks
-            \end{itemize}
-
-            \item Have tried (but in vain)
-            \begin{itemize}
-                \item ANCOM with premature/normal
-                \item Classification with raw TSV
-            \end{itemize}
+            \item t-SNE with databases
+            \item Random Forest Classifier
         \end{itemize}
     \end{frame}
 
@@ -379,8 +390,8 @@
 
         \begin{itemize}
             \item More data
+            \item Metadata for databases
             \item Mothur pipeline
-            \item Classification
         \end{itemize}
     \end{frame}
 
