@@ -219,6 +219,7 @@
         \begin{itemize}
             \item Pandas \cite{pandas1}
             \item Scikit-Learn \cite{sklearn1}
+            \item SciPy \cite{scipy1}
             \item Matplotlib \cite{matplotlib1}
             \item Seaborn \cite{seaborn1}
         \end{itemize}
@@ -264,6 +265,7 @@
                 \\
                 \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
             \end{array}$
+            \caption{t-SNE with Site}
         \end{figure}
 
         \begin{figure}[h!]
@@ -289,7 +291,7 @@
                 \\
                 \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
             \end{array}$
-            \caption{t-SNE with Site}
+            \caption{t-SNE with Site + Premature}
         \end{figure}
 
         \begin{figure}[h!]
@@ -300,7 +302,7 @@
                 \\
                 \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
-            \caption{t-SNE with Site}
+            \caption{t-SNE with Site + Premature}
         \end{figure}
     \end{frame}
 
@@ -317,6 +319,33 @@
             \end{array}$
             \caption{Histogram with Clinical Information}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Random Forest Classifier}
+
+        Input Data was treated with \textbf{Deblur} and \textbf{SILVA}.
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/importances.png}
+            \caption{Feature Importance derived by Random Forest Classifier}
+        \end{figure}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/scores.png}
+            \caption{Number of Features vs. Accuracy}
+        \end{figure}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/case1/tree.png}
+            \caption{Random Forest Classifier}
+        \end{figure}
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/feature.png}
+            \caption{Violin Plot of \textit{Leptotrichia}}
+        \end{figure}
+        \textit{Bacteria Fusobacteriota Fusobacteriia Fusobacteriales Leptotrichiaceae Leptotrichia}
     \end{frame}
 
     \section{Proceedings}
