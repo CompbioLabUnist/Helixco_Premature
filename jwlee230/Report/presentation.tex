@@ -90,19 +90,30 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Train Data vs. Validate Data}
+        \frametitle{Train/Test Data vs. Validate Data}
 
-        Train/Test data
         \begin{itemize}
-            \item Helixco: Data collected by Helixco
+            \item Train/Test data
+            \begin{itemize}
+                \item Helixco: Data collected by Helixco
+            \end{itemize}
+
+            \item Validate data
+            \begin{itemize}
+                \item EBI (European Bioinformatics Institute): Data collected by \citeNP{validate1}
+                \item HMP (Human Microbiome Project): Data collected by \citeNP{validate2}
+            \end{itemize}
         \end{itemize}
 
-        Validate data
-        \begin{itemize}
-            \item EBI (European Bioinformatics Institute): Data collected by \shortciteNP{validate1}
-            \item HMP (Human Microbiome Project): Data collected by \shortciteNP{validate2}
-        \end{itemize}
+        \begin{table}
+            \centering
+            \input{metadata.tex}
+        \end{table}
     \end{frame}
+
+    \section{Literature Survey I \protect \cite{validate1}}
+
+    \section{Literature Survey II \protect \cite{validate2}}
 
     \section{Methods}
     \begin{frame}
