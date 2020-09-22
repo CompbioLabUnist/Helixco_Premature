@@ -225,16 +225,29 @@
     \end{frame}
 
     \section{Results}
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{t-SNE for Brief Information}
 
         \begin{figure}[h!]
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DADA2.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DB.DADA2.gg.png}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/Deblur.png}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DB.DADA2.silva.png}
                 \\
-                \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
+
+                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+            \end{array}$
+            \caption{t-SNE for Brief Information}
+        \end{figure}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DB.Deblur.gg.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Brief/DB.Deblur.silva.png}
+                \\
+
+                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
             \caption{t-SNE for Brief Information}
         \end{figure}
