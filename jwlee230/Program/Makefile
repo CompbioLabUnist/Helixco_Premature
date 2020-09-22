@@ -504,12 +504,12 @@ Output/Step25/TSNE.%.png: Python/step25-2.py Output/TSV/helixco.%.tar.gz Output/
 step25: Output/Step25/TSNE.DADA2.gg.png
 .PHONY += step25
 
-# Step 26 (Random Forest Classifier)
+# Step 26 (RandomForest Classifier)
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar.gz: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --cpu $(CPUS)
+Output/Step26/RF.%.tar: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
 
-step26: Output/Step26/RF.DADA2.gg.tar.gz# Output/Step26/RF.DADA2.silva.tar.gz Output/Step26/RF.Deblur.gg.tar.gz Output/Step26/RF.Deblur.silva.tar.gz
+step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
 .PHONY += step26
