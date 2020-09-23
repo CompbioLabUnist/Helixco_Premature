@@ -55,7 +55,7 @@ run: tmp.sh | log Output
 .PHONY += run
 
 # Actual
-latest: step03
+latest: step05
 .PHONY += latest
 
 # Step 01 (Make manifest files)
@@ -138,7 +138,7 @@ Output/Deblur/HMP.table.qza Output/Deblur/HMP.seq.qza Output/Deblur/HMP.stat.qza
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 226 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step05: Output/Deblur/whole.seq.qza Output/Deblur/EBI.seq.qza
+step05: Output/Deblur/whole.seq.qza Output/Deblur/EBI.seq.qza Output/Deblur/HMP.seq.qza
 .PHONY += step05
 
 # Step 06 (Taxonomy information)
