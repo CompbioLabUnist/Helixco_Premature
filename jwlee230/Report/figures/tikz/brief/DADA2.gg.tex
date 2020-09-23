@@ -1,0 +1,26 @@
+\documentclass[border=1cm]{standalone}
+\usepackage{tikz}
+
+\begin{document}
+    \begin{tikzpicture}
+        \begin{scope}[blend group = soft light]
+            \fill[red!30!white] (90:1.2) circle (2);
+            \fill[green!30!white] (210:1.2) circle (2);
+            \fill[blue!30!white] (330:1.2) circle (2);
+        \end{scope}
+
+        \node at (90:3) {Helixco};
+        \node at (210:3) {EBI};
+        \node at (330:3) {HMP};
+
+        \node {1};
+
+        \node at (150:1.5) {2};
+        \node at (270:1.5) {2};
+        \node at (30:1.5) {2};
+
+        \node at (90:2) {1};
+        \node at (210:2) {1};
+        \node at (330:2) {1};
+    \end{tikzpicture}
+\end{document}
