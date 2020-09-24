@@ -10,7 +10,7 @@
 \usepackage{listings, listing}
 \usepackage{color}
 \usepackage{mathptmx}
-\usepackage{apacite}
+\usepackage[numberedbib]{apacite}
 \usepackage[style=iso]{datetime2}
 
 \geometry
@@ -37,6 +37,12 @@
     \section{Introduction}
         \subsection{Microbiome}
 
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/microbiome.jpg}
+                \caption{Concept of a core human microbiome. \protect \cite{micro1}}
+            \end{figure}
+
         \subsection[rRNA]{Ribosomal RNA}
 
         \subsection{Premature}
@@ -48,14 +54,23 @@
         \subsection{QIIME 2}
             QIIME 2 is a next-generation microbiome bioinformatics platform which is extensible, free, open-source, and community developed \cite{qiime1, qiime2, qiime3}.
 
-            \begin{figure}[htbp]
+            \begin{figure}[p]
                 \centering
                 \includegraphics[width=0.6 \linewidth]{figures/qiime.png}
                 \caption{Workflow of QIIME2}
                 \label{fig:qiime2}
             \end{figure}
 
-        \subsection{Denoising Techniques}
+        \subsection{Denoising Algorithms}
+            There are two denoising algorithms which are provided by QIIME as figures \ref{fig:denoising}.
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/tikz/denoising.pdf}
+                \caption{Denoising Algorithms}
+                \label{fig:denoising}
+            \end{figure}
+
             \subsubsection{DADA2}
                 DADA2 is an open-source software package for modeling and correcting Illumina-sequenced amplicon erros \cite{DADA2}.
 
@@ -64,7 +79,7 @@
 
         \subsection{Taxonomy Classification}
             \subsubsection{Greengenes}
-                Greengenes is a chimera-checked 16S rRNA gene database \cite{greengenes1}.
+                Greengenes (GG) is a chimera-checked 16S rRNA gene database \cite{greengenes1}.
 
             \subsubsection{SILVA}
                 SILVA is a comprehensive web resource for up-to-date, quality-controlled databases of aligned rRNA gene sequences from the Bacteria domains \cite{silva1, silva2}.
@@ -73,9 +88,9 @@
             Mothur is an open-source software package for bioinformatics data processing, especially for the analysis of DNA from microbes \cite{mothur1}.
 
         \subsection[t-SNE]{t-distributed Stochastic Neighbor Embedding}
-            T-distributed stochastic neighbor embedding (t-SNE) visualizeds high-dimensional data by giving each data-point a location in a two-dimensional map \cite{tsne1}.
+            T-distributed stochastic neighbor embedding (t-SNE) visualizes high-dimensional data by giving each data-point a location in a two-dimensional map \cite{tsne1}.
 
-            \begin{figure}[htbp]
+            \begin{figure}[p]
                 \centering
                 \includegraphics[width=0.5 \linewidth]{figures/tsne.png}
                 \caption{t-SNE Visualizations of handwritten digits from MNIST data \protect \cite{tsne1}}
@@ -94,7 +109,6 @@
 
             \subsubsection{Seaborn}
                 Seaborn is a Python data visualization library based on Matplotlib \cite{seaborn1}.
-
 
     \section{Results}
 
