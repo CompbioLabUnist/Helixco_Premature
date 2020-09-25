@@ -211,7 +211,7 @@
             \item Higher quality value
         \end{itemize}
 
-        $\therefore$ I select the length $n$ where:
+        $\therefore$ Select the length $n$ where:
         \begin{equation}
             \begin{array}{c}
                 \forall n_i \in \{ n_k | \mbox{MedianQualityScore} \geq 30 \} \\
@@ -270,9 +270,14 @@
         \frametitle{Taxonomy Classification}
 
         \begin{itemize}
-            \item Greengenes (GG): Kingdom $\leftrightarrow$ Species \cite{greengenes1}
-            \item SILVA: Domain $\leftrightarrow$ Genus \cite{silva1, silva2}
+            \item Greengenes (GG) \cite{greengenes1}
+            \item SILVA \cite{silva1, silva2}
         \end{itemize}
+
+        \begin{figure}
+            \includegraphics[width=0.4 \linewidth]{figures/tikz/taxonomy.pdf}
+            \caption{Taxonomy Classifications}
+        \end{figure}
 
         “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
         but performance appears to \textbf{drop} at \textit{species level}” \cite{performance1}
@@ -336,6 +341,8 @@
             \caption{Aggregated Taxa Information}
         \end{figure}
 
+        Note: need to be updated
+
         \begin{figure}
             $\begin{array}{cc}
                 \includegraphics[width=0.2 \linewidth]{figures/TSNE/Brief/DB.DADA2.gg.png}
@@ -352,6 +359,7 @@
             \end{array}$
             \caption{t-SNE for Brief Information}
         \end{figure}
+
     \end{frame}
 
     \begin{frame}[allowframebreaks]
