@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
     parser.add_argument("helixco", type=str, nargs=1, help="Helixco TAR.gz file")
     parser.add_argument("ebi", type=str, nargs=1, help="EBI TAR.gz file")
+    parser.add_argument("hmp", type=str, nargs=1, help="HMP TAR.gz file")
     parser.add_argument("output", type=str, nargs=1, help="Output PNG file")
     parser.add_argument("--cpu", type=int, default=1, help="CPU to use")
 
@@ -24,16 +25,23 @@ if __name__ == "__main__":
 
     helixco_data: pandas.DataFrame = step00.read_pickle(args.helixco[0])
     EBI_data: pandas.DataFrame = step00.read_pickle(args.ebi[0])
+    HMP_data: pandas.DataFrame = step00.read_pickle(args.hmp[0])
 
-    same_taxos = sorted(set(helixco_data.columns) & set(EBI_data.columns))
+    same_taxos = sorted(set(helixco_data.columns) & set(EBI_data.columns) & set(HMP_data.columns))
+
+    print(helixco_data.shape, EBI_data.shape, HMP_data.shape)
+    print(len(set(helixco_data.columns) & set(EBI_data.columns)), len(set(EBI_data.columns) & set(HMP_data.columns)), len(set(HMP_data.columns) & set(helixco_data.columns)))
+    print(len(set(helixco_data.columns) & set(EBI_data.columns) & set(HMP_data.columns)))
 
     helixco_data = helixco_data[same_taxos]
     EBI_data = EBI_data[same_taxos]
+    HMP_data = HMP_data[same_taxos]
 
     helixco_data["DB"] = "Helixco"
     EBI_data["DB"] = "EBI"
+    HMP_data["DB"] = "HMP"
 
-    whole_data = pandas.concat([helixco_data, EBI_data], ignore_index=True, verify_integrity=True)
+    whole_data = pandas.concat([helixco_data, EBI_data, HMP_data], ignore_index=True, verify_integrity=True)
 
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpu).fit_transform(whole_data[same_taxos]), columns=["TSNE1", "TSNE2"])
     for column in tsne_data.columns:
