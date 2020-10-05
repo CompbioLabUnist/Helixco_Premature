@@ -20,6 +20,7 @@ if __name__ == "__main__":
 
     parser.add_argument("train", type=str, nargs=1, help="Train TAR.gz file")
     parser.add_argument("normal", type=str, nargs=1, help="Normal TAR.gz file")
+    parser.add_argument("premature", type=str, nargs=1, help="premature TAR.gz file")
     parser.add_argument("meta", type=str, nargs=1, help="Metadata TSV file")
     parser.add_argument("output", type=str, nargs=1, help="Output basename")
     parser.add_argument("--cpu", type=int, default=1, help="CPU to use")
@@ -40,14 +41,17 @@ if __name__ == "__main__":
 
     train_data = step00.read_pickle(args.train[0])
     normal_data = step00.read_pickle(args.normal[0])
+    premature_data = step00.read_pickle(args.premature[0])
     metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
 
-    intersect_columns = sorted(list(set(train_data.columns) & set(normal_data.columns)))
+    intersect_columns = sorted(set(train_data.columns) & set(normal_data.columns) & set(premature_data.columns))
     train_data = train_data[intersect_columns]
     normal_data = normal_data[intersect_columns]
+    premature_data = premature_data[intersect_columns]
 
     train_data["Answer"] = list(metadata["premature"])
     normal_data["Answer"] = "Normal"
+    premature_data["Answer"] = "Premature"
 
     # Get Feature Importances
     classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0, bootstrap=False)

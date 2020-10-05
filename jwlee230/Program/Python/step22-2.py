@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     whole_data = pandas.concat([helixco_data, EBI_data, HMP_data], ignore_index=True, verify_integrity=True)
 
-    tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpu).fit_transform(whole_data[same_taxos]), columns=["TSNE1", "TSNE2"])
+    tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="barnes_hut", n_jobs=args.cpu).fit_transform(whole_data[same_taxos]), columns=["TSNE1", "TSNE2"])
     for column in tsne_data.columns:
         tsne_data[column] = sklearn.preprocessing.scale(tsne_data[column])
     tsne_data["DB"] = whole_data["DB"]
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     seaborn.set(context="poster", style="whitegrid")
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.scatterplot(data=tsne_data, x="TSNE1", y="TSNE2", ax=ax, hue="DB", style="DB", legend="full")
+    seaborn.scatterplot(data=tsne_data, x="TSNE1", y="TSNE2", ax=ax, hue="DB", style="DB", legend="full", alpha=0.3)
 
     fig.savefig(args.output[0])
     matplotlib.pyplot.close(fig)
