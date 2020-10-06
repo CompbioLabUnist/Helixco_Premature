@@ -47,13 +47,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("raw", help="Raw TSV file", type=str, nargs=1)
-    parser.add_argument("ancom", help="ANCOM TSV file", type=str, nargs=1)
     parser.add_argument("output", help="Output TAR.gz file", type=str, nargs=1)
 
     args = parser.parse_args()
 
     raw_data = read_raw_data(args.raw[0])
-    ancom_data = read_ancom_data(args.ancom[0])
-    data = select_data(raw_data, ancom_data)
 
-    step00.make_pickle(args.output[0], data)
+    step00.make_pickle(args.output[0], raw_data)

@@ -63,27 +63,25 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     seaborn.distplot(list(filter(lambda x: x > 0, feature_importances)), hist=True, kde=False, rug=True, ax=ax)
     matplotlib.pyplot.title("Feature Importances")
-    matplotlib.pyplot.xlabel("Feature")
-    matplotlib.pyplot.ylabel("Importances")
+    matplotlib.pyplot.xlabel("Feature Importances")
+    matplotlib.pyplot.ylabel("Counts")
     tar_files.append("importances.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(train_data[best_features], train_data["Answer"], test_size=0.1, random_state=0, shuffle=True, stratify=train_data["Answer"])
+    validation_data = pandas.concat([normal_data, premature_data], verify_integrity=True)
 
     # Select best features
     scores = [0 for _ in best_features]
     best_num, best_score = 0, 0
     for i in range(1, len(scores) + 1):
-        classifier.fit(x_train[best_features[:i]], y_train)
-        scores[i - 1] = tmp = classifier.score(x_test[best_features[:i]], y_test)
+        classifier.fit(train_data[best_features[:i]], train_data["Answer"])
+        scores[i - 1] = tmp = classifier.score(validation_data[best_features[:i]], validation_data["Answer"])
         if tmp > best_score:
             best_score = tmp
             best_num = i
 
     best_features = best_features[:best_num]
-    x_train = x_train[best_features]
-    x_test = x_test[best_features]
     for f in best_features:
         print(f)
 
@@ -100,8 +98,7 @@ if __name__ == "__main__":
 
     # Draw Random Forest
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    tree = classifier.fit(x_train, y_train)
-    sklearn.tree.plot_tree(tree.estimators_[0], ax=ax, feature_names=[list(filter(lambda x: not x.endswith("__"), x))[-1].strip() for x in list(map(lambda x: x.split(";"), best_features))], class_names=["Normal", "Premature"], filled=True)
+    sklearn.tree.plot_tree(classifier.fit(train_data[best_features], train_data["Answer"]).estimators_[0], ax=ax, feature_names=[list(filter(lambda x: not x.endswith("__"), x))[-1].strip() for x in list(map(lambda x: x.split(";"), best_features))], class_names=["Normal", "Premature"], filled=True)
     matplotlib.pyplot.title("Accuracy: %.2f" % best_score)
     tar_files.append("tree.png")
     fig.savefig(tar_files[-1])
