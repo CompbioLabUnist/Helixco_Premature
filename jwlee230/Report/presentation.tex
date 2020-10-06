@@ -7,6 +7,7 @@
 \usepackage{graphicx, graphics}
 \usepackage{apacite}
 \usepackage[style=iso]{datetime2}
+\usepackage{enumerate}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
 
 \AtBeginSection[]
@@ -457,10 +458,25 @@
         \end{figure}
 
         \begin{figure}[h!]
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/feature.png}
-            \caption{Violin Plot of \textit{Leptotrichia}}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/case1/feature_0.png}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/case1/feature_3.png}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/case1/feature_4.png}
+                \\
+
+                \mbox{(a) \textit{Lactobacillus iners}} & \mbox{(b) \textit{Lactobacillus}} & \mbox{(c) \textit{Romboutsia}}
+            \end{array}$
+            \caption{Violin Plot of Taxonomy}
         \end{figure}
-        \textit{Fusobacteriota Fusobacteriia Fusobacteriales Leptotrichiaceae Leptotrichia}
+
+        \begin{enumerate}[a.]
+            \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus Lactobacillus iners}
+            \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus}
+            \item \textit{Bacteria Firmicutes Clostridia Peptostreptococcales-Tissierellales Peptostreptococcaceae Romboutsia}
+        \end{enumerate}
+
     \end{frame}
 
     \section{Proceedings}
