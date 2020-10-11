@@ -36,12 +36,13 @@
 
     \section{Introduction}
         \subsection{Microbiome}
-            After the Human Genome Project was finished, the microorganisms which live along humans, as known as the microbiota, are considered overwhelmed human cells \cite{micro1}. Moreover, the microbiome, the collective genome from these microbiota \cite{micro2}, serve as the trait of individual have not to evolve on their own \cite{micro1}.
+            After the Human Genome Project was finished, the microorganisms which live along humans, as known as the microbiota, are considered overwhelmed human cells \cite{micro1}. Moreover, the microbiome, the collective genome from these microbiota \cite{micro2}, serve as the trait of individual have not to evolve on their own \cite{micro1}. Furthermore, human microbiome is effected by host's life style as figure \ref{fig:microbiome}.
 
             \begin{figure}[p]
                 \centering
                 \includegraphics[width=0.4 \linewidth]{figures/microbiome.jpg}
                 \caption{Concept of a core human microbiome. \protect \cite{micro1}}
+                \label{fig:microbiome}
             \end{figure}
 
         \subsection[rRNA]{Ribosomal RNA}
@@ -59,7 +60,24 @@
 
     \section{Materials}
         \subsection{16S rRNA Sequencing}
+            rRNA has been kept among bacteria; thus, 16S rRNA exists in almost bacteria, and its functions has not changed over time. Also, 16S rRNA is large enough for bioinformatics \cite{16S2}. Hence, 16S rRNA sequencing is the reference method for bacterial taxonomy classification and identification \cite{16S1}.
 
+            There are three databases which for machine learning: Helixco data, EBI data, and HMP data. Metadata of these databases is as table \ref{tb:metadata}.
+
+            \begin{table}[p]
+                \centering
+                \caption{Metadata of Data}
+                \label{tb:metadata}
+                \input{metadata.tex}
+            \end{table}
+
+            \subsubsection{Helixco Data}
+
+            \subsubsection{EBI Data}
+                EBI data was collected by European Bioinformatics Institute (EBI) \cite{validate1}. EBI data aimed to compare Cesarean section birth and vaginal birth; thus, every participants in EBI data is on term, not PTB.
+
+            \subsubsection{HMP Data}
+                HMP data was collected by Human Microbiome Project (HMP) \cite{validate2}. HMP data aimed to compare PTB and on-term birth; thus, every participants in HTMP data is PTB.
     \section{Methods}
         \subsection{QIIME 2}
             QIIME 2 is a next-generation microbiome bioinformatics platform which is extensible, free, open-source, and community developed \cite{qiime1, qiime2, qiime3}.
@@ -130,6 +148,51 @@
                 Seaborn is a Python data visualization library based on Matplotlib \cite{seaborn1}.
 
     \section{Results}
+        \subsection{t-SNE for Brief Information}
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.3 \linewidth]{figures/tikz/brief.pdf}
+                \caption{Workflow of t-SNE for Brief Information}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.3 \linewidth]{figures/tikz/brief/DADA2.gg.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/tikz/brief/DADA2.silva.pdf}
+                    \\
+                    \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+
+                    \includegraphics[width=0.3 \linewidth]{figures/tikz/brief/Deblur.gg.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/tikz/brief/Deblur.silva.pdf}
+                    \\
+                    \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA}
+                \end{array}$
+                \caption{Count of Intersected Taxa Information}
+                \label{fig:inter-brief}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.3 \linewidth]{figures/TSNE/Brief/DB.DADA2.gg.png}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/TSNE/Brief/DB.DADA2.silva.png}
+                    \\
+                    \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
+
+                    \includegraphics[width=0.3 \linewidth]{figures/TSNE/Brief/DB.Deblur.gg.png}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/TSNE/Brief/DB.Deblur.silva.png}
+                    \\
+                    \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA}
+                \end{array}$
+                \caption{t-SNE for Brief Information}
+                \label{fig:tsne-brief}
+            \end{figure}
 
     \section{Discussion}
 
