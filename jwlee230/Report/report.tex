@@ -161,7 +161,7 @@
                 Seaborn is a Python data visualization library based on Matplotlib \cite{seaborn1}.
 
     \section{Results}
-        \subsection{Filtering}
+        \subsection{Deciding Trimming Length}
             Deblur require filtering step; though, DADA2 contains filtering step. For filtering step, trimming length should be decided. In other words, the sequence which is longer than specific length should be removed, because of the quality of sequences. There is no canonically admitted methods for deciding trimming length; thus, trimming length $n$ would be decided as equation \ref{eq:trim}. Hence, trimming lengths are decided as shown as table \ref{tb:trim}.
 
             \begin{equation}
@@ -217,7 +217,7 @@
                 \end{tabular}
             \end{table}
 
-        \subsection{t-SNE for Brief Information}
+        \subsection{t-SNE for Comparing Databases}
             To compare three databases, workflow, which as figure \ref{fig:workflow-brief}, was executed:
             \begin{enumerate}
                 \item Select intersected taxonomies that means the taxonomy which can be founded in every database.
@@ -248,7 +248,7 @@
                     \\
                     \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA}
                 \end{array}$
-                \caption{Count of Intersected Taxa Information}
+                \caption{Count of Intersected Taxonomies}
                 \label{fig:inter-brief}
             \end{figure}
 
@@ -267,11 +267,12 @@
                     \\
                     \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA}
                 \end{array}$
-                \caption{t-SNE for Brief Information}
+                \caption{t-SNE for Comparing Databases}
                 \label{fig:tsne-brief}
             \end{figure}
 
     \section{Discussion}
+        \subsection{t-SNE for Comparing Databases}
 
     \bibliographystyle{apacite}
     \bibliography{reference}
