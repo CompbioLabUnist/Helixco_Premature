@@ -79,6 +79,9 @@
             \subsubsection[HMP Data]{Human Microbiome Project Data}
                 HMP data was collected by Human Microbiome Project (HMP) \cite{validate2}. HMP data aimed to compare PTB and on-term birth; thus, every participants in HTMP data is PTB.
     \section{Methods}
+        \subsection{Docker}
+            Docker is light-weight Linux containers for consistent development and deployment \cite{docker1}.
+
         \subsection{QIIME 2}
             QIIME 2 is a next-generation microbiome bioinformatics platform which is extensible, free, open-source, and community developed \cite{qiime1, qiime2, qiime3}.
 
@@ -149,7 +152,11 @@
 
     \section{Results}
         \subsection{t-SNE for Brief Information}
-            To compare three databases, workflow, which as figure \ref{fig:workflow-brief}, was executed.
+            To compare three databases, workflow, which as figure \ref{fig:workflow-brief}, was executed:
+            \begin{enumerate}
+                \item Select intersected taxonomy that means the taxonomy which can be founded in every database.
+                \item Draw t-SNE plot in 2-dimension with intersected taxonomy.
+            \end{enumerate}
 
             \begin{figure}[p]
                 \centering
