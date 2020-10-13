@@ -124,6 +124,16 @@
             \subsubsection{SILVA}
                 SILVA is a comprehensive web resource for up-to-date, quality-controlled databases of aligned rRNA gene sequences from the Bacteria domains \cite{silva1, silva2}.
 
+        \subsection{Merging Taxonomy}
+            After applying denoising algorithms and taxonomy classification algorithms, some reads have different IDs (ASV OTU), but are identified as same taxonomy. In that cases, these reads are merged into same taxonomy as figure \ref{fig:merging}.
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.5 \linewidth]{figures/tikz/merging.pdf}
+                \caption{Example Diagram for Merging Taxonomy}
+                \label{fig:merging}
+            \end{figure}
+
         \subsection{Mothur}
             Mothur is an open-source software package for bioinformatics data processing, especially for the analysis of DNA from microbes \cite{mothur1}.
 
@@ -152,7 +162,7 @@
 
     \section{Results}
         \subsection{Filtering}
-            Deblur require filtering step; though, DADA2 contains filtering step. For filtering step, trimming length should be decided. In other words, the sequence which is longer than specific length should be removed, because of the quality of sequences. There is no canonically admitted methods for deciding trimming length; thus, trimming length would be decided as equation \ref{eq:trim}.
+            Deblur require filtering step; though, DADA2 contains filtering step. For filtering step, trimming length should be decided. In other words, the sequence which is longer than specific length should be removed, because of the quality of sequences. There is no canonically admitted methods for deciding trimming length; thus, trimming length $n$ would be decided as equation \ref{eq:trim}. Hence, trimming lengths are decided as shown as table \ref{tb:trim}.
 
             \begin{equation}
                 \begin{array}{c}
@@ -194,6 +204,18 @@
                 \caption{Sequence Quality Plot from HMP Data}
                 \label{fig:quality-HMP}
             \end{figure}
+
+            \begin{table}[p]
+                \centering
+                \caption{Trimming Lengths of Databases}
+                \label{tb:trim}
+                \begin{tabular}{c | c c}
+                    & Sequence Quality Plot & Trimming Length \\ \hline
+                    Helixco Data & 265 & Figure \ref{fig:quality-Helixco} \\
+                    EBI Data & 150 & Figure \ref{fig:quality-EBI} \\
+                    HMP Data & 226 & Figure \ref{fig:quality-HMP}
+                \end{tabular}
+            \end{table}
 
         \subsection{t-SNE for Brief Information}
             To compare three databases, workflow, which as figure \ref{fig:workflow-brief}, was executed:
