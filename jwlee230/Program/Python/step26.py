@@ -82,8 +82,11 @@ if __name__ == "__main__":
             best_num = i
 
     best_features = best_features[:best_num]
-    for f in best_features:
-        print(f)
+    tar_files.append("features.txt")
+    with open(tar_files[-1], "w") as f:
+        for feature in best_features:
+            f.write(feature)
+            f.write("\n")
 
     # Draw scores
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
@@ -118,5 +121,5 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output[0], "w") as tar:
-        for f in tar_files:
-            tar.add(f, arcname=f)
+        for file_name in tar_files:
+            tar.add(file_name, arcname=file_name)
