@@ -218,38 +218,6 @@
                 \exists ! n \in \{n_i\} : n \geq n_i
             \end{array}
         \end{equation}
-
-        \begin{figure}[h!]
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeForward.png}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeReverse.png}
-                \\
-
-                \mbox{(a) Forward} & \mbox{(b) Reverse}
-            \end{array}$
-            \caption{Sequence Quality Plot from Helixco Data}
-        \end{figure}
-        Maximum Length: 265
-
-        \begin{figure}[h!]
-            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
-            \caption{Sequence Quality Plot from EBI Data}
-        \end{figure}
-        Maximum Length: 150
-
-        \begin{figure}[h!]
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
-                \\
-
-                \mbox{(a) Forward} & \mbox{(b) Reverse}
-            \end{array}$
-            \caption{Sequence Quality Plot from HMP Data}
-        \end{figure}
-        Maximum Length: 226
     \end{frame}
 
     \begin{frame}
@@ -331,6 +299,42 @@
     \end{frame}
 
     \section{Results}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Filtering with Quality Score}
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeForward.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeReverse.png}
+                \\
+
+                \mbox{(a) Forward} & \mbox{(b) Reverse}
+            \end{array}$
+            \caption{Sequence Quality Plot from Helixco Data}
+        \end{figure}
+        Maximum Length: 265
+
+        \begin{figure}[h!]
+            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
+            \caption{Sequence Quality Plot from EBI Data}
+        \end{figure}
+        Maximum Length: 150
+
+        \begin{figure}[h!]
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
+                \\
+
+                \mbox{(a) Forward} & \mbox{(b) Reverse}
+            \end{array}$
+            \caption{Sequence Quality Plot from HMP Data}
+        \end{figure}
+        Maximum Length: 226
+    \end{frame}
+
     \begin{frame}[allowframebreaks]
         \frametitle{t-SNE for Comparing Databases}
 
@@ -452,6 +456,16 @@
             \caption{Number of Features vs. Accuracy}
         \end{figure}
 
+        \begin{enumerate}
+            \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus Lactobacillus iners}
+            \item \textit{Bacteria Fusobacteriota Fusobacteriia Fusobacteriales Leptotrichiaceae Leptotrichia}
+            \item \textit{Bacteria Actinobacteriota Actinobacteria}
+            \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus}
+            \item \textit{Bacteria Firmicutes Clostridia Peptostreptococcales-Tissierellales Peptostreptococcaceae Romboutsia}
+            \item \textit{Bacteria Firmicutes Bacilli Mycoplasmatales Mycoplasmataceae Ureaplasma}
+            \item \textit{Bacteria Actinobacteriota Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium Corynebacterium matruchotii}
+        \end{enumerate}
+
         \begin{figure}[h!]
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest/case1/tree.png}
             \caption{Random Forest Classifier}
@@ -471,15 +485,30 @@
             \caption{Violin Plot of Taxonomy}
         \end{figure}
 
-        \begin{enumerate}[a.]
+        \begin{enumerate}[a]
             \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus Lactobacillus iners}
             \item \textit{Bacteria Firmicutes Bacilli Lactobacillales Lactobacillaceae Lactobacillus}
             \item \textit{Bacteria Firmicutes Clostridia Peptostreptococcales-Tissierellales Peptostreptococcaceae Romboutsia}
         \end{enumerate}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{\textit{Lactobacillus (Lb.)}}
+
+        \begin{itemize}
+            \item Vaginal \textit{Lb.} may be clinically useful tools at PTB under 33 weeks. \cite{lb1}
+            \item Presence of \textit{Lb.} sp (odds ratio 0.2) was negatively associated. \cite{lb2}
+            \item \textit{Lb. crispatus/gasseri} could decrease the risk of PTB. \cite{lb3}
+            \item \textit{Lb.} were associated with decreased risk of PTB. \cite{lb4}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{\textit{Romboutsia}}
+    \end{frame}
+
     \section{Proceedings}
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Yields}
 
         \begin{itemize}
@@ -489,7 +518,7 @@
         \end{itemize}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Requirements}
 
         \begin{itemize}
@@ -498,7 +527,7 @@
         \end{itemize}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Expectations}
 
         \begin{itemize}
