@@ -151,12 +151,58 @@
                 Seaborn is a Python data visualization library based on Matplotlib \cite{seaborn1}.
 
     \section{Results}
+        \subsection{Filtering}
+            Deblur require filtering step; though, DADA2 contains filtering step. For filtering step, trimming length should be decided. In other words, the sequence which is longer than specific length should be removed, because of the quality of sequences. There is no canonically admitted methods for deciding trimming length; thus, trimming length would be decided as equation \ref{eq:trim}.
+
+            \begin{equation}
+                \begin{array}{c}
+                    \forall n_i \in \{ n_k | \mbox{MedianQualityScore} \geq 30 \} \\
+                    \exists ! n \in \{n_i\} : n \geq n_i
+                \end{array}
+                \label{eq:trim}
+            \end{equation}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeForward.png}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeReverse.png}
+                    \\
+                    \mbox{(a) Forward} & \mbox{(b) Reverse}
+                \end{array}$
+                \caption{Sequence Quality Plot from Helixco Data}
+                \label{fig:quality-Helixco}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/EBIForward.png}
+                \caption{Sequence Quality Plot from EBI Data}
+                \label{fig:quality-EBI}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
+                    \\
+                    \mbox{(a) Forward} & \mbox{(b) Reverse}
+                \end{array}$
+                \caption{Sequence Quality Plot from HMP Data}
+                \label{fig:quality-HMP}
+            \end{figure}
+
         \subsection{t-SNE for Brief Information}
             To compare three databases, workflow, which as figure \ref{fig:workflow-brief}, was executed:
             \begin{enumerate}
-                \item Select intersected taxonomy that means the taxonomy which can be founded in every database.
-                \item Draw t-SNE plot in 2-dimension with intersected taxonomy.
+                \item Select intersected taxonomies that means the taxonomy which can be founded in every database.
+                \item Draw t-SNE plot in 2-dimension with intersected taxonomies.
             \end{enumerate}
+
+            Thereupon, intersected taxonomies are as figure \ref{fig:inter-brief}. There are around 200 - 400 intersected taxonomies. With these intersected taxonomies, t-SNE plot was derived as figure \ref{fig:tsne-brief}.
 
             \begin{figure}[p]
                 \centering
