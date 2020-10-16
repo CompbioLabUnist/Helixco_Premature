@@ -6,7 +6,6 @@ import tarfile
 import typing
 import matplotlib
 import matplotlib.pyplot
-import scipy.stats
 import seaborn
 import sklearn.ensemble
 import sklearn.manifold
@@ -39,23 +38,23 @@ if __name__ == "__main__":
 
     tar_files: typing.List[str] = list()
 
-    train_data = step00.read_pickle(args.train[0])
+    helixco_data = step00.read_pickle(args.train[0])
     normal_data = step00.read_pickle(args.normal[0])
     premature_data = step00.read_pickle(args.premature[0])
     metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
 
-    intersect_columns = sorted(set(train_data.columns) & set(normal_data.columns) & set(premature_data.columns))
-    train_data = train_data[intersect_columns]
+    intersect_columns = sorted(set(helixco_data.columns) & set(normal_data.columns) & set(premature_data.columns))
+    helixco_data = helixco_data[intersect_columns]
     normal_data = normal_data[intersect_columns]
     premature_data = premature_data[intersect_columns]
 
-    train_data["Answer"] = list(metadata["premature"])
+    helixco_data["Answer"] = list(metadata["premature"])
     normal_data["Answer"] = "Normal"
     premature_data["Answer"] = "Premature"
 
     # Get Feature Importances
-    classifier = sklearn.ensemble.RandomForestClassifier(criterion="entropy", max_features=None, n_jobs=args.cpu, random_state=0, bootstrap=False)
-    classifier.fit(train_data[intersect_columns], train_data["Answer"])
+    classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpu, random_state=0)
+    classifier.fit(helixco_data[intersect_columns], helixco_data["Answer"])
     feature_importances = classifier.feature_importances_
     best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, intersect_columns))), reverse=True)))
 
@@ -71,54 +70,25 @@ if __name__ == "__main__":
 
     validation_data = pandas.concat([normal_data, premature_data], verify_integrity=True)
 
-    # Select best features
-    scores = [0 for _ in best_features]
-    best_num, best_score = 0, 0
-    for i in range(1, len(scores) + 1):
-        classifier.fit(train_data[best_features[:i]], train_data["Answer"])
-        scores[i - 1] = tmp = classifier.score(validation_data[best_features[:i]], validation_data["Answer"])
-        if tmp > best_score:
-            best_score = tmp
-            best_num = i
+    k_fold = sklearn.model_selection.StratifiedKFold(n_splits=10)
+    test_scores = list()
+    for i in range(1, len(best_features) + 1):
+        print("With", i, "/", len(best_features), "features!!")
+        used_columns = intersect_columns[:i]
+        for j, (train_index, test_index) in enumerate(k_fold.split(helixco_data[used_columns], helixco_data["Answer"])):
+            x_train, x_test = helixco_data.iloc[train_index][used_columns], helixco_data.iloc[test_index][used_columns]
+            y_train, y_test = helixco_data.iloc[train_index]["Answer"], helixco_data.iloc[test_index]["Answer"]
 
-    best_features = best_features[:best_num]
-    tar_files.append("features.txt")
-    with open(tar_files[-1], "w") as f:
-        for feature in best_features:
-            f.write(feature)
-            f.write("\n")
+            classifier.fit(x_train, y_train)
+            test_scores.append((i, classifier.score(x_test, y_test)))
 
-    # Draw scores
+    score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Accuracy"])
+    seaborn.set(context="poster", style="whitegrid")
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
-    matplotlib.pyplot.plot(range(1, len(scores) + 1), scores, "o-")
-    matplotlib.pyplot.xlabel("Number of Features")
-    matplotlib.pyplot.ylabel("Accuracy")
-    matplotlib.pyplot.grid(True)
-    matplotlib.pyplot.title("Best Features: %d Features at %.2f" % (best_num, best_score))
-    tar_files.append("scores.png")
+    seaborn.lineplot(data=score_data, x="Features", y="Accuracy", ax=ax)
+    tar_files.append("accuracy.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
-
-    # Draw Random Forest
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    sklearn.tree.plot_tree(classifier.fit(train_data[best_features], train_data["Answer"]).estimators_[0], ax=ax, feature_names=[list(filter(lambda x: not x.endswith("__"), x))[-1].strip() for x in list(map(lambda x: x.split(";"), best_features))], class_names=["Normal", "Premature"], filled=True)
-    matplotlib.pyplot.title("Accuracy: %.2f" % best_score)
-    tar_files.append("tree.png")
-    fig.savefig(tar_files[-1])
-    matplotlib.pyplot.close(fig)
-
-    # Draw violin plot
-    for i, feature in enumerate(best_features):
-        data = pandas.concat([train_data, normal_data, premature_data], verify_integrity=True)[["Answer"] + [feature]]
-        seaborn.set(context="poster", style="whitegrid")
-        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
-        seaborn.violinplot(data=data, x="Answer", y=feature, ax=ax)
-        matplotlib.pyplot.xlabel("Normal/Premature")
-        matplotlib.pyplot.ylabel(list(filter(lambda x: not x.endswith("__"), feature.split(";")))[-1])
-        matplotlib.pyplot.title("P-value: %.4f" % scipy.stats.ttest_ind(data.loc[(data["Answer"] == "Normal")][feature], data.loc[(data["Answer"] == "Premature")][feature], equal_var=False)[1])
-        tar_files.append("feature_%d.png" % i)
-        fig.savefig(tar_files[-1])
-        matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output[0], "w") as tar:
         for file_name in tar_files:
