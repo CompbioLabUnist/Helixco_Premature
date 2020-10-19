@@ -546,7 +546,7 @@ Output/Step26:
 Output/Step26/RF.%.tar: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
 
-step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
+step26: Output/Step26/RF.DADA2.gg.tar# Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
 .PHONY += step26
 
 # Step 27 (DecisionTree Classifier)

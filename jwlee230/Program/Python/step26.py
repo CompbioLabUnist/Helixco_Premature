@@ -64,12 +64,25 @@ if __name__ == "__main__":
     matplotlib.pyplot.title("Feature Importances")
     matplotlib.pyplot.xlabel("Feature Importances")
     matplotlib.pyplot.ylabel("Counts")
+    matplotlib.pyplot.grid(True)
     tar_files.append("importances.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    validation_data = pandas.concat([normal_data, premature_data], verify_integrity=True)
+    # Select best features
+    flag = False
+    while flag:
+        print(len(best_features), "features!!")
 
+        flag = False
+        classifier.fit(helixco_data[best_features], helixco_data["Answer"])
+        feature_importances = classifier.feature_importances_
+        best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, best_features))), reverse=True)))
+
+        if list(filter(lambda x: x == 0, feature_importances)):
+            flag = True
+
+    # Run K-fold
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=10)
     test_scores = list()
     for i in range(1, len(best_features) + 1):
@@ -82,14 +95,17 @@ if __name__ == "__main__":
             classifier.fit(x_train, y_train)
             test_scores.append((i, classifier.score(x_test, y_test)))
 
+    # Draw K-fold
     score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Accuracy"])
     seaborn.set(context="poster", style="whitegrid")
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     seaborn.lineplot(data=score_data, x="Features", y="Accuracy", ax=ax)
+    matplotlib.pyplot.grid(True)
     tar_files.append("accuracy.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
+    # Save data
     with tarfile.open(args.output[0], "w") as tar:
         for file_name in tar_files:
             tar.add(file_name, arcname=file_name)
