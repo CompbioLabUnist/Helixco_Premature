@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Draw Feature Importances
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     seaborn.distplot(list(filter(lambda x: x > 0, feature_importances)), hist=True, kde=False, rug=True, ax=ax)
-    matplotlib.pyplot.title("Feature Importances")
+    matplotlib.pyplot.title("Feature Importances by Feature Counts")
     matplotlib.pyplot.xlabel("Feature Importances")
     matplotlib.pyplot.ylabel("Counts")
     matplotlib.pyplot.grid(True)
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.close(fig)
 
     # Select best features
-    flag = False
+    flag = True
     while flag:
         print(len(best_features), "features!!")
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         feature_importances = classifier.feature_importances_
         best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, best_features))), reverse=True)))
 
-        if list(filter(lambda x: x == 0, feature_importances)):
+        if list(filter(lambda x: x <= 0, feature_importances)):
             flag = True
 
     # Run K-fold
@@ -93,13 +93,15 @@ if __name__ == "__main__":
             y_train, y_test = helixco_data.iloc[train_index]["Answer"], helixco_data.iloc[test_index]["Answer"]
 
             classifier.fit(x_train, y_train)
-            test_scores.append((i, classifier.score(x_test, y_test)))
+            test_scores.append(("Helixco", i, classifier.score(x_test, y_test)))
+            test_scores.append(("EBI", i, classifier.score(normal_data[used_columns], normal_data["Answer"])))
+            test_scores.append(("HMP", i, classifier.score(premature_data[used_columns], premature_data["Answer"])))
 
     # Draw K-fold
-    score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Accuracy"])
+    score_data = pandas.DataFrame.from_records(test_scores, columns=["Database", "Features", "Accuracy"])
     seaborn.set(context="poster", style="whitegrid")
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
-    seaborn.lineplot(data=score_data, x="Features", y="Accuracy", ax=ax)
+    seaborn.lineplot(data=score_data, x="Features", y="Accuracy", hue="Database", style="Database", ax=ax)
     matplotlib.pyplot.grid(True)
     tar_files.append("accuracy.png")
     fig.savefig(tar_files[-1])
