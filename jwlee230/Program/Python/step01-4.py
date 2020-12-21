@@ -4,8 +4,8 @@ step01-4.py: make manifest file from stool data
 import sys
 
 f = sys.argv[1:]
-f1 = sorted(list(filter(lambda x: x.endswith("1.fastq.gz"), f)))
-f2 = sorted(list(filter(lambda x: x.endswith("2.fastq.gz"), f)))
+f1 = sorted(list(filter(lambda x: x.endswith("R1_001.fastq.gz"), f)))
+f2 = sorted(list(filter(lambda x: x.endswith("R2_001.fastq.gz"), f)))
 
 print("sample-id\tforward-absolute-filepath\treverse-absolute-filepath")
 for fa, fb in zip(f1, f2):
