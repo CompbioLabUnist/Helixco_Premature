@@ -55,7 +55,7 @@ run: tmp.sh | log Output
 .PHONY += run
 
 # Actual
-latest: step02
+latest: step02 step03
 .PHONY += latest
 
 # Step 01 (Make manifest files)
@@ -96,7 +96,7 @@ Output/Demux/Stool.qza: Output/Manifest/Stool.tsv | Output/Demux build.log
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv Output/Demux/Stool.qza
+step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv Output/Demux/Stool.qza Output/Demux/Stool.qzv
 .PHONY += step02
 
 # Step 03 (Quality filter)
@@ -106,7 +106,7 @@ Output/Filter:
 Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Filter build.log
 	$(DOCKER) qiime quality-filter q-score --i-demux $(addprefix /,$<) --o-filtered-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-filter-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step03: Output/Filter/whole.seq.qza Output/Filter/EBI.seq.qza Output/Filter/HMP.seq.qza
+step03: Output/Filter/whole.seq.qza Output/Filter/EBI.seq.qza Output/Filter/HMP.seq.qza Output/Filter/Stool.seq.qza
 .PHONY += step03
 
 # Step 04 (DADA2 Denoising)
