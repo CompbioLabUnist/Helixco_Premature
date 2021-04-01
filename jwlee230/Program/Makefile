@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 CPUS = 10
-MEMS = 200G
+MEMS = 300G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -14,7 +14,7 @@ RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 
 # General
 all:
-.PHONY += all
+.PHONY: all
 
 log Output Docker/Tools:
 	mkdir $@
@@ -32,56 +32,66 @@ build.log: Docker/Dockerfile $(TOOLS) | log Output
 	docker build --rm --tag $(IMAGE_NAME) $(<D) | tee $@
 
 build: build.log
-.PHONY += build
+.PHONY: build
 
 interactive: build.log
 	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) /bin/bash || true
-.PHONY += interactive
+.PHONY: interactive
 
 delete: build.log
 	docker rmi $(IMAGE_NAME)
 	rm -fv build.log
-.PHONY += delete
+.PHONY: delete
 
 stop:
 	docker rm $(CONTAINER_NAME)
 
 # SGE
-tmp.sh: build.log
+run: | log Output
 	echo "make -C $(PWD) latest" > tmp.sh
-
-run: tmp.sh | log Output
-	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Premature_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) $<
-.PHONY += run
+	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Premature_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
+.PHONY: run
 
 # Actual
-latest: step04 step05
-.PHONY += latest
+latest: step01 step02
+.PHONY: latest
 
 # Step 01 (Make manifest files)
 Output/Manifest:
 	mkdir -p $@
 
-Output/Manifest/whole.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+Output/Manifest/first.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+Output/Manifest/second.tsv: Python/step01-4.py $(wildcard Data/GMB-JBNU-A-200224/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+Output/Manifest/third.tsv: Python/step01.py $(wildcard Data/HN00145920/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Manifest build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) | Output/Manifest build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Manifest/Stool.tsv: Python/step01-4.py $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step01: Output/Manifest/whole.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv Output/Manifest/Stool.tsv
-.PHONY += step01
+step01: Output/Manifest/first.tsv Output/Manifest/second.tsv Output/Manifest/third.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv Output/Manifest/Stool.tsv
+.PHONY: step01
 
 # Step 02 (De-multiplexing)
 Output/Demux:
 	mkdir -p $@
 
-Output/Demux/whole.qza: Output/Manifest/whole.tsv | Output/Demux build.log
+Output/Demux/first.qza: Output/Manifest/first.tsv | Output/Demux build.log
+	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Demux/second.qza: Output/Manifest/second.tsv | Output/Demux build.log
+	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Demux/third.qza: Output/Manifest/third.tsv | Output/Demux build.log
 	$(DOCKER) qiime tools import --type "SampleData[PairedEndSequencesWithQuality]" --input-format "PairedEndFastqManifestPhred33V2" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Demux/EBI.qza: Output/Manifest/EBI.tsv | Output/Demux build.log
@@ -96,8 +106,8 @@ Output/Demux/Stool.qza: Output/Manifest/Stool.tsv | Output/Demux build.log
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/whole.qza Output/Demux/whole.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv Output/Demux/Stool.qza Output/Demux/Stool.qzv
-.PHONY += step02
+step02: Output/Demux/first.qza Output/Demux/first.qzv Output/Demux/second.qza Output/Demux/second.qzv Output/Demux/third.qza Output/Demux/third.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv Output/Demux/Stool.qza Output/Demux/Stool.qzv
+.PHONY: step02
 
 # Step 03 (Quality filter)
 Output/Filter:
@@ -106,14 +116,14 @@ Output/Filter:
 Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Filter build.log
 	$(DOCKER) qiime quality-filter q-score --i-demux $(addprefix /,$<) --o-filtered-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-filter-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step03: Output/Filter/whole.seq.qza Output/Filter/EBI.seq.qza Output/Filter/HMP.seq.qza Output/Filter/Stool.seq.qza
-.PHONY += step03
+step03: Output/Filter/first.seq.qza Output/Filter/EBI.seq.qza Output/Filter/HMP.seq.qza Output/Filter/Stool.seq.qza
+.PHONY: step03
 
 # Step 04 (DADA2 Denoising)
 Output/DADA2:
 	mkdir -p $@
 
-Output/DADA2/whole.table.qza Output/DADA2/whole.seq.qza Output/DADA2/whole.stat.qza: Output/Demux/whole.qza | Output/DADA2 build.log
+Output/DADA2/first.table.qza Output/DADA2/first.seq.qza Output/DADA2/first.stat.qza: Output/Demux/first.qza | Output/DADA2 build.log
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 300 --p-trunc-len-r 265 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
@@ -129,14 +139,14 @@ Output/DADA2/Stool.table.qza Output/DADA2/Stool.seq.qza Output/DADA2/Stool.stat.
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 250 --p-trunc-len-r 251 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step04: Output/DADA2/whole.seq.qza Output/DADA2/EBI.seq.qza Output/DADA2/HMP.seq.qza Output/DADA2/Stool.seq.qza
-.PHONY += step04
+step04: Output/DADA2/first.seq.qza Output/DADA2/EBI.seq.qza Output/DADA2/HMP.seq.qza Output/DADA2/Stool.seq.qza
+.PHONY: step04
 
 # Step 05 (Deblur Denoising)
 Output/Deblur:
 	mkdir -p $@
 
-Output/Deblur/whole.table.qza Output/Deblur/whole.seq.qza Output/Deblur/whole.stat.qza: Output/Filter/whole.seq.qza | Output/Deblur build.log
+Output/Deblur/first.table.qza Output/Deblur/first.seq.qza Output/Deblur/first.stat.qza: Output/Filter/first.seq.qza | Output/Deblur build.log
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 265 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
@@ -152,8 +162,8 @@ Output/Deblur/Stool.table.qza Output/Deblur/Stool.seq.qza Output/Deblur/Stool.st
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length 250 --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step05: Output/Deblur/whole.seq.qza Output/Deblur/EBI.seq.qza Output/Deblur/HMP.seq.qza Output/Deblur/Stool.seq.qza
-.PHONY += step05
+step05: Output/Deblur/first.seq.qza Output/Deblur/EBI.seq.qza Output/Deblur/HMP.seq.qza Output/Deblur/Stool.seq.qza
+.PHONY: step05
 
 # Step 06 (Taxonomy information)
 Output/Taxonomy:
@@ -177,21 +187,21 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/whole.DADA2.silva.qza Output/Taxonomy/whole.DADA2.gg.qza Output/Taxonomy/whole.Deblur.silva.qza Output/Taxonomy/whole.Deblur.gg.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza
-.PHONY += step06
+step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza
+.PHONY: step06
 
 # Step 07 (Build Metadata)
 Output/Metadata:
 	mkdir -p $@
 
-Output/Metadata/whole.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
+Output/Metadata/first.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/firstData/*.fastq.gz) | Output/Metadata build.log
 	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Metadata build.log
 	@$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step07: Output/Metadata/whole.tsv Output/Metadata/EBI.tsv
-.PHONY += step07
+step07: Output/Metadata/first.tsv Output/Metadata/EBI.tsv
+.PHONY: step07
 
 # Step 08 (Run ANCOM)
 Output/ANCOM:
@@ -209,45 +219,45 @@ Output/ANCOM/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur
 Output/ANCOM/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur.silva.qza | Output/ANCOM build.log
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.CV.qza: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.CV.qza: Output/ANCOM/%.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Cervix', 'Vagina')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.mouth.qza: Output/ANCOM/%.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.mouth.qza: Output/ANCOM/%.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Mouth')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/whole.%.site.qzv: Output/ANCOM/whole.%.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/first.%.site.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/EBI.%.site.qzv: Output/ANCOM/EBI.%.pseudocount.qza Output/Metadata/EBI.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site_premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.CV.premature.qzv: Output/ANCOM/%.CV.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.CV.premature.qzv: Output/ANCOM/%.CV.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.mouth.premature.qzv: Output/ANCOM/%.mouth.pseudocount.qza Output/Metadata/whole.tsv | build.log
+Output/ANCOM/%.mouth.premature.qzv: Output/ANCOM/%.mouth.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
 
-step08: Output/ANCOM/whole.DADA2.gg.site/ancom.tsv Output/ANCOM/whole.DADA2.silva.site/ancom.tsv Output/ANCOM/whole.Deblur.gg.site/ancom.tsv Output/ANCOM/whole.Deblur.silva.site/ancom.tsv Output/ANCOM/EBI.DADA2.gg.site/ancom.tsv Output/ANCOM/EBI.DADA2.silva.site/ancom.tsv Output/ANCOM/EBI.Deblur.gg.site/ancom.tsv Output/ANCOM/EBI.Deblur.silva.site/ancom.tsv
-.PHONY += step08
+step08: Output/ANCOM/first.DADA2.gg.site/ancom.tsv Output/ANCOM/first.DADA2.silva.site/ancom.tsv Output/ANCOM/first.Deblur.gg.site/ancom.tsv Output/ANCOM/first.Deblur.silva.site/ancom.tsv Output/ANCOM/EBI.DADA2.gg.site/ancom.tsv Output/ANCOM/EBI.DADA2.silva.site/ancom.tsv Output/ANCOM/EBI.Deblur.gg.site/ancom.tsv Output/ANCOM/EBI.Deblur.silva.site/ancom.tsv
+.PHONY: step08
 
 # Step 09 (Get TSV)
 Output/TSV:
 	mkdir -p $@
 
-Output/TSV/raw.DADA2.gg.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/whole.DADA2.gg.qza | Output/TSV build.log
+Output/TSV/first.%.tsv: Output/DADA2/first.table.qza Output/Taxonomy/first.%.qza | Output/TSV build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
@@ -255,7 +265,7 @@ Output/TSV/raw.DADA2.gg.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/whole.
 	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
 	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
 
-Output/TSV/raw.DADA2.silva.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/whole.DADA2.silva.qza | Output/TSV build.log
+Output/TSV/EBI.%.tsv: Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.%.qza | Output/TSV build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
@@ -263,7 +273,7 @@ Output/TSV/raw.DADA2.silva.tsv: Output/DADA2/whole.table.qza Output/Taxonomy/who
 	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
 	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
 
-Output/TSV/raw.Deblur.gg.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/whole.Deblur.gg.qza | Output/TSV build.log
+Output/TSV/HMP.%.tsv: Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.%.qza | Output/TSV build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
 	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
@@ -271,161 +281,89 @@ Output/TSV/raw.Deblur.gg.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/whol
 	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
 	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
 
-Output/TSV/raw.Deblur.silva.tsv: Output/Deblur/whole.table.qza Output/Taxonomy/whole.Deblur.silva.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/EBI.DADA2.gg.tsv: Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.gg.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/EBI.DADA2.silva.tsv: Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.silva.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/EBI.Deblur.gg.tsv: Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.gg.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/EBI.Deblur.silva.tsv: Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.silva.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/HMP.DADA2.gg.tsv: Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.gg.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/HMP.DADA2.silva.tsv: Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.silva.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/HMP.Deblur.gg.tsv: Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.gg.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-Output/TSV/HMP.Deblur.silva.tsv: Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.silva.qza | Output/TSV build.log
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 2,$^)) --output-path /Output/TSV/$(RANDOM)
-	$(DOCKER) sed --in-place "1c#OTU ID\ttaxonomy\tconfidence" /Output/TSV/$(RANDOM)/taxonomy.tsv
-	$(DOCKER) biom add-metadata --input-fp /Output/TSV/$(RANDOM)/feature-table.biom --observation-metadata-fp /Output/TSV/$(RANDOM)/taxonomy.tsv --output-fp /Output/TSV/$(RANDOM)/tmp.biom --sc-separated "taxonomy"
-	$(DOCKER) biom convert --input-fp /Output/TSV/$(RANDOM)/tmp.biom --output-fp $(addprefix /,$@) --to-tsv --process-obs-metadata "taxonomy" --tsv-metadata-formatter "sc_separated" --header-key "taxonomy"
-	$(DOCKER) rm -rfv /Output/TSV/$(RANDOM)
-
-step09: Output/TSV/raw.DADA2.gg.tsv Output/TSV/raw.DADA2.silva.tsv Output/TSV/raw.Deblur.gg.tsv Output/TSV/raw.Deblur.silva.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv
-.PHONY += step09
+step09: Output/TSV/first.DADA2.gg.tsv Output/TSV/first.DADA2.silva.tsv Output/TSV/first.Deblur.gg.tsv Output/TSV/first.Deblur.silva.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv
+.PHONY: step09
 
 # Step 10 (Select & Clearify TSV)
-Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/premature.%.tar.gz: Python/step10.py Output/TSV/raw.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+Output/TSV/premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/whole.%.tar.gz: Python/step10-2.py Output/TSV/raw.%.tsv
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@)
+Output/TSV/first.%.tar.gz: Python/step10-2.py Output/TSV/first.%.tsv
+	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
-.PHONY += step10
+.PHONY: step10
 
 # Step 11 (Making t-SNE)
 Output/TSNE:
 	mkdir -p $@
 
 Output/TSNE/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/TSNE build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Output/TSNE/site.Deblur.gg.tar.gz Output/TSNE/site.Deblur.silva.tar.gz
-.PHONY += step11
+.PHONY: step11
 
-# Step 12 (Drawing t-SNE)
-Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/whole.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+# Step 12 (Dfirsting t-SNE)
+Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/premature.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/premature.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/premature.Deblur.gg.png Output/TSNE/site.Deblur.silva.png Output/TSNE/premature.Deblur.silva.png
-.PHONY += step12
+.PHONY: step12
 
 # Step 13 (Build stability file)
 MOTHUR_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
 Output/Stability:
 	mkdir -p $@
 
-Output/Stability/whole.tsv: Python/step13.py $(wildcard Data/RawData/*.fastq.gz) | Output/Stability build.log
+Output/Stability/first.tsv: Python/step13.py $(wildcard Data/firstData/*.fastq.gz) | Output/Stability build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step13: Output/Stability/whole.tsv
-.PHONY += step13
+step13: Output/Stability/first.tsv
+.PHONY: step13
 
 # Step 14 (Make contigs)
 Output/Contigs:
 	mkdir -p $@
 
-Output/Contigs/whole.trim.contigs.fasta Output/Contigs/whole.contigs.groups: Output/Stability/whole.tsv | Output/Contigs build.log
+Output/Contigs/first.trim.contigs.fasta Output/Contigs/first.contigs.groups: Output/Stability/first.tsv | Output/Contigs build.log
 	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); make.contigs(file=$(addprefix /,$(word 1,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-step14: Output/Contigs/whole.trim.contigs.fasta
-.PHONY += step14
+step14: Output/Contigs/first.trim.contigs.fasta
+.PHONY: step14
 
 # Step 15 (Screen sequence)
 Output/Screen:
 	mkdir -p $@
 
-Output/Screen/whole.trim.contigs.good.fasta Output/Screen/whole.contigs.good.groups: Output/Contigs/whole.trim.contigs.fasta | Output/Screen build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));"
+Output/Screen/first.trim.contigs.good.fasta Output/Screen/first.contigs.good.groups: Output/Contigs/first.trim.contigs.fasta | Output/Screen build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-step15: Output/Screen/whole.trim.contigs.good.fasta
-.PHONY += step15
+step15: Output/Screen/first.trim.contigs.good.fasta
+.PHONY: step15
 
 # Step 16 (Unique sequence)
 Output/Unique:
 	mkdir -p $@
 
-Output/Unique/whole.trim.contigs.good.unique.fasta Output/Unique/whole.trim.contigs.good.names: Output/Screen/whole.trim.contigs.good.fasta | Output/Unique build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)));"
+Output/Unique/first.trim.contigs.good.unique.fasta Output/Unique/first.trim.contigs.good.names: Output/Screen/first.trim.contigs.good.fasta | Output/Unique build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)));" 1> $@.stdout 2> $@.stderr
 
-step16: Output/Unique/whole.trim.contigs.good.unique.fasta
-.PHONY += step16
+step16: Output/Unique/first.trim.contigs.good.unique.fasta
+.PHONY: step16
 
 # Step 17 (Count sequence)
 Output/Count:
 	mkdir -p $@
 
-Output/Count/whole.trim.contigs.good.count_table: Output/Unique/whole.trim.contigs.good.names | Output/Count build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); count.seqs(name=$(addprefix /,$(word 1,$^)));"
+Output/Count/first.trim.contigs.good.count_table: Output/Unique/first.trim.contigs.good.names | Output/Count build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); count.seqs(name=$(addprefix /,$(word 1,$^)));" 1> $@.stdout 2> $@.stderr
 
-step17: Output/Count/whole.trim.contigs.good.count_table
-.PHONY += step17
+step17: Output/Count/first.trim.contigs.good.count_table
+.PHONY: step17
 
 # Step 18 (Pseudo-PCR)
 Output/PCR:
@@ -439,76 +377,76 @@ Output/PCR/silva.seed_v138.align Output/PCR/silva.seed_v138.tax: Output/PCR/silv
 	touch $@
 
 Output/PCR/silva.seed_v138.summary: Output/PCR/silva.seed_v138.align | build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));"
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
 Output/PCR/silva.seed_v138.scrap.pcr.align: Output/PCR/silva.seed_v138.align Output/PCR/silva.seed_v138.tax | build.log
 	@echo "You have to check the length manually!!"
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pcr.seqs(fasta=$(addprefix /,$(word 1,$^)), taxonomy=$(addprefix /,$(word 2,$^)), start=1044, end=43116, keepdots=F, processors=$(CPUS));"
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pcr.seqs(fasta=$(addprefix /,$(word 1,$^)), taxonomy=$(addprefix /,$(word 2,$^)), start=1044, end=43116, keepdots=F, processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
 step18: Output/PCR/silva.seed_v138.scrap.pcr.align
-.PHONY += step18
+.PHONY: step18
 
 # Step 19 (Align to reference)
 Output/Align:
 	mkdir -p $@
 
-Output/Align/whole.trim.contigs.good.unique.align: Output/Unique/whole.trim.contigs.good.unique.fasta Output/PCR/silva.seed_v138.scrap.pcr.align | Output/Align build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); align.seqs(fasta=$(addprefix /,$(word 1,$^)), reference=$(addprefix /,$(word 2,$^)), processors=$(CPUS));"
+Output/Align/first.trim.contigs.good.unique.align: Output/Unique/first.trim.contigs.good.unique.fasta Output/PCR/silva.seed_v138.scrap.pcr.align | Output/Align build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); align.seqs(fasta=$(addprefix /,$(word 1,$^)), reference=$(addprefix /,$(word 2,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-Output/Align/whole.trim.contigs.good.unique.summary: Output/Align/whole.trim.contigs.good.unique.align Output/Count/whole.trim.contigs.good.count_table | build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), processors=$(CPUS));"
+Output/Align/first.trim.contigs.good.unique.summary: Output/Align/first.trim.contigs.good.unique.align Output/Count/first.trim.contigs.good.count_table | build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); summary.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-Output/Align/whole.trim.contigs.good.unique.good.align: Output/Align/whole.trim.contigs.good.unique.align Output/Count/whole.trim.contigs.good.count_table Output/Align/whole.trim.contigs.good.unique.summary | build.log
+Output/Align/first.trim.contigs.good.unique.good.align: Output/Align/first.trim.contigs.good.unique.align Output/Count/first.trim.contigs.good.count_table Output/Align/first.trim.contigs.good.unique.summary | build.log
 	@echo "You have to check the length manually!!"
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), summary=$(addprefix /,$(word 3,$^)), start=6388, end=25316, maxhomop=8, processors=$(CPUS));"
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); screen.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), summary=$(addprefix /,$(word 3,$^)), start=6388, end=25316, maxhomop=8, processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-Output/Align/whole.trim.contigs.good.unique.good.filter.fasta: Output/Align/whole.trim.contigs.good.unique.good.align | build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); filter.seqs(fasta=$(addprefix /,$(word 1,$^)), vertical=T, trump=., processors=$(CPUS));"
+Output/Align/first.trim.contigs.good.unique.good.filter.fasta: Output/Align/first.trim.contigs.good.unique.good.align | build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); filter.seqs(fasta=$(addprefix /,$(word 1,$^)), vertical=T, trump=., processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 
-Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/whole.trim.contigs.good.unique.good.filter.count_table: Output/Align/whole.trim.contigs.good.unique.good.filter.fasta Output/Count/whole.trim.contigs.good.count_table
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)))"
+Output/Align/first.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/first.trim.contigs.good.unique.good.filter.count_table: Output/Align/first.trim.contigs.good.unique.good.filter.fasta Output/Count/first.trim.contigs.good.count_table
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); unique.seqs(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)))" 1> $@.stdout 2> $@.stderr
 
-step19: Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta
-.PHONY += step19
+step19: Output/Align/first.trim.contigs.good.unique.good.filter.unique.fasta
+.PHONY: step19
 
 # Step 20 (Chimera filtering)
 Output/Chimera:
 	mkdir -p $@
 
-Output/Chimera/test: Output/Align/whole.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/whole.trim.contigs.good.unique.good.filter.count_table | Output/Chimera build.log
-	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pre.cluster(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), diffs=2, processors=$(CPUS));"
+Output/Chimera/test: Output/Align/first.trim.contigs.good.unique.good.filter.unique.fasta Output/Align/first.trim.contigs.good.unique.good.filter.count_table | Output/Chimera build.log
+	$(MOTHUR_DOCKER) mothur "#set.dir(input=.); set.dir(output=.); pre.cluster(fasta=$(addprefix /,$(word 1,$^)), count=$(addprefix /,$(word 2,$^)), diffs=2, processors=$(CPUS));" 1> $@.stdout 2> $@.stderr
 # TODO: Here you are start
 
-# Step 21 (Read & clearify raw TSV into pandas)
-Output/TSV/helixco.%.tar.gz: Python/step21.py Output/TSV/raw.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+# Step 21 (Read & clearify first TSV into pandas)
+Output/TSV/helixco.%.tar.gz: Python/step21.py Output/TSV/first.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/HMP.%.tar.gz: Python/step21.py Output/TSV/HMP.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step21: Output/TSV/helixco.DADA2.gg.tar.gz Output/TSV/helixco.DADA2.silva.tar.gz Output/TSV/helixco.Deblur.gg.tar.gz Output/TSV/helixco.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz
-.PHONY += step21
+.PHONY: step21
 
-# Step 22 (Making & Draw t-SNE)
+# Step 22 (Making & Dfirst t-SNE)
 Output/Step22:
 	mkdir -p $@
 
 Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/DB.%.png: Python/step22-2.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step22: Output/Step22/helixco.DADA2.gg.png Output/Step22/helixco.DADA2.silva.png Output/Step22/helixco.Deblur.gg.png Output/Step22/helixco.Deblur.silva.png Output/Step22/EBI.DADA2.gg.png Output/Step22/EBI.DADA2.silva.png Output/Step22/EBI.Deblur.gg.png Output/Step22/EBI.Deblur.silva.png Output/Step22/DB.DADA2.gg.png Output/Step22/DB.DADA2.silva.png Output/Step22/DB.Deblur.gg.png Output/Step22/DB.Deblur.silva.png
-.PHONY += step22
+.PHONY: step22
 
-# Step 23 (Draw histogram)
+# Step 23 (Dfirst histogram)
 Output/Step23:
 	mkdir -p $@
 
@@ -522,53 +460,53 @@ Output/Step23/BMI.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output
 	$(DOCKER) python3 $(addprefix /,$^ $@) "BMI"
 
 step23: Output/Step23/age.png Output/Step23/weight.png Output/Step23/BMI.png
-.PHONY += step23
+.PHONY: step23
 
-# Step 24 (Draw histogram with parsing)
+# Step 24 (Dfirst histogram with parsing)
 Output/Step24:
 	mkdir -p $@
 
 Output/Step24/weight_now.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 0 "/"
+	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 0 "/" 1> $@.stdout 2> $@.stderr
 
 Output/Step24/height.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 1 "/"
+	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 1 "/" 1> $@.stdout 2> $@.stderr
 
 Output/Step24/weeks.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "분만주수" 0 "+"
+	$(DOCKER) python3 $(addprefix /,$^ $@) "분만주수" 0 "+" 1> $@.stdout 2> $@.stderr
 
 step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/weeks.png
-.PHONY += step24
+.PHONY: step24
 
 # Step 25 (Make pseudo-sample)
 Output/Step25:
 	mkdir -p $@
 
 Output/Step25/pseudo.%.tar.gz: Python/step25.py Output/TSV/helixco.%.tar.gz | Output/Step25 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step25/TSNE.%.png: Python/step25-2.py Output/TSV/helixco.%.tar.gz Output/Step25/pseudo.%.tar.gz | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step25: Output/Step25/TSNE.DADA2.gg.png
-.PHONY += step25
+.PHONY: step25
 
 # Step 26 (RandomForest Classifier)
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/whole.tsv | Output/Step26 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+Output/Step26/RF.%.tar: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/first.tsv | Output/Step26 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
-.PHONY += step26
+.PHONY: step26
 
 # Step 27 (DecisionTree Classifier)
 Output/Step27:
 	mkdir -p $@
 
-Output/Step27/DT.%.tar: Python/step27.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/whole.tsv | Output/Step27 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS)
+Output/Step27/DT.%.tar: Python/step27.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/first.tsv | Output/Step27 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step27: Output/Step27/DT.DADA2.gg.tar Output/Step27/DT.DADA2.silva.tar Output/Step27/DT.Deblur.gg.tar Output/Step27/DT.Deblur.silva.tar
-.PHONY += step27
+.PHONY: step27
