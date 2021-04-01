@@ -124,17 +124,18 @@
 
     \begin{frame}
         \frametitle{Train/Test Data vs. Validate Data}
-
         \begin{itemize}
-            \item Train/Test data
+            \item JBNU/Helixco data
             \begin{itemize}
-                \item Helixco: Data collected by Helixco
+                \item First data
+                \item Second data
+                \item Stool data
             \end{itemize}
 
             \item Validate data
             \begin{itemize}
-                \item EBI (European Bioinformatics Institute): Data collected by \citeNP{validate1}
-                \item HMP (Human Microbiome Project): Data collected by \citeNP{validate2}
+                \item EBI data
+                \item HMP data
             \end{itemize}
         \end{itemize}
 
@@ -146,8 +147,9 @@
     \end{frame}
 
     \section{Literature Survey }
+    \subsection{EBI Data \protect\cite{validate1}}
     \begin{frame}[allowframebreaks]
-        \frametitle{EBI Data \protect \cite{validate1}}
+        \frametitle{EBI Data}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/Literature/EBI/title.png}
@@ -181,8 +183,9 @@
         \end{itemize}
     \end{frame}
 
+    \subsection{HMP Data \protect\cite{validate2}}
     \begin{frame}[allowframebreaks]
-        \frametitle{HMP Data \protect \cite{validate2}}
+        \frametitle{HMP Data}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/Literature/HMP/title.png}
@@ -216,6 +219,7 @@
     \end{frame}
 
     \section{Methods}
+    \subsection{Qiime 2 Workflow}
     \begin{frame}
         \frametitle{Qiime 2 Workflow}
 
@@ -289,17 +293,7 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Mothur}
-
-        \begin{figure}[h!]
-            \includegraphics[width=0.3 \linewidth]{figures/mothur.png}
-            \caption{Mothur}
-        \end{figure}
-
-        Note: Still in progress
-    \end{frame}
-
+    \subsection{Python Workflow}
     \begin{frame}
         \frametitle{t-distributed Stochastic Neighbor Embedding (t-SNE)}
 
@@ -553,35 +547,6 @@
 
     \begin{frame}
         \frametitle{\textit{Romboutsia}}
-    \end{frame}
-
-    \section{Proceedings}
-    \begin{frame}
-        \frametitle{Yields}
-
-        \begin{itemize}
-            \item Add validation date
-            \item t-SNE with databases
-            \item Random Forest Classifier
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Requirements}
-
-        \begin{itemize}
-            \item Metadata for databases
-            \item Mothur pipeline
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Expectations}
-
-        \begin{itemize}
-            \item Alpha-diversity
-            \item Beta-diversity
-        \end{itemize}
     \end{frame}
 
    	\begin{frame}[allowframebreaks]
