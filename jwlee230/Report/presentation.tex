@@ -24,9 +24,32 @@
     \end{frame}
 }
 
+\AtBeginSubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
 \title[Premature]{Microbiome Premature}
 
-\author{Jaewoong Lee}
+\author{
+    Jaewoong Lee
+    \and
+    Semin Lee
+}
 \institute[UNIST]
 {
 	Ulsan National Institute of Science and Technology
@@ -43,7 +66,7 @@
 
 	\begin{frame}
         \frametitle{Overview}
-        \tableofcontents
+        \tableofcontents[hideallsubsections]
     \end{frame}
 
     \section{Introduction}
