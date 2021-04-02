@@ -22,7 +22,11 @@
 }
 
 \title{Microbiome Premature}
-\author{Jaewoong Lee}
+\author{
+    Jaewoong Lee
+    \and
+    Semin Lee
+}
 \date{\today}
 
 \begin{document}
@@ -68,16 +72,17 @@
                 \centering
                 \caption{Metadata of Data}
                 \label{tb:metadata}
-                \input{metadata.tex}
+                \input{tables/metadata.tex}
             \end{table}
 
-            \subsubsection{Helixco Data}
+            \subsubsection{JBNU/Helixco Data}
 
             \subsubsection[EBI Data]{European Bioinformatics Institute Data}
                 EBI data was collected by European Bioinformatics Institute (EBI) \cite{validate1}. EBI data aimed to compare Cesarean section birth and vaginal birth; thus, every participants in EBI data is on term, not PTB.
 
             \subsubsection[HMP Data]{Human Microbiome Project Data}
                 HMP data was collected by Human Microbiome Project (HMP) \cite{validate2}. HMP data aimed to compare PTB and on-term birth; thus, every participants in HTMP data is PTB.
+
     \section{Methods}
         \subsection{Docker}
             Docker is light-weight Linux containers for consistent development and deployment \cite{docker1}.
@@ -134,9 +139,6 @@
                 \label{fig:merging}
             \end{figure}
 
-        \subsection{Mothur}
-            Mothur is an open-source software package for bioinformatics data processing, especially for the analysis of DNA from microbes \cite{mothur1}.
-
         \subsection[t-SNE]{t-distributed Stochastic Neighbor Embedding}
             T-distributed stochastic neighbor embedding (t-SNE) visualizes high-dimensional data by giving each data-point a location in a two-dimensional map \cite{tsne1}.
 
@@ -175,14 +177,40 @@
             \begin{figure}[p]
                 \centering
                 $\begin{array}{cc}
-                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeForward.png}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/FirstForward.png}
                     &
-                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/WholeReverse.png}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/FirstReverse.png}
                     \\
                     \mbox{(a) Forward} & \mbox{(b) Reverse}
                 \end{array}$
-                \caption{Sequence Quality Plot from Helixco Data}
-                \label{fig:quality-Helixco}
+                \caption{Sequence Quality Plot from First JBNU/Helixco Data}
+                \label{fig:quality-first}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/SecondForward.png}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/SecondReverse.png}
+                    \\
+                    \mbox{(a) Forward} & \mbox{(b) Reverse}
+                \end{array}$
+                \caption{Sequence Quality Plot from Second JBNU/Helixco Data}
+                \label{fig:quality-second}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/StoolForward.png}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/StoolReverse.png}
+                    \\
+                    \mbox{(a) Forward} & \mbox{(b) Reverse}
+                \end{array}$
+                \caption{Sequence Quality Plot from Stool JBNU/Helixco Data}
+                \label{fig:quality-stool}
             \end{figure}
 
             \begin{figure}[p]
@@ -211,7 +239,7 @@
                 \label{tb:trim}
                 \begin{tabular}{c | c c}
                     & Sequence Quality Plot & Trimming Length \\ \hline
-                    Helixco Data & 265 & Figure \ref{fig:quality-Helixco} \\
+                    Helixco Data & 265 & Figure \ref{fig:quality-first} \\
                     EBI Data & 150 & Figure \ref{fig:quality-EBI} \\
                     HMP Data & 226 & Figure \ref{fig:quality-HMP}
                 \end{tabular}
@@ -224,7 +252,7 @@
                 \item Draw t-SNE plot in 2-dimension with intersected taxonomies.
             \end{enumerate}
 
-            Thereupon, intersected taxonomies are as figure \ref{fig:inter-brief}. There are around 200 - 400 intersected taxonomies. With these intersected taxonomies, t-SNE plot was derived as figure \ref{fig:tsne-brief}.
+            Thereupon, intersected taxonomies are as figure \ref{fig:inter-brief}. There are around 200 - 400 intersected taxa. With these intersected taxa, t-SNE plot was derived as figure \ref{fig:tsne-brief}.
 
             \begin{figure}[p]
                 \centering
