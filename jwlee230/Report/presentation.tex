@@ -316,14 +316,16 @@
     \end{frame}
 
     \section{Results}
-    \begin{frame}[allowframebreaks]
-        \frametitle{Filtering with Quality Score}
+    \subsection{Filtering Results}
+
+    \begin{frame}
+        \frametitle{Quality Score from First Data}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/WholeForward.png}
+                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/FirstForward.png}
                 &
-                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/WholeReverse.png}
+                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/FirstReverse.png}
                 \\
 
                 \mbox{(a) Forward} & \mbox{(b) Reverse} \\
@@ -331,25 +333,27 @@
             \caption{Sequence Quality Plot from Helixco Data}
         \end{figure}
         Maximum Length: $n_{forward} = 300$, $n_{Reverse} = 265$
+    \end{frame}
 
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
-            \caption{Sequence Quality Plot from EBI Data}
-        \end{figure}
-        Maximum Length: 150
+    \begin{frame}
+        \frametitle{Quality Score from Second Data}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
+                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/SecondForward.png}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
+                \includegraphics[width=0.45 \linewidth]{figures/QualityFilter/SecondReverse.png}
                 \\
 
                 \mbox{(a) Forward} & \mbox{(b) Reverse} \\
             \end{array}$
-            \caption{Sequence Quality Plot from HMP Data}
+            \caption{Sequence Quality Plot from Helixco Data}
         \end{figure}
-        Maximum Length: $n_{forward} = 278$, $n_{Reverse} = 226$
+        Maximum Length: $n_{forward} = 300$, $n_{Reverse} = 222$
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Quality Score from Stool Data}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -365,13 +369,45 @@
         Maximum Length: $n_{forward} = 250$, $n_{Reverse} = 251$
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
-        \frametitle{t-SNE for Comparing Databases}
+    \begin{frame}
+        \frametitle{Quality Score with EBI Data}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
+            \caption{Sequence Quality Plot from EBI Data}
+        \end{figure}
+        Maximum Length: 150
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Quality Score with HMP Data}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
+                \\
+
+                \mbox{(a) Forward} & \mbox{(b) Reverse} \\
+            \end{array}$
+            \caption{Sequence Quality Plot from HMP Data}
+        \end{figure}
+        Maximum Length: $n_{forward} = 278$, $n_{Reverse} = 226$
+    \end{frame}
+
+    \subsection{Comparing Data}
+    \begin{frame}
+        \frametitle{Workflow for Comparing Data}
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/tikz/brief.pdf}
             \caption{Workflow of t-SNE for Brief Information}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Intersected Taxa}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -389,6 +425,10 @@
             \end{array}$
             \caption{Intersected Taxa Information}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{t-SNE for Comparing Data}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -404,9 +444,8 @@
                 \\
                 \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
             \end{array}$
-            \caption{t-SNE for Brief Information}
+            \caption{t-SNE for Comparing Data}
         \end{figure}
-
     \end{frame}
 
     \begin{frame}[allowframebreaks]
