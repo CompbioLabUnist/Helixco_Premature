@@ -36,11 +36,11 @@
 
 \begin{document}
     \begin{tikzpicture}
-        \node[block] (01) {EBI};
+        \node[block] (01) {EBI Data};
 
-        \node[block, left=1cm of 01] (00) {Helixco};
+        \node[block, left=1cm of 01] (00) {JBNU/Helixco Data};
 
-        \node[block, right=1cm of 01] (02) {HMP};
+        \node[block, right=1cm of 01] (02) {HMP Data};
 
         \node[cloud, below=1cm of 01] (03) {Intersected Taxonomy};
         \path[line] (00) -- (03);
