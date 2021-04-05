@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 10
+CPUS = 30
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS = 
@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03
+latest: step01 step02 step03 step04
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -137,7 +137,7 @@ Output/DADA2/Stool.table.qza Output/DADA2/Stool.seq.qza Output/DADA2/Stool.stat.
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f 250 --p-trunc-len-r 251 --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step04: Output/DADA2/first.seq.qza Output/DADA2/EBI.seq.qza Output/DADA2/HMP.seq.qza Output/DADA2/Stool.seq.qza
+step04: Output/DADA2/first.seq.qza Output/DADA2/second.seq.qza Output/DADA2/EBI.seq.qza Output/DADA2/HMP.seq.qza Output/DADA2/Stool.seq.qza
 .PHONY: step04
 
 # Step 05 (Deblur Denoising)
