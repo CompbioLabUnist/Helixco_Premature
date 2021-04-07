@@ -43,7 +43,7 @@
     \end{frame}
 }
 
-\title[Premature]{Microbiome Premature}
+\title[Premature]{Metagenome Analysis of Premature Birth}
 
 \author[Jaewoong Lee]
 {
@@ -99,11 +99,11 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Premature (Preterm Birth)}
+        \frametitle{Premature Birth (Preterm Birth)}
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/premature.png}
-            \caption{Definitions of Premature \protect \cite{premature1}}
+            \caption{Definitions of Premature \protect\cite{premature1}}
         \end{figure}
 
         $\therefore$ Hence, in this study,
@@ -136,16 +136,16 @@
                 \item Stool data
             \end{itemize}
 
-            \item Validate data
+            \item External data
             \begin{itemize}
-                \item EBI data
-                \item HMP data
+                \item The European Bioinformatics Institute (EBI data)
+                \item NIH Human Microbiome Project (HMP data)
             \end{itemize}
         \end{itemize}
 
         \begin{table}
             \centering
-            \caption{Metadata of Data}
+            \caption{Sample Information}
             \input{tables/metadata.tex}
         \end{table}
     \end{frame}
@@ -233,7 +233,7 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Filitering with Quality Score}
 
         Drawback between:
@@ -385,7 +385,7 @@
             \end{array}$
             \caption{Sequence Quality Plot from Helixco Data}
         \end{figure}
-        Maximum Length: $n_{forward} = 300$, $n_{Reverse} = 265$
+        Maximum Length: $n_{Forward} = 300$, $n_{Reverse} = 265$
     \end{frame}
 
     \begin{frame}
@@ -402,7 +402,7 @@
             \end{array}$
             \caption{Sequence Quality Plot from Helixco Data}
         \end{figure}
-        Maximum Length: $n_{forward} = 300$, $n_{Reverse} = 222$
+        Maximum Length: $n_{Forward} = 300$, $n_{Reverse} = 222$
     \end{frame}
 
     \begin{frame}
@@ -419,7 +419,7 @@
             \end{array}$
             \caption{Sequence Quality Plot from Stool Data}
         \end{figure}
-        Maximum Length: $n_{forward} = 250$, $n_{Reverse} = 251$
+        Maximum Length: $n_{Forward} = 250$, $n_{Reverse} = 251$
     \end{frame}
 
     \begin{frame}
@@ -582,7 +582,7 @@
     \begin{frame}
         \frametitle{Workflow for Classification}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.5 \linewidth]{figures/tikz/classification.pdf}
             \caption{Workflow with Classification}
         \end{figure}
@@ -593,12 +593,12 @@
 
         Input Data was treated with \textbf{Deblur} and \textbf{SILVA}.
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/importances.png}
             \caption{Feature Importance derived by Random Forest Classifier}
         \end{figure}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest/case1/scores.png}
             \caption{Number of Features vs. Accuracy}
         \end{figure}
@@ -613,12 +613,12 @@
             \item \textit{Bacteria Actinobacteriota Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium Corynebacterium matruchotii}
         \end{enumerate}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest/case1/tree.png}
             \caption{Random Forest Classifier}
         \end{figure}
 
-        \begin{figure}[h!]
+        \begin{figure}
             $\begin{array}{ccc}
                 \includegraphics[width=0.3 \linewidth]{figures/RandomForest/case1/feature_0.png}
                 &
