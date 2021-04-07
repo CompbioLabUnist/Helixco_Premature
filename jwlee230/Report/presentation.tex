@@ -5,7 +5,7 @@
 \mode<presentation> { \usetheme{Madrid} }
 
 \usepackage{graphicx, graphics}
-\usepackage{apacite}
+\usepackage[notocbib]{apacite}
 \usepackage[style=iso]{datetime2}
 \usepackage{enumerate}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
@@ -45,18 +45,23 @@
 
 \title[Premature]{Microbiome Premature}
 
-\author{
+\author[Jaewoong Lee]
+{
     Jaewoong Lee
     \and
     Semin Lee
 }
-\institute[UNIST]
+
+\institute[UNIST BME]
 {
-	Ulsan National Institute of Science and Technology
-	\medskip
-	\newline
-	\textit{jwlee230@unist.ac.kr}
+    Department of Biomedical Engineering
+    \newline
+    Ulsan National Institute of Science and Technology
+    \medskip
+    \newline
+    \textit{jwlee230@unist.ac.kr}
 }
+
 \date{\today}
 
 \begin{document}
@@ -96,7 +101,7 @@
     \begin{frame}
         \frametitle{Premature (Preterm Birth)}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/premature.png}
             \caption{Definitions of Premature \protect \cite{premature1}}
         \end{figure}
@@ -127,8 +132,7 @@
         \begin{itemize}
             \item JBNU/Helixco data
             \begin{itemize}
-                \item First data
-                \item Second data
+                \item First data / Second data
                 \item Stool data
             \end{itemize}
 
@@ -146,7 +150,7 @@
         \end{table}
     \end{frame}
 
-    \section{Literature Survey }
+    \section{Literature Survey}
     \subsection{EBI Data \protect\cite{validate1}}
     \begin{frame}[allowframebreaks]
         \frametitle{EBI Data}
@@ -223,9 +227,9 @@
     \begin{frame}
         \frametitle{Qiime 2 Workflow}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/qiime.png}
-            \caption{QIIME 2 workflow \protect \cite{qiime1, qiime2, qiime3}}
+            \caption{QIIME 2 workflow \protect\cite{qiime1, qiime2, qiime3}}
         \end{figure}
     \end{frame}
 
@@ -296,6 +300,12 @@
     \subsection{Abundance Test}
     \begin{frame}
         \frametitle{ANCOM}
+
+        \begin{itemize}
+            \item Analysis of composition of microbiome \cite{ANCOM1}
+            \item ANCOM detects significantly abundant taxa, while maintain high statistical power
+            \item Find taxa that can divide each classes
+        \end{itemize}
     \end{frame}
 
     \subsection{Diversity Indices}
@@ -304,7 +314,11 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Alpha \& Beta Diversity Indices}
+        \frametitle{Alpha  Diversity Indices}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Beta Diversity Indices}
     \end{frame}
 
     \subsection{Miscellaneous}
@@ -313,7 +327,7 @@
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/tsne.png}
-            \caption{t-SNE with handwritten data \protect \cite{tsne1}}
+            \caption{t-SNE with handwritten data \protect\cite{tsne1}}
         \end{figure}
     \end{frame}
 
