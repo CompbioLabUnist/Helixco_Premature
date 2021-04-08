@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 10
+CPUS = 8
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS = 
@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05
+latest: step01 step02 step03 step04 step05 step06
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -189,7 +189,7 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza
+step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/second.DADA2.silva.qza Output/Taxonomy/second.DADA.gg.qza Output/Taxonomy/second.Deblur.gg.qza Output/Taxonomy/second.Deblur.silva Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza
 .PHONY: step06
 
 # Step 07 (Build Metadata)
