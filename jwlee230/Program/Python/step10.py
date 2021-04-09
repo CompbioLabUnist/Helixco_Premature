@@ -46,11 +46,11 @@ def select_data(raw_data: pandas.DataFrame, significance: typing.List[str]) -> p
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("raw", help="Raw TSV file", type=str, nargs=1)
-    parser.add_argument("output", help="Output TAR.gz file", type=str, nargs=1)
+    parser.add_argument("raw", help="Raw TSV file", type=str)
+    parser.add_argument("output", help="Output TAR.gz file", type=str)
 
     args = parser.parse_args()
 
-    raw_data = read_raw_data(args.raw[0])
+    raw_data = read_raw_data(args.raw)
 
-    step00.make_pickle(args.output[0], raw_data)
+    step00.make_pickle(args.output, raw_data)

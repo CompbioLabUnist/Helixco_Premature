@@ -23,9 +23,9 @@ def read_raw_data(path: str) -> pandas.DataFrame:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Raw TSV file", type=str, nargs=1)
-    parser.add_argument("output", help="Output TAR.gz file", type=str, nargs=1)
+    parser.add_argument("input", help="Raw TSV file", type=str)
+    parser.add_argument("output", help="Output TAR.gz file", type=str)
 
     args = parser.parse_args()
 
-    step00.make_pickle(args.output[0], read_raw_data(args.input[0]))
+    step00.make_pickle(args.output, read_raw_data(args.input))
