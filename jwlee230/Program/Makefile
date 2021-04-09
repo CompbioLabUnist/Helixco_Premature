@@ -9,7 +9,7 @@ TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data --volume $(abspath Python):/Python --volum $(abspath Bash):/Bash --tmpfs /tmpfs
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data --volume $(abspath Python):/Python --volume $(abspath Bash):/Bash --tmpfs /tmpfs
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 
 # General
