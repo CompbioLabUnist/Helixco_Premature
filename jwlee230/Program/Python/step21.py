@@ -14,9 +14,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    raw_data = pandas.read_csv(args.input[0], sep="\t", skiprows=1)
-    raw_data.set_index(inplace=True, keys=["taxonomy", "#OTU ID"], verify_integrity=True)
-    raw_data = raw_data.T
+    raw_data = pandas.read_csv(args.input[0], sep="\t", skiprows=1).set_index(keys=["taxonomy", "#OTU ID"], verify_integrity=True).T
 
     data = pandas.DataFrame()
     taxonomy_list = sorted(set(map(lambda x: x[0], raw_data.columns)))

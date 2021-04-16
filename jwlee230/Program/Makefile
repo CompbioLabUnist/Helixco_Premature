@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step09
+latest: step01 step02 step03 step04 step05 step06 step08 step09 step21 step22
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -299,10 +299,7 @@ Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 Output/TSV/premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/first.%.tar.gz: Python/step10-2.py Output/TSV/first.%.tsv
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
+step10: 
 .PHONY: step10
 
 # Step 11 (Making t-SNE)
@@ -323,7 +320,13 @@ step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/premature.DADA2.gg.png Output/
 .PHONY: step12
 
 # Step 21 (Read & clearify first TSV into pandas)
-Output/TSV/helixco.%.tar.gz: Python/step21.py Output/TSV/first.%.tsv | build.log
+Output/TSV/first.%.tar.gz: Python/step21.py Output/TSV/first.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TSV/second.%.tar.gz: Python/step21.py Output/TSV/second.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TSV/Stool.%.tar.gz: Python/step21.py Output/TSV/Stool.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
@@ -332,7 +335,7 @@ Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
 Output/TSV/HMP.%.tar.gz: Python/step21.py Output/TSV/HMP.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/helixco.DADA2.gg.tar.gz Output/TSV/helixco.DADA2.silva.tar.gz Output/TSV/helixco.Deblur.gg.tar.gz Output/TSV/helixco.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz
+step21: Output/TSV/first.DADA2.gg.tar.gz Output/TSV/first.DADA2.silva.tar.gz Output/TSV/first.Deblur.gg.tar.gz Output/TSV/first.Deblur.silva.tar.gz Output/TSV/second.DADA2.gg.tar.gz Output/TSV/second.DADA2.silva.tar.gz Output/TSV/second.Deblur.gg.tar.gz Output/TSV/second.Deblur.silva.tar.gz Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -345,10 +348,10 @@ Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 bui
 Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step22/DB.%.png: Python/step22-2.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz | Output/Step22 build.log
+Output/Step22/DB.%.pdf: Python/step22-2.py Output/TSV/first.%.tar.gz Output/TSV/second.%.tar.gz Output/TSV/Stool.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step22: Output/Step22/helixco.DADA2.gg.png Output/Step22/helixco.DADA2.silva.png Output/Step22/helixco.Deblur.gg.png Output/Step22/helixco.Deblur.silva.png Output/Step22/EBI.DADA2.gg.png Output/Step22/EBI.DADA2.silva.png Output/Step22/EBI.Deblur.gg.png Output/Step22/EBI.Deblur.silva.png Output/Step22/DB.DADA2.gg.png Output/Step22/DB.DADA2.silva.png Output/Step22/DB.Deblur.gg.png Output/Step22/DB.Deblur.silva.png
+step22: Output/Step22/DB.DADA2.gg.pdf Output/Step22/DB.DADA2.silva.pdf Output/Step22/DB.Deblur.gg.pdf Output/Step22/DB.Deblur.silva.pdf
 .PHONY: step22
 
 # Step 23 (Draw histogram)
@@ -367,7 +370,7 @@ Output/Step23/BMI.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output
 step23: Output/Step23/age.png Output/Step23/weight.png Output/Step23/BMI.png
 .PHONY: step23
 
-# Step 24 (Dfirst histogram with parsing)
+# Step 24 (Draw histogram with parsing)
 Output/Step24:
 	mkdir -p $@
 

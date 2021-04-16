@@ -10,6 +10,7 @@ import tempfile
 import typing
 
 key = bytes("asdf", "UTF-8")
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 300}
 
 
 def file_list(path: str) -> typing.List[str]:
