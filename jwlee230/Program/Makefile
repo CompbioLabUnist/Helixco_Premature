@@ -345,7 +345,7 @@ Output/Step22:
 Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step22/%.png: Python/step22.py Output/Step22/%.tar.gz | build.log
+Output/Step22/%.pdf: Python/step22.py Output/Step22/%.tar.gz | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/DB.%.pdf: Python/step22-2.py Output/TSV/first.%.tar.gz Output/TSV/second.%.tar.gz Output/TSV/Stool.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz | Output/Step22 build.log
