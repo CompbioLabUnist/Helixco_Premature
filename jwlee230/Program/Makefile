@@ -316,7 +316,7 @@ step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Out
 Output/TSNE/%.pdf: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step12: Output/TSNE/site.DADA2.gg.pdf Output/TSNE/premature.DADA2.gg.pdf Output/TSNE/site.DADA2.silva.pdf Output/TSNE/premature.DADA2.silva.pdf Output/TSNE/site.Deblur.gg.pndf Output/TSNE/premature.Deblur.gg.pdf Output/TSNE/site.Deblur.silva.pdf Output/TSNE/premature.Deblur.silva.pdf
+step12: Output/TSNE/site.DADA2.gg.pdf Output/TSNE/premature.DADA2.gg.pdf Output/TSNE/site.DADA2.silva.pdf Output/TSNE/premature.DADA2.silva.pdf Output/TSNE/site.Deblur.gg.pdf Output/TSNE/premature.Deblur.gg.pdf Output/TSNE/site.Deblur.silva.pdf Output/TSNE/premature.Deblur.silva.pdf
 .PHONY: step12
 
 # Step 21 (Read & clearify first TSV into pandas)

@@ -34,10 +34,10 @@ if __name__ == "__main__":
     data[hue] = info_data[hue]
     data[style] = info_data[style]
 
-    seaborn.set(context="poster", style="whitegrid", rcParams=step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.scatterplot(data=data, x="TSNE1", y="TSNE2", ax=ax, hue=hue, style=style, legend="brief", s=1000)
+    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=hue, style=style, legend="brief", s=1000)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
