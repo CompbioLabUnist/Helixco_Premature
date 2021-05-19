@@ -7,15 +7,17 @@ import pandas
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("info", help="Informative XLSX file", type=str, nargs=1)
+    parser.add_argument("info", help="Informative XLSX file", type=str)
     parser.add_argument("input", help="Input file (FQ.gz) names", type=str, nargs="+")
 
     args = parser.parse_args()
 
-    if not args.info[0].endswith(".xlsx"):
+    if not args.info.endswith(".xlsx"):
         raise ValueError("INFO file must end with .xlsx")
+    elif list(filter(lambda x: not x.endswith(".fastq.gz"), args.input)):
+        raise ValueError("INFO file must end with .fastq.gz")
 
-    info_data = pandas.read_excel(args.info[0])
+    info_data = pandas.read_excel(args.info)
 
     data = pandas.DataFrame()
     data["#SampleID"] = sorted(list(set(list(map(lambda x: x.split("_")[0], list(map(lambda x: x.split("/")[-1], args.input)))))))

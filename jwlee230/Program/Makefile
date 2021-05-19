@@ -9,7 +9,7 @@ TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data --volume $(abspath Python):/Python --volume $(abspath Bash):/Bash --tmpfs /tmpfs
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath Bash):/Bash:ro --tmpfs /tmpfs
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 
 # General
@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step09 step21 step22
+latest: step01 step02 step03 step04 step05 step06 step07 step09 step10 step11 step12 step21 step22
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -196,11 +196,11 @@ step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza
 Output/Metadata:
 	mkdir -p $@
 
-Output/Metadata/first.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/firstData/*.fastq.gz) | Output/Metadata build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+Output/Metadata/first.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Metadata build.log
-	@$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 step07: Output/Metadata/first.tsv Output/Metadata/EBI.tsv
 .PHONY: step07
@@ -299,7 +299,7 @@ Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 Output/TSV/premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step10: 
+step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
 .PHONY: step10
 
 # Step 11 (Making t-SNE)
@@ -313,10 +313,10 @@ step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Out
 .PHONY: step11
 
 # Step 12 (Draw t-SNE)
-Output/TSNE/%.png: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
+Output/TSNE/%.pdf: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step12: Output/TSNE/site.DADA2.gg.png Output/TSNE/premature.DADA2.gg.png Output/TSNE/site.DADA2.silva.png Output/TSNE/premature.DADA2.silva.png Output/TSNE/site.Deblur.gg.png Output/TSNE/premature.Deblur.gg.png Output/TSNE/site.Deblur.silva.png Output/TSNE/premature.Deblur.silva.png
+step12: Output/TSNE/site.DADA2.gg.pdf Output/TSNE/premature.DADA2.gg.pdf Output/TSNE/site.DADA2.silva.pdf Output/TSNE/premature.DADA2.silva.pdf Output/TSNE/site.Deblur.gg.pndf Output/TSNE/premature.Deblur.gg.pdf Output/TSNE/site.Deblur.silva.pdf Output/TSNE/premature.Deblur.silva.pdf
 .PHONY: step12
 
 # Step 21 (Read & clearify first TSV into pandas)
