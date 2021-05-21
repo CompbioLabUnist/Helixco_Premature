@@ -31,13 +31,17 @@ if __name__ == "__main__":
     else:
         hue = style = hue_style
 
+    print(hue, style)
+
     data[hue] = info_data[hue]
     data[style] = info_data[style]
+
+    print(data)
 
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=hue, style=style, legend="brief", s=1000)
+    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=hue, style=style, legend="brief", s=1000, hue_order=sorted(data[hue]))
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
