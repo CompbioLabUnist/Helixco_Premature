@@ -196,11 +196,14 @@ step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza
 Output/Metadata:
 	mkdir -p $@
 
-Output/Metadata/first.tsv: Python/step07.py Data/Metadata/샘플정보.xlsx $(wildcard Data/RawData/*.fastq.gz) | Output/Metadata build.log
+Output/Metadata/first.tsv: Python/step07.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/RawData/*.fastq.gz)) | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(sort $(wildcard Data/EBIData/ena_files/*/*.fastq.gz)) | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^)
+
+Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/HN00145920/*.fastq.gz)) | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^)
 
 step07: Output/Metadata/first.tsv Output/Metadata/EBI.tsv
 .PHONY: step07

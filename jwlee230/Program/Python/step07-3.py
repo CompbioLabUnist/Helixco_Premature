@@ -25,9 +25,13 @@ if __name__ == "__main__":
     data["#SampleID"] = sorted(list(set(list(map(lambda x: x.split("_")[0], list(map(lambda x: x.split("/")[-1], args.input)))))))
     data["BarcodeSequence"] = ""
     data["LinkPrimerSequence"] = ""
-    data["Site"] = list(map(lambda x: {"B1": "Baby-1day", "B3": "Baby-3day", "B5": "Baby-5day", "M": "Mouth", "C": "Cervix", "V": "Vagina", "P": "Placenta"}[x.split("-")[-1]], data["#SampleID"]))
-    data["Mother"] = list(map(lambda x: x.split("-")[0], data["#SampleID"]))
+    data["Site"] = list(map(lambda x: {"B1": "Baby-1day", "B3": "Baby-3day", "B5": "Baby-5day", "M": "Mouth", "C": "Cervix", "V": "Vagina", "P": "Placenta"}[x.split("-")[0]], data["#SampleID"]))
+    data["Mother"] = list(map(lambda x: "%03d" % int(x.split("-")[1]), data["#SampleID"]))
     data["Baby_Number"] = list(map(lambda x: x.split("-")[1] if len(x.split("-")) == 3 else "1", data["#SampleID"]))
+
+    print(list(data["Mother"]))
+    print(list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["분만주수"]), data["Mother"])))
+
     data["Premature"] = list(map(lambda x: "Premature" if int(x) < 37 else "Normal", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["분만주수"])[0].split("+")[0], data["Mother"]))))
     data["Detail_Premature"] = list(map(lambda x: "NonlatePremature" if int(x) < 34 else ("LatePremature" if int(x) < 37 else "Normal"), list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["분만주수"])[0].split("+")[0], data["Mother"]))))
     data["Utero_Week"] = list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["분만주수"])[0].split("+")[0], data["Mother"]))
