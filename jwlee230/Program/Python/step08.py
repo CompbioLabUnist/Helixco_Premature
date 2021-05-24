@@ -34,5 +34,7 @@ if __name__ == "__main__":
 
     seaborn.scatterplot(data=input_data, x="clr", y="W", ax=ax, style="Reject null hypothesis", markers={True: "o", False: "X"}, legend="full", s=1000, hue="Reject null hypothesis", palette={True: "tab:blue", False: "tab:red"})
 
+    matplotlib.pyplot.title("{0} taxa reject null hypothesis".format(input_data.loc[(input_data["Reject null hypothesis"])].shape[0]))
+
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
