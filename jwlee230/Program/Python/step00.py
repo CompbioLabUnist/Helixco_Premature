@@ -27,7 +27,7 @@ def directory_list(path: str) -> typing.List[str]:
     return list(filter(lambda x: os.path.isdir(x), list(map(lambda x: os.path.join(path, x), os.listdir(path)))))
 
 
-def make_hmac(message: bytes) -> bytes:
+def _make_hmac(message: bytes) -> bytes:
     """
     make_hmac: return a HMAC
     """
@@ -42,7 +42,7 @@ def make_pickle(path: str, data: typing.Any) -> None:
         raise ValueError("Path must end with .tar.gz")
 
     pkl = pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL)
-    key = make_hmac(pkl)
+    key = _make_hmac(pkl)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         with open(os.path.join(tmp_dir, "data.pkl"), "wb") as f:
@@ -73,7 +73,7 @@ def read_pickle(path: str) -> typing.Any:
         with open(os.path.join(tmp_dir, "key.txt"), "rb") as f:
             key = f.read()
 
-    if not hmac.compare_digest(make_hmac(pkl), key):
+    if not hmac.compare_digest(_make_hmac(pkl), key):
         raise ValueError("Data is not valid")
 
     return pickle.loads(pkl)
