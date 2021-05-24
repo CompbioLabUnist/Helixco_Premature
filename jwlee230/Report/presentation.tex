@@ -119,7 +119,7 @@
 
         \textbf{16S rRNA sequencing} is the \textit{reference method} for bacterial taxonomy \& identification \cite{16S1}
 
-        Reasons \cite{16S2}:
+        Three main reasons \cite{16S2}:
         \begin{itemize}
             \item 16S rRNA exists in almost all bacteria
             \item Functions of the 16S rRNA has not changed over time
@@ -132,14 +132,9 @@
         \begin{itemize}
             \item JBNU/Helixco data
             \begin{itemize}
-                \item First data / Second data
+                \item First data
+                \item Second data
                 \item Stool data
-            \end{itemize}
-
-            \item External data
-            \begin{itemize}
-                \item The European Bioinformatics Institute (EBI data)
-                \item NIH Human Microbiome Project (HMP data)
             \end{itemize}
         \end{itemize}
 
@@ -148,78 +143,6 @@
             \caption{Sample Information}
             \input{tables/metadata.tex}
         \end{table}
-    \end{frame}
-
-    \section{Literature Survey}
-    \subsection{EBI Data \protect\cite{validate1}}
-    \begin{frame}[allowframebreaks]
-        \frametitle{EBI Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Literature/EBI/title.png}
-        \end{figure}
-        \newpage
-
-        \begin{itemize}
-            \item Study Objectives
-            \begin{enumerate}
-                \item Compare Vaginally vs. Cesarean-section (C-section)
-                \item Restore the microbiota of C-section
-            \end{enumerate}
-
-            \item Microbial restoration procedure
-            \begin{enumerate}
-                \item Measure maternal vaginal pH
-                \item Put sterile gauze with saline solution in vagina for 1 hour
-                \item Swab the infant with the gauze
-            \end{enumerate}
-
-            \item Sample collection procedure
-            \begin{enumerate}
-                \item Sample at right after birth, day 3 and weekly for the first month
-                \item Sample from oral, forehead, arm, foot and anal
-            \end{enumerate}
-
-            \item Notable Methods/Results
-            \begin{enumerate}
-                \item Using distance methods: e.g. UniFrac distance, Hamming distance
-            \end{enumerate}
-        \end{itemize}
-    \end{frame}
-
-    \subsection{HMP Data \protect\cite{validate2}}
-    \begin{frame}[allowframebreaks]
-        \frametitle{HMP Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Literature/HMP/title.png}
-        \end{figure}
-        \newpage
-
-        \begin{itemize}
-            \item Study Objectives
-            \begin{enumerate}
-                \item Predicting \& Preventing premature
-                \item Report community resources
-                \item Provide an analysis of the longitudinal, comprehensive, multi-omic profiling of vaginal samples
-            \end{enumerate}
-
-            \item Sample collection Procedure
-            \begin{enumerate}
-                \item Premature birth vs. Matched normal birth
-                \item Ethnically diverse cohort
-            \end{enumerate}
-
-            \item Notable Methods/Results
-            \begin{enumerate}
-                \item Imitate figures
-            \end{enumerate}
-        \end{itemize}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/Literature/HMP/gestational.png}
-            \caption{Microbiome Composition during Pregnancy}
-        \end{figure}
     \end{frame}
 
     \section{Methods}
@@ -365,6 +288,7 @@
             \item SciPy \cite{scipy1}
             \item Matplotlib \cite{matplotlib1}
             \item Seaborn \cite{seaborn1}
+            \item Statannot
         \end{itemize}
     \end{frame}
 
@@ -420,33 +344,6 @@
             \caption{Sequence Quality Plot from Stool Data}
         \end{figure}
         Maximum Length: $n_{Forward} = 250$, $n_{Reverse} = 251$
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Quality Score with EBI Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/QualityFilter/EBIForward.png}
-            \caption{Sequence Quality Plot from EBI Data}
-        \end{figure}
-        Maximum Length: $n=150$
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Quality Score with HMP Data}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPForward.png}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/HMPReverse.png}
-                \\
-
-                \mbox{(a) Forward} & \mbox{(b) Reverse} \\
-            \end{array}$
-            \caption{Sequence Quality Plot from HMP Data}
-        \end{figure}
-        Maximum Length: $n_{Forward} = 278$, $n_{Reverse} = 226$
     \end{frame}
 
     \subsection{t-SNE with Site/Premature Information}
@@ -586,9 +483,9 @@
             \caption{ANCOM result with PROM (DADA2 + GG)}
         \end{figure}
 
-        \begin{enumerate}
+        \begin{itemize}
             \item \textit{Campylobacteraceae} genus \textit{Campylobacter} species
-        \end{enumerate}
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
