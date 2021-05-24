@@ -224,39 +224,40 @@ Output/ANCOM/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur
 Output/ANCOM/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur.silva.qza | Output/ANCOM build.log
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.CV.qza: Output/ANCOM/%.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Cervix', 'Vagina')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/%.mouth.qza: Output/ANCOM/%.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[site] IN ('Mouth')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
 Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/first.%.site.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/first.%.Site.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/EBI.%.site.qzv: Output/ANCOM/EBI.%.pseudocount.qza Output/Metadata/EBI.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/%.Premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.site_premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "site_premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/%.Detail_Premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Detail_Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/first.%.C-section.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "C-section" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.CV.premature.qzv: Output/ANCOM/%.CV.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/first.%.PROM.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "PROM" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.mouth.premature.qzv: Output/ANCOM/%.mouth.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "premature2" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/first.%.Steroid.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Steroid" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/first.%.Antibiotic.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Antibiotic" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv: Output/ANCOM/%.qzv | build.log
-	$(DOCKER) rm -rfv $(addprefix /,$(@D))
+	$(DOCKER) rm -rf $(addprefix /,$(@D))
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
 
-step08: Output/ANCOM/first.DADA2.gg.site/ancom.tsv Output/ANCOM/first.DADA2.silva.site/ancom.tsv Output/ANCOM/first.Deblur.gg.site/ancom.tsv Output/ANCOM/first.Deblur.silva.site/ancom.tsv Output/ANCOM/EBI.DADA2.gg.site/ancom.tsv Output/ANCOM/EBI.DADA2.silva.site/ancom.tsv Output/ANCOM/EBI.Deblur.gg.site/ancom.tsv Output/ANCOM/EBI.Deblur.silva.site/ancom.tsv
-.PHONY: step08
+step08-DADA2-gg: Output/ANCOM/first.DADA2.gg.qza Output/ANCOM/first.DADA2.gg.pseudocount.qza Output/ANCOM/first.DADA2.gg.Site.qzv Output/ANCOM/first.DADA2.gg.Site/ancom.tsv Output/ANCOM/first.DADA2.gg.Premature.qzv Output/ANCOM/first.DADA2.gg.Premature/ancom.tsv Output/ANCOM/first.DADA2.gg.Detail_Premature.qzv Output/ANCOM/first.DADA2.gg.Detail_Premature/ancom.tsv Output/ANCOM/first.DADA2.gg.PROM.qzv Output/ANCOM/first.DADA2.gg.PROM/ancom.tsv Output/ANCOM/first.DADA2.gg.C-section.qzv Output/ANCOM/first.DADA2.gg.C-section/ancom.tsv Output/ANCOM/first.DADA2.gg.Steroid.qzv Output/ANCOM/first.DADA2.gg.Steroid/ancom.tsv Output/ANCOM/first.DADA2.gg.Antibiotic.qzv Output/ANCOM/first.DADA2.gg.Antibiotic/ancom.tsv
+step08-DADA2-silva: Output/ANCOM/first.DADA2.silva.qza Output/ANCOM/first.DADA2.silva.pseudocount.qza Output/ANCOM/first.DADA2.silva.Site.qzv Output/ANCOM/first.DADA2.silva.Site/ancom.tsv Output/ANCOM/first.DADA2.silva.Premature.qzv Output/ANCOM/first.DADA2.silva.Premature/ancom.tsv Output/ANCOM/first.DADA2.silva.Detail_Premature.qzv Output/ANCOM/first.DADA2.silva.Detail_Premature/ancom.tsv Output/ANCOM/first.DADA2.silva.PROM.qzv Output/ANCOM/first.DADA2.silva.PROM/ancom.tsv Output/ANCOM/first.DADA2.silva.C-section.qzv Output/ANCOM/first.DADA2.silva.C-section/ancom.tsv Output/ANCOM/first.DADA2.silva.Steroid.qzv Output/ANCOM/first.DADA2.silva.Steroid/ancom.tsv Output/ANCOM/first.DADA2.silva.Antibiotic.qzv Output/ANCOM/first.DADA2.silva.Antibiotic/ancom.tsv
+step08-Deblur-gg: Output/ANCOM/first.Deblur.gg.qza Output/ANCOM/first.Deblur.gg.pseudocount.qza Output/ANCOM/first.Deblur.gg.Site.qzv Output/ANCOM/first.Deblur.gg.Site/ancom.tsv Output/ANCOM/first.Deblur.gg.Premature.qzv Output/ANCOM/first.Deblur.gg.Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.Detail_Premature.qzv Output/ANCOM/first.Deblur.gg.Detail_Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.PROM.qzv Output/ANCOM/first.Deblur.gg.PROM/ancom.tsv Output/ANCOM/first.Deblur.gg.C-section.qzv Output/ANCOM/first.Deblur.gg.C-section/ancom.tsv Output/ANCOM/first.Deblur.gg.Steroid.qzv Output/ANCOM/first.Deblur.gg.Steroid/ancom.tsv Output/ANCOM/first.Deblur.gg.Antibiotic.qzv Output/ANCOM/first.Deblur.gg.Antibiotic/ancom.tsv
+step08-Deblur-silva: Output/ANCOM/first.Deblur.silva.qza Output/ANCOM/first.Deblur.silva.pseudocount.qza Output/ANCOM/first.Deblur.silva.Site.qzv Output/ANCOM/first.Deblur.silva.Site/ancom.tsv Output/ANCOM/first.Deblur.silva.Premature.qzv Output/ANCOM/first.Deblur.silva.Premature/ancom.tsv Output/ANCOM/first.Deblur.silva.Detail_Premature.qzv Output/ANCOM/first.Deblur.silva.Detail_Premature/ancom.tsv Output/ANCOM/first.Deblur.silva.PROM.qzv Output/ANCOM/first.Deblur.silva.PROM/ancom.tsv Output/ANCOM/first.Deblur.silva.C-section.qzv Output/ANCOM/first.Deblur.silva.C-section/ancom.tsv Output/ANCOM/first.Deblur.silva.Steroid.qzv Output/ANCOM/first.Deblur.silva.Steroid/ancom.tsv Output/ANCOM/first.Deblur.silva.Antibiotic.qzv Output/ANCOM/first.Deblur.silva.Antibiotic/ancom.tsv
+step08: step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
+.PHONY: step08 step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 
 # Step 09 (Get TSV)
 Output/TSV:

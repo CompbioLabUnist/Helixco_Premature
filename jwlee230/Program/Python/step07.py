@@ -39,7 +39,7 @@ if __name__ == "__main__":
     data["PROM"] = list(map(lambda x: "Yes" if "유" in x else "No", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["조기양막파수 유무"])[0], data["Mother"]))))
     data["C-section"] = list(map(lambda x: "Yes" if "제왕절개" in x else "No", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["분만형태"])[0], data["Mother"]))))
     data["Steroid"] = list(map(lambda x: "Yes" if "유" in x else "No", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["산전스테로이드사용여부"])[0], data["Mother"]))))
-    data["Antibiotic"] = list(map(lambda x: "Yes" if "유 " in x else "No", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["산전항생제(6주이내) 사용여부"])[0], data["Mother"]))))
+    data["Antibiotic"] = list(map(lambda x: "Yes" if "유" in x else "No", list(map(lambda x: list(mother_data.loc[(mother_data["바코드"].str.startswith(x))]["산전항생제(6주이내) 사용여부"])[0], data["Mother"]))))
     data["Description"] = ""
 
     print("\t".join(data.columns))
