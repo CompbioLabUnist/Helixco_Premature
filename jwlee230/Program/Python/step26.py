@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         seaborn.violinplot(data=input_data, x="Detail_Premature", y=feature, order=orders, ax=ax, inner="box")
-        statannot.add_stat_annotation(ax, data=input_data, x="Detail_Premature", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0)
+        statannot.add_stat_annotation(ax, data=input_data, x="Detail_Premature", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0, test="t-test_ind")
 
         matplotlib.pyplot.title(" ".join(list(map(lambda x: x[3:], step00.consistency_taxonomy(feature).split("; ")))[5:]))
         matplotlib.pyplot.ylabel("")
