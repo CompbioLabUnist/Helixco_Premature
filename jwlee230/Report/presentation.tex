@@ -446,59 +446,7 @@
             \end{array}$
             \caption{Sequence Quality Plot from HMP Data}
         \end{figure}
-        Maximum Length: $n_{forward} = 278$, $n_{Reverse} = 226$
-    \end{frame}
-
-    \subsection{Comparing Data}
-    \begin{frame}
-        \frametitle{Workflow for Comparing Data}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/tikz/brief.pdf}
-            \caption{Workflow of t-SNE for Brief Information}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Intersected Taxa}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/tikz/brief/DADA2.gg.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/tikz/brief/DADA2.silva.pdf}
-                \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
-
-                \includegraphics[width=0.2 \linewidth]{figures/tikz/brief/Deblur.gg.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/tikz/brief/Deblur.silva.pdf}
-                \\
-                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
-            \end{array}$
-            \caption{Intersected Taxa Information}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{t-SNE for Comparing Data}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/TSNE/Brief/DB.DADA2.gg.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/TSNE/Brief/DB.DADA2.silva.pdf}
-                \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
-
-                \includegraphics[width=0.2 \linewidth]{figures/TSNE/Brief/DB.Deblur.gg.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/TSNE/Brief/DB.Deblur.silva.pdf}
-                \\
-                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
-            \end{array}$
-            \caption{t-SNE for Comparing Data}
-        \end{figure}
+        Maximum Length: $n_{Forward} = 278$, $n_{Reverse} = 226$
     \end{frame}
 
     \subsection{t-SNE with Site/Premature Information}
@@ -565,7 +513,102 @@
 
     \subsection{Bacterial Abundance Test with ANCOM}
     \begin{frame}
-        \frametitle{ANCOM}
+        \frametitle{ANCOM?}
+
+        \begin{itemize}
+            \item Analysis of composition of microbiomes
+            \item ANCOM can be used for analyzing the composition of microbiomes in multiple populations \cite{ANCOM1}
+            \item Differential abundance testing
+        \end{itemize}
+
+        \begin{enumerate}
+            \item clr: Centered $\log (Ratio)$
+            \item W: a count of the number of sub-hypothesis which have passed for given species
+        \end{enumerate}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with ...}
+
+        \begin{itemize}
+            \item Site where get the microbiome
+            \item Premature -- Before 37 weeks and After 37 weeks
+            \item Detailed Premature -- Before 34 weeks, After 37 weeks, and the other
+            \item C-section
+            \item PROM -- Premature rupture of membranes
+            \item Using Steroid?
+            \item Using anti-biotic?
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with Detailed Premature}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.DADA2.gg.Detail_Premature.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.Deblur.gg.Detail_Premature.pdf}
+                \\
+                \mbox{(a) DADA2 + GG} & \mbox{(b) Deblur + GG} \\
+            \end{array}$
+            \caption{ANCOM results with Detailed Premature}
+        \end{figure}
+
+        \begin{itemize}
+            \item \textit{Ureaplasma} genus
+            \item \textit{Aerococcus} genus
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with Site}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.DADA2.gg.Site.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.DADA2.silva.Site.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.Deblur.gg.Site.pdf}
+                \\
+                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + Silva} & \mbox{(c) Deblur + GG} \\
+            \end{array}$
+            \caption{ANCOM results with Site}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with PROM}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/ANCOM/first.DADA2.gg.PROM.pdf}
+            \caption{ANCOM result with PROM (DADA2 + GG)}
+        \end{figure}
+
+        \begin{enumerate}
+            \item \textit{Campylobacteraceae} genus \textit{Campylobacter} species
+        \end{enumerate}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with Using Steroid}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.DADA2.gg.Steroid.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.Deblur.gg.Steroid.pdf}
+                \\
+                \mbox{(a) DADA2 + GG} & \mbox{(b) Deblur + GG} \\
+            \end{array}$
+            \caption{ANCOM results with Using Steroid}
+        \end{figure}
+
+        \begin{itemize}
+            \item \textit{Ureaplasma} genus
+            \item \textit{Aerococcus} genus
+        \end{itemize}
     \end{frame}
 
     \subsection{Alpha-Diversity}
