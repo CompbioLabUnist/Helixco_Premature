@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 CPUS = 10
-MEMS = 300G
+MEMS = 100G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -412,3 +412,44 @@ Output/Step27/DT.%.tar: Python/step27.py Output/TSV/helixco.%.tar.gz Output/TSV/
 
 step27: Output/Step27/DT.DADA2.gg.tar Output/Step27/DT.DADA2.silva.tar Output/Step27/DT.Deblur.gg.tar Output/Step27/DT.Deblur.silva.tar
 .PHONY: step27
+
+# Step 28 (Phylogenetic diversity analysis)
+Output/Step28:
+	mkdir -p $@
+
+Output/Step28/%.DADA2.aligned-rep-seqs.qza Output/Step28/%.DADA2.masked-aligned-rep-seqs.qza Output/Step28/%.DADA2.unrooted-tree.qza Output/Step28/%.DADA2.rooted-tree.qza: Output/DADA2/%.seq.qza | Output/Step28 build.log
+	$(DOCKER) qiime phylogeny align-to-tree-mafft-fasttree --i-sequences $(addprefix /,$<) --o-alignment $(addprefix /,$(basename $(basename $@))).aligned-rep-seqs.qza --o-masked-alignment $(addprefix /,$(basename $(basename $@))).masked-aligned-rep-seqs.qza --o-tree $(addprefix /,$(basename $(basename $@))).unrooted-tree.qza --o-rooted-tree $(addprefix /,$(basename $(basename $@))).rooted-tree.qza --p-n-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step28/%.Deblur.aligned-rep-seqs.qza Output/Step28/%.Deblur.masked-aligned-rep-seqs.qza Output/Step28/%.Deblur.unrooted-tree.qza Output/Step28/%.Deblur.rooted-tree.qza: Output/Deblur/%.seq.qza | Output/Step28 build.log
+	$(DOCKER) qiime phylogeny align-to-tree-mafft-fasttree --i-sequences $(addprefix /,$<) --o-alignment $(addprefix /,$(basename $(basename $@))).aligned-rep-seqs.qza --o-masked-alignment $(addprefix /,$(basename $(basename $@))).masked-aligned-rep-seqs.qza --o-tree $(addprefix /,$(basename $(basename $@))).unrooted-tree.qza --o-rooted-tree $(addprefix /,$(basename $(basename $@))).rooted-tree.qza --p-n-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step28: Output/Step28/first.DADA2.rooted-tree.qza Output/Step28/second.DADA2.rooted-tree.qza Output/Step28/Stool.DADA2.rooted-tree.qza Output/Step28/first.Deblur.rooted-tree.qza Output/Step28/second.Deblur.rooted-tree.qza Output/Step28/Stool.Deblur.rooted-tree.qza
+.PHONY: step28
+
+# Step 29 (Core phylogenetic metrics)
+Output/Step29 Output/Step29/DADA2 Output/Step29/Deblur:
+	mkdir -p $@
+
+Output/Step29/%.DADA2.table.qzv: Output/DADA2/%.table.qza Output/Metadata/%.tsv | Output/Step29 build.log
+	$(DOCKER) qiime feature-table summarize --i-table $(addprefix /,$(word 1,$^)) --m-sample-metadata-file $(addprefix /,$(word 2,$^)) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step29/%.DADA2.seq.qzv: Output/DADA2/%.seq.qza | Output/Step29 build.log
+	$(DOCKER) qiime feature-table tabulate-seqs --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step29/%.Deblur.table.qzv: Output/Deblur/%.table.qza Output/Metadata/%.tsv | Output/Step29 build.log
+	$(DOCKER) qiime feature-table summarize --i-table $(addprefix /,$(word 1,$^)) --m-sample-metadata-file $(addprefix /,$(word 2,$^)) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step29/%.Deblur.seq.qzv: Output/Deblur/%.seq.qza | Output/Step29 build.log
+	$(DOCKER) qiime feature-table tabulate-seqs --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step29/DADA2/first.faith_pd_vector.qza Output/Step29/DADA2/first.unweighted_unifrac_distance_matrix.qza Output/Step29/DADA2/first.bray_curtis_pcoa_results.qza Output/Step29/DADA2/first.shannon_vector.qza Output/Step29/DADA2/first.rarefied_table.qza Output/Step29/DADA2/first.weighted_unifrac_distance_matrix.qza Output/Step29/DADA2/first.jaccard_pcoa_results.qza Output/Step29/DADA2/first.weighted_unifrac_pcoa_results.qza Output/Step29/DADA2/first.observed_features_vector.qza Output/Step29/DADA2/first.jaccard_distance_matrix.qza Output/Step29/DADA2/first.evenness_vector.qza Output/Step29/DADA2/first.bray_curtis_distance_matrix.qza Output/Step29/DADA2/first.unweighted_unifrac_pcoa_results.qza Output/Step29/DADA2/first.unweighted_unifrac_emperor.qzv Output/Step29/DADA2/first.jaccard_emperor.qzv Output/Step29/DADA2/first.bray_curtis_emperor.qzv Output/Step29/DADA2/first.weighted_unifrac_emperor.qzv: Output/Step28/first.DADA2.rooted-tree.qza Output/DADA2/first.table.qza Output/Metadata/first.tsv | Output/Step29/DADA2 build.log
+	@echo "You have to check the sequencing depth manually!!"
+	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "8062" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step29/Deblur/first.faith_pd_vector.qza Output/Step29/Deblur/first.unweighted_unifrac_distance_matrix.qza Output/Step29/Deblur/first.bray_curtis_pcoa_results.qza Output/Step29/Deblur/first.shannon_vector.qza Output/Step29/Deblur/first.rarefied_table.qza Output/Step29/Deblur/first.weighted_unifrac_distance_matrix.qza Output/Step29/Deblur/first.jaccard_pcoa_results.qza Output/Step29/Deblur/first.weighted_unifrac_pcoa_results.qza Output/Step29/Deblur/first.observed_features_vector.qza Output/Step29/Deblur/first.jaccard_distance_matrix.qza Output/Step29/Deblur/first.evenness_vector.qza Output/Step29/Deblur/first.bray_curtis_distance_matrix.qza Output/Step29/Deblur/first.unweighted_unifrac_pcoa_results.qza Output/Step29/Deblur/first.unweighted_unifrac_emperor.qzv Output/Step29/Deblur/first.jaccard_emperor.qzv Output/Step29/Deblur/first.bray_curtis_emperor.qzv Output/Step29/Deblur/first.weighted_unifrac_emperor.qzv: Output/Step28/first.Deblur.rooted-tree.qza Output/Deblur/first.table.qza Output/Metadata/first.tsv | Output/Step29/Deblur build.log
+	@echo "You have to check the sequencing depth manually!!"
+	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "7239" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step29-depth: Output/Step29/first.DADA2.table.qzv Output/Step29/first.DADA2.seq.qzv Output/Step29/first.Deblur.table.qzv Output/Step29/first.Deblur.seq.qzv
+step29: Output/Step29/DADA2/first.faith_pd_vector.qza Output/Step29/Deblur/first.faith_pd_vector.qza
+.PHONY: step29-depth step29
