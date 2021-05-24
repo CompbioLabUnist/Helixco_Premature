@@ -300,13 +300,13 @@ step09: Output/TSV/first.DADA2.gg.tsv Output/TSV/first.DADA2.silva.tsv Output/TS
 .PHONY: step09
 
 # Step 10 (Select & Clearify TSV)
-Output/TSV/site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
+Output/TSV/Site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
+Output/TSV/Premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step10: Output/TSV/site.DADA2.gg.tar.gz Output/TSV/site.DADA2.silva.tar.gz Output/TSV/site.Deblur.gg.tar.gz Output/TSV/site.Deblur.silva.tar.gz
+step10: Output/TSV/Site.DADA2.gg.tar.gz Output/TSV/Site.DADA2.silva.tar.gz Output/TSV/Site.Deblur.gg.tar.gz Output/TSV/Site.Deblur.silva.tar.gz Output/TSV/Premature.DADA2.gg.tar.gz Output/TSV/Premature.DADA2.silva.tar.gz Output/TSV/Premature.Deblur.gg.tar.gz Output/TSV/Premature.Deblur.silva.tar.gz
 .PHONY: step10
 
 # Step 11 (Making t-SNE)
@@ -316,14 +316,14 @@ Output/TSNE:
 Output/TSNE/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/TSNE build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step11: Output/TSNE/site.DADA2.gg.tar.gz Output/TSNE/site.DADA2.silva.tar.gz Output/TSNE/site.Deblur.gg.tar.gz Output/TSNE/site.Deblur.silva.tar.gz
+step11: Output/TSNE/Site.DADA2.gg.tar.gz Output/TSNE/Site.DADA2.silva.tar.gz Output/TSNE/Site.Deblur.gg.tar.gz Output/TSNE/Site.Deblur.silva.tar.gz Output/TSNE/Premature.DADA2.gg.tar.gz Output/TSNE/Premature.DADA2.silva.tar.gz Output/TSNE/Premature.Deblur.gg.tar.gz Output/TSNE/Premature.Deblur.silva.tar.gz
 .PHONY: step11
 
 # Step 12 (Draw t-SNE)
 Output/TSNE/%.pdf: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step12: Output/TSNE/site.DADA2.gg.pdf Output/TSNE/premature.DADA2.gg.pdf Output/TSNE/site.DADA2.silva.pdf Output/TSNE/premature.DADA2.silva.pdf Output/TSNE/site.Deblur.gg.pdf Output/TSNE/premature.Deblur.gg.pdf Output/TSNE/site.Deblur.silva.pdf Output/TSNE/premature.Deblur.silva.pdf
+step12: Output/TSNE/Site.DADA2.gg.pdf Output/TSNE/Premature.DADA2.gg.pdf Output/TSNE/Site.DADA2.silva.pdf Output/TSNE/Premature.DADA2.silva.pdf Output/TSNE/Site.Deblur.gg.pdf Output/TSNE/Premature.Deblur.gg.pdf Output/TSNE/Site.Deblur.silva.pdf Output/TSNE/Premature.Deblur.silva.pdf
 .PHONY: step12
 
 # Step 21 (Read & clearify first TSV into pandas)
