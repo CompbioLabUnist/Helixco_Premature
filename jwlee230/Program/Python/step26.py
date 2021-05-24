@@ -2,65 +2,67 @@
 step26.py: RandomForest Classifier
 """
 import argparse
+import itertools
 import tarfile
 import typing
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import seaborn
 import sklearn.ensemble
 import sklearn.manifold
 import sklearn.model_selection
 import sklearn.tree
+import statannot
 import pandas
 import step00
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("train", type=str, nargs=1, help="Train TAR.gz file")
-    parser.add_argument("normal", type=str, nargs=1, help="Normal TAR.gz file")
-    parser.add_argument("premature", type=str, nargs=1, help="premature TAR.gz file")
-    parser.add_argument("meta", type=str, nargs=1, help="Metadata TSV file")
-    parser.add_argument("output", type=str, nargs=1, help="Output basename")
-    parser.add_argument("--cpu", type=int, default=1, help="CPU to use")
+    parser.add_argument("input", type=str, help="Train TAR.gz file")
+    parser.add_argument("metadata", type=str, help="Metadata TSV file")
+    parser.add_argument("output", type=str, help="Output basename")
+    parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
     args = parser.parse_args()
 
-    if args.cpu < 1:
-        raise ValueError("CPU must be greater than zero!!")
-    elif not args.meta[0].endswith(".tsv"):
+    if args.cpus < 1:
+        raise ValueError("CPUS must be greater than zero!!")
+    elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
-    elif not args.output[0].endswith(".tar"):
+    elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .tar!!")
 
     matplotlib.use("Agg")
-    matplotlib.rcParams.update({"font.size": 30})
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     tar_files: typing.List[str] = list()
 
-    helixco_data = step00.read_pickle(args.train[0])
-    normal_data = step00.read_pickle(args.normal[0])
-    premature_data = step00.read_pickle(args.premature[0])
-    metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
+    input_data = step00.read_pickle(args.input)
+    taxa = list(input_data.columns)
+    print(input_data)
 
-    intersect_columns = sorted(set(helixco_data.columns) & set(normal_data.columns) & set(premature_data.columns))
-    helixco_data = helixco_data[intersect_columns]
-    normal_data = normal_data[intersect_columns]
-    premature_data = premature_data[intersect_columns]
+    metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1])
+    print(metadata)
 
-    helixco_data["Answer"] = list(metadata["premature"])
-    normal_data["Answer"] = "Normal"
-    premature_data["Answer"] = "Premature"
+    input_data["Detail_Premature"] = list(metadata["Detail_Premature"])
 
     # Get Feature Importances
-    classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpu, random_state=0)
-    classifier.fit(helixco_data[intersect_columns], helixco_data["Answer"])
+    classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0)
+    classifier.fit(input_data[taxa], input_data["Detail_Premature"])
     feature_importances = classifier.feature_importances_
-    best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, intersect_columns))), reverse=True)))
+    best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, taxa))), reverse=True)))
 
     # Draw Feature Importances
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     seaborn.distplot(list(filter(lambda x: x > 0, feature_importances)), hist=True, kde=False, rug=True, ax=ax)
+
     matplotlib.pyplot.title("Feature Importances by Feature Counts")
     matplotlib.pyplot.xlabel("Feature Importances")
     matplotlib.pyplot.ylabel("Counts")
@@ -75,7 +77,7 @@ if __name__ == "__main__":
         print(len(best_features), "features!!")
 
         flag = False
-        classifier.fit(helixco_data[best_features], helixco_data["Answer"])
+        classifier.fit(input_data[best_features], input_data["Detail_Premature"])
         feature_importances = classifier.feature_importances_
         best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, best_features))), reverse=True)))
 
@@ -87,27 +89,48 @@ if __name__ == "__main__":
     test_scores = list()
     for i in range(1, len(best_features) + 1):
         print("With", i, "/", len(best_features), "features!!")
-        used_columns = intersect_columns[:i]
-        for j, (train_index, test_index) in enumerate(k_fold.split(helixco_data[used_columns], helixco_data["Answer"])):
-            x_train, x_test = helixco_data.iloc[train_index][used_columns], helixco_data.iloc[test_index][used_columns]
-            y_train, y_test = helixco_data.iloc[train_index]["Answer"], helixco_data.iloc[test_index]["Answer"]
+        used_columns = taxa[:i]
+        for j, (train_index, test_index) in enumerate(k_fold.split(input_data[used_columns], input_data["Detail_Premature"])):
+            x_train, x_test = input_data.iloc[train_index][used_columns], input_data.iloc[test_index][used_columns]
+            y_train, y_test = input_data.iloc[train_index]["Detail_Premature"], input_data.iloc[test_index]["Detail_Premature"]
 
             classifier.fit(x_train, y_train)
-            test_scores.append(("Helixco", i, classifier.score(x_test, y_test)))
-            test_scores.append(("EBI", i, classifier.score(normal_data[used_columns], normal_data["Answer"])))
-            test_scores.append(("HMP", i, classifier.score(premature_data[used_columns], premature_data["Answer"])))
+
+            for metric in step00.derivations:
+                test_scores.append(("First", i, metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
 
     # Draw K-fold
-    score_data = pandas.DataFrame.from_records(test_scores, columns=["Database", "Features", "Accuracy"])
-    seaborn.set(context="poster", style="whitegrid")
+    score_data = pandas.DataFrame.from_records(test_scores, columns=["Database", "Features", "Metrics", "Values"])
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
-    seaborn.lineplot(data=score_data, x="Features", y="Accuracy", hue="Database", style="Database", ax=ax)
+    seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
     matplotlib.pyplot.grid(True)
-    tar_files.append("accuracy.png")
+    matplotlib.pyplot.ylim(0, 1)
+    tar_files.append("metrics.png")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
+    orders = ["NonlatePremature", "LatePremature", "Normal"]
+
+    for i, feature in enumerate(taxa):
+        matplotlib.use("Agg")
+        matplotlib.rcParams.update(step00.matplotlib_parameters)
+        seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+        seaborn.violinplot(data=input_data, x="Detail_Premature", y=feature, order=orders, ax=ax, inner="box")
+        statannot.add_stat_annotation(ax, data=input_data, x="Detail_Premature", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0)
+
+        matplotlib.pyplot.title(" ".join(list(map(lambda x: x[3:], step00.consistency_taxonomy(feature).split("; ")))[5:]))
+        matplotlib.pyplot.ylabel("")
+
+        tar_files.append("Violin_" + str(i) + ".png")
+        fig.savefig(tar_files[-1])
+        matplotlib.pyplot.close(fig)
+
     # Save data
-    with tarfile.open(args.output[0], "w") as tar:
+    with tarfile.open(args.output, "w") as tar:
         for file_name in tar_files:
             tar.add(file_name, arcname=file_name)

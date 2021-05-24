@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step09 step10 step11 step12 step21 step22
+latest: step01 step02 step03 step04 step05 step06 step07 step09 step10 step11 step12 step21 step22 step26
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -397,8 +397,8 @@ step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/week
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar: Python/step26.py Output/TSV/helixco.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/first.tsv | Output/Step26 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Step26/RF.%.tar: Python/step26.py Output/TSV/first.%.tar.gz Output/Metadata/first.tsv | Output/Step26 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
 .PHONY: step26

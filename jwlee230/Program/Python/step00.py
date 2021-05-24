@@ -8,9 +8,11 @@ import pickle
 import tarfile
 import tempfile
 import typing
+import numpy
 
 key = bytes("asdf", "UTF-8")
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 300}
+derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -84,3 +86,34 @@ def consistency_taxonomy(taxonomy: str) -> str:
     consistency_taxonomy: make taxonomy information with consistency
     """
     return ";".join(list(map(lambda x: x.strip(), taxonomy.split(";"))))
+
+
+def simplified_taxonomy(taxonomy: str) -> str:
+    """
+    simplified_taxonomy: simplified taxonomy information for file name
+    """
+    return "_".join(list(filter(lambda x: x, list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";"))))))
+
+
+def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:
+    """
+    aggregate_confusion_matrix: derivations from confusion matrix
+    """
+
+    assert (derivation in derivations)
+    assert confusion_matrix.shape == (2, 2)
+
+    TP, FP, FN, TN = confusion_matrix[0][0], confusion_matrix[0][1], confusion_matrix[1][0], confusion_matrix[1][1]
+
+    if derivation == "Sensitivity":
+        return TP / (TP + FN)
+    elif derivation == "Specificity":
+        return TN / (TN + FP)
+    elif derivation == "Precision":
+        return TP / (TP + FP)
+    elif derivation == "Accuracy":
+        return (TP + TN) / (TP + TN + FP + FN)
+    elif derivation == "Balanced_Accuracy":
+        return TP / 2 * (TP + FN) + TN / 2 * (TN + FP)
+    else:
+        raise Exception("Something went wrong!!")
