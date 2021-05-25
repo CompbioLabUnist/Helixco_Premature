@@ -220,7 +220,7 @@ Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.
 	$(DOCKER) python3 $(addprefix /,$^)
 
 Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^)
+	$(DOCKER) python3 $(addprefix /,$^) > $@
 
 step07: Output/Metadata/first.tsv Output/Metadata/everything.tsv
 .PHONY: step07
