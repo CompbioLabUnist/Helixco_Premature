@@ -75,8 +75,8 @@ Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) 
 Output/Manifest/Stool.tsv: Python/step01-4.py $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-Output/Manifest/everything.tsv: Python/step01-5.py $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$<) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
+Output/Manifest/everything.tsv: Python/step01-5.py Data/Metadata/readable.xlsx $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
 
 step01: Output/Manifest/first.tsv Output/Manifest/second.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv Output/Manifest/Stool.tsv Output/Manifest/everything.tsv
 .PHONY: step01
@@ -203,7 +203,7 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/second.DADA2.silva.qza Output/Taxonomy/second.DADA2.gg.qza Output/Taxonomy/second.Deblur.gg.qza Output/Taxonomy/second.Deblur.silva.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza
+step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/second.DADA2.silva.qza Output/Taxonomy/second.DADA2.gg.qza Output/Taxonomy/second.Deblur.gg.qza Output/Taxonomy/second.Deblur.silva.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza Output/Taxonomy/everything.DADA2.gg.qza Output/Taxonomy/everything.DADA2.silva.qza Output/Taxonomy/everything.Deblur.gg.qza Output/Taxonomy/everything.Deblur.silva.qza
 .PHONY: step06
 
 # Step 07 (Build Metadata)
@@ -219,7 +219,10 @@ Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJ
 Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/HN00145920/*.fastq.gz)) | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^)
 
-step07: Output/Metadata/first.tsv Output/Metadata/EBI.tsv
+Output/Metadata/everything.tsv: Python/step07-4.py Data/Metadata/first.xlsx Data/Metadata/second.xlsx Data/Metadata/third.xlsx Output/Demux/everything.qza | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^)
+
+step07: Output/Metadata/first.tsv Output/Metadata/everything.tsv
 .PHONY: step07
 
 # Step 08 (Run ANCOM)
