@@ -63,11 +63,11 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
     seaborn.distplot(list(filter(lambda x: x > 0, feature_importances)), hist=True, kde=False, rug=True, ax=ax)
 
-    matplotlib.pyplot.title("Feature Importances by Feature Counts")
+    matplotlib.pyplot.title("Feature Importances")
     matplotlib.pyplot.xlabel("Feature Importances")
-    matplotlib.pyplot.ylabel("Counts")
+    matplotlib.pyplot.ylabel("Features")
     matplotlib.pyplot.grid(True)
-    tar_files.append("importances.png")
+    tar_files.append("importances.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
@@ -108,12 +108,11 @@ if __name__ == "__main__":
     seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
-    tar_files.append("metrics.png")
+    tar_files.append("metrics.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
     orders = ["NonlatePremature", "LatePremature", "Normal"]
-
     for i, feature in enumerate(taxa):
         matplotlib.use("Agg")
         matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -123,10 +122,10 @@ if __name__ == "__main__":
         seaborn.violinplot(data=input_data, x="Detail_Premature", y=feature, order=orders, ax=ax, inner="box")
         statannot.add_stat_annotation(ax, data=input_data, x="Detail_Premature", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0, test="t-test_ind")
 
-        matplotlib.pyplot.title(" ".join(list(map(lambda x: x[3:], step00.consistency_taxonomy(feature).split("; ")))[5:]))
+        matplotlib.pyplot.title(step00.simplified_taxonomy(feature))
         matplotlib.pyplot.ylabel("")
 
-        tar_files.append("Violin_" + str(i) + ".png")
+        tar_files.append("Violin_" + str(i) + ".pdf")
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
