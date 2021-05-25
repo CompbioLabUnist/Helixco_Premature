@@ -26,6 +26,7 @@ if __name__ == "__main__":
     args.stool.sort()
 
     print("sample-id\tforward-absolute-filepath\treverse-absolute-filepath")
+    print("# Group-Mother-Newborn-Site")
 
     f1 = list(filter(lambda x: x.endswith("1.fastq.gz"), args.first))
     f2 = list(filter(lambda x: x.endswith("2.fastq.gz"), args.first))
@@ -39,7 +40,7 @@ if __name__ == "__main__":
         elif (len(name) == 2) and (name[1] in ["B1", "B3", "B5"]):
             name = "First-" + name[0] + "-0-" + name[1]
         elif len(name) == 2:
-            name = "First-M-" + "-".join(name)
+            name = "First-" + name[0] + "-Mother-" + name[1]
         else:
             raise Exception("Something went wrong!!")
 
@@ -54,7 +55,7 @@ if __name__ == "__main__":
         data = metadata.loc[(metadata["Sample"] == name[0]) & (metadata["ID"] == name[1]), :].to_numpy()[0]
 
         if data[1] == "Mother":
-            name = "Second-" + data[0] + "-M-" + data[2]
+            name = "Second-" + data[0] + "-Mother-" + data[2]
         else:
             name = "Second-" + "-".join(data[:3])
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
         data = metadata.loc[(metadata["Sample"] == name[0]) & (metadata["ID"] == name[1]), :].to_numpy()[0]
 
         if data[1] == "Mother":
-            name = "Third-" + data[0] + "-M-" + data[2]
+            name = "Third-" + data[0] + "-Mother-" + data[2]
         else:
             name = "Third-" + "-".join(data[:3])
 

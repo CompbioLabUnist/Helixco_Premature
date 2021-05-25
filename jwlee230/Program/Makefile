@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 CPUS = 50
-MEMS = 100G
+MEMS = 300G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -219,7 +219,7 @@ Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJ
 Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/HN00145920/*.fastq.gz)) | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^)
 
-Output/Metadata/everything.tsv: Python/step07-4.py Data/Metadata/first.xlsx Data/Metadata/second.xlsx Data/Metadata/third.xlsx Output/Demux/everything.qza | Output/Metadata build.log
+Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^)
 
 step07: Output/Metadata/first.tsv Output/Metadata/everything.tsv
