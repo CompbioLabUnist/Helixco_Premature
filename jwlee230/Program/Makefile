@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step28 step29-depth
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step28 step29-depth
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -339,10 +339,10 @@ step10: Output/TSV/Site.DADA2.gg.tar.gz Output/TSV/Site.DADA2.silva.tar.gz Outpu
 Output/TSNE:
 	mkdir -p $@
 
-Output/TSNE/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/TSNE build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/TSNE/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/TSNE build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step11: Output/TSNE/Site.DADA2.gg.tar.gz Output/TSNE/Site.DADA2.silva.tar.gz Output/TSNE/Site.Deblur.gg.tar.gz Output/TSNE/Site.Deblur.silva.tar.gz Output/TSNE/Premature.DADA2.gg.tar.gz Output/TSNE/Premature.DADA2.silva.tar.gz Output/TSNE/Premature.Deblur.gg.tar.gz Output/TSNE/Premature.Deblur.silva.tar.gz
+step11: Output/TSNE/everything.DADA2.gg.tar.gz Output/TSNE/everything.DADA2.silva.tar.gz Output/TSNE/everything.Deblur.gg.tar.gz Output/TSNE/everything.Deblur.silva.tar.gz
 .PHONY: step11
 
 # Step 12 (Draw t-SNE)
