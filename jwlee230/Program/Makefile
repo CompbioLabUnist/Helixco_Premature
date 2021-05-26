@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step28 step29-depth
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step22 step28 step29-depth
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -335,16 +335,6 @@ Output/TSV/Premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.l
 step10: Output/TSV/Site.DADA2.gg.tar.gz Output/TSV/Site.DADA2.silva.tar.gz Output/TSV/Site.Deblur.gg.tar.gz Output/TSV/Site.Deblur.silva.tar.gz Output/TSV/Premature.DADA2.gg.tar.gz Output/TSV/Premature.DADA2.silva.tar.gz Output/TSV/Premature.Deblur.gg.tar.gz Output/TSV/Premature.Deblur.silva.tar.gz
 .PHONY: step10
 
-# Step 11 (Making t-SNE)
-Output/TSNE:
-	mkdir -p $@
-
-Output/TSNE/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/TSNE build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step11: Output/TSNE/everything.DADA2.gg.tar.gz Output/TSNE/everything.DADA2.silva.tar.gz Output/TSNE/everything.Deblur.gg.tar.gz Output/TSNE/everything.Deblur.silva.tar.gz
-.PHONY: step11
-
 # Step 12 (Draw t-SNE)
 Output/TSNE/%.pdf: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -353,41 +343,23 @@ step12: Output/TSNE/Site.DADA2.gg.pdf Output/TSNE/Premature.DADA2.gg.pdf Output/
 .PHONY: step12
 
 # Step 21 (Read & clearify first TSV into pandas)
-Output/TSV/first.%.tar.gz: Python/step21.py Output/TSV/first.%.tsv | build.log
+Output/TSV/everything.%.merge.tsv: Python/step21.py Output/TSV/everything.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/second.%.tar.gz: Python/step21.py Output/TSV/second.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/Stool.%.tar.gz: Python/step21.py Output/TSV/Stool.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/HMP.%.tar.gz: Python/step21.py Output/TSV/HMP.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/everything.%.tar.gz: Python/step21.py Output/TSV/everything.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz
+step21: Output/TSV/everything.DADA2.gg.merge.tsv Output/TSV/everything.DADA2.silva.merge.tsv Output/TSV/everything.Deblur.gg.merge.tsv Output/TSV/everything.Deblur.silva.merge.tsv
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
 Output/Step22:
 	mkdir -p $@
 
-Output/Step22/%.tar.gz: Python/step11.py Output/TSV/%.tar.gz | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Step22/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step22/%.pdf: Python/step22.py Output/Step22/%.tar.gz | build.log
+Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step22/DB.%.pdf: Python/step22-2.py Output/TSV/first.%.tar.gz Output/TSV/second.%.tar.gz Output/TSV/Stool.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step22: Output/Step22/DB.DADA2.gg.pdf Output/Step22/DB.DADA2.silva.pdf Output/Step22/DB.Deblur.gg.pdf Output/Step22/DB.Deblur.silva.pdf
+step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar
 .PHONY: step22
 
 # Step 23 (Draw histogram)
@@ -473,11 +445,11 @@ Output/Step29/%.Deblur.seq.qzv: Output/Deblur/%.seq.qza | Output/Step29 build.lo
 
 Output/Step29/DADA2/everything.faith_pd_vector.qza Output/Step29/DADA2/everything.unweighted_unifrac_distance_matrix.qza Output/Step29/DADA2/everything.bray_curtis_pcoa_results.qza Output/Step29/DADA2/everything.shannon_vector.qza Output/Step29/DADA2/everything.rarefied_table.qza Output/Step29/DADA2/everything.weighted_unifrac_distance_matrix.qza Output/Step29/DADA2/everything.jaccard_pcoa_results.qza Output/Step29/DADA2/everything.weighted_unifrac_pcoa_results.qza Output/Step29/DADA2/everything.observed_features_vector.qza Output/Step29/DADA2/everything.jaccard_distance_matrix.qza Output/Step29/DADA2/everything.evenness_vector.qza Output/Step29/DADA2/everything.bray_curtis_distance_matrix.qza Output/Step29/DADA2/everything.unweighted_unifrac_pcoa_results.qza Output/Step29/DADA2/everything.unweighted_unifrac_emperor.qzv Output/Step29/DADA2/everything.jaccard_emperor.qzv Output/Step29/DADA2/everything.bray_curtis_emperor.qzv Output/Step29/DADA2/everything.weighted_unifrac_emperor.qzv: Output/Step28/everything.DADA2.rooted-tree.qza Output/DADA2/everything.table.qza Output/Metadata/everything.tsv | Output/Step29/DADA2 build.log
 	@echo "You have to check the sequencing depth manually!!"
-	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "8062" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "1046" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step29/Deblur/everything.faith_pd_vector.qza Output/Step29/Deblur/everything.unweighted_unifrac_distance_matrix.qza Output/Step29/Deblur/everything.bray_curtis_pcoa_results.qza Output/Step29/Deblur/everything.shannon_vector.qza Output/Step29/Deblur/everything.rarefied_table.qza Output/Step29/Deblur/everything.weighted_unifrac_distance_matrix.qza Output/Step29/Deblur/everything.jaccard_pcoa_results.qza Output/Step29/Deblur/everything.weighted_unifrac_pcoa_results.qza Output/Step29/Deblur/everything.observed_features_vector.qza Output/Step29/Deblur/.jaccard_distance_matrix.qza Output/Step29/Deblur/everything.evenness_vector.qza Output/Step29/Deblur/everything.bray_curtis_distance_matrix.qza Output/Step29/Deblur/everything.unweighted_unifrac_pcoa_results.qza Output/Step29/Deblur/everything.unweighted_unifrac_emperor.qzv Output/Step29/Deblur/everything.jaccard_emperor.qzv Output/Step29/Deblur/everything.bray_curtis_emperor.qzv Output/Step29/Deblur/everything.weighted_unifrac_emperor.qzv: Output/Step28/everything.Deblur.rooted-tree.qza Output/Deblur/everything.table.qza Output/Metadata/everything.tsv | Output/Step29/Deblur build.log
 	@echo "You have to check the sequencing depth manually!!"
-	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "7239" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "4864" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step29-depth: Output/Step29/everything.DADA2.table.qzv Output/Step29/everything.DADA2.seq.qzv Output/Step29/everything.Deblur.table.qzv Output/Step29/everything.Deblur.seq.qzv
 step29: Output/Step29/DADA2/everything.faith_pd_vector.qza Output/Step29/Deblur/everything.faith_pd_vector.qza
@@ -495,4 +467,4 @@ Output/Step30/Deblur/%.tsv: Output/Step29/Deblur/%_vector.qza | Output/Step30/De
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $@.stdout 2> $@.stderr
 	$(DOCKER) mv -f $(addprefix /,$(@D))/alpha-diversity.tsv $(addprefix /,$@)
 
-step30: Output/Step30/DADA2/first.evenness.tsv Output/Step30/DADA2/first.faith_pd.tsv Output/Step30/DADA2/first.d
+step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv

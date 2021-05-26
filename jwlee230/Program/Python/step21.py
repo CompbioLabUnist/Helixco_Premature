@@ -3,22 +3,20 @@ step21.py: Read & Clearify raw TSV into pandas
 """
 import argparse
 import pandas
-import step00
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Input TSV file", type=str, nargs=1)
-    parser.add_argument("output", help="Output TAR.gz file", type=str, nargs=1)
+    parser.add_argument("input", help="Input TSV file", type=str)
+    parser.add_argument("output", help="Output TSV file", type=str)
 
     args = parser.parse_args()
 
-    raw_data = pandas.read_csv(args.input[0], sep="\t", skiprows=1).set_index(keys=["taxonomy", "#OTU ID"], verify_integrity=True).T
+    raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
+    print(raw_data)
 
-    data = pandas.DataFrame()
-    taxonomy_list = sorted(set(map(lambda x: x[0], raw_data.columns)))
-    for taxonomy in taxonomy_list:
-        data[taxonomy] = raw_data[list(filter(lambda x: x[0] == taxonomy, raw_data.columns))].sum(axis=1)
+    output_data = raw_data.groupby(["taxonomy"]).mean()
+    print(output_data)
 
-    step00.make_pickle(args.output[0], data)
+    output_data.to_csv(args.output, sep="\t")
