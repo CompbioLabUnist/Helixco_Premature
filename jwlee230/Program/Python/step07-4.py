@@ -3,6 +3,7 @@ step07-4.py: make metadata for everything
 """
 import argparse
 import pandas
+import step00
 
 metadata = pandas.DataFrame()
 
@@ -44,8 +45,6 @@ if __name__ == "__main__":
     elif not args.info.endswith(".xlsx"):
         raise ValueError("INFO file must end with .XLSX!!")
 
-    numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day"}
-
     input_data = pandas.read_csv(args.input, sep="\t", comment="#")
     metadata = pandas.read_excel(args.info, sheet_name=0, dtype=str)
     metadata["ID"] = list(map(lambda x: "-".join(x), zip(metadata["Data"], metadata["Mother"], metadata["Newborn"])))
@@ -63,6 +62,6 @@ if __name__ == "__main__":
     del data["ID"]
 
     print("\t".join(data.columns))
-    print("#q2:types", "\t".join(list(map(lambda x: "numeric" if x in numeric_columns else "categorical", list(data.columns)[1:]))), sep="\t")
+    print("#q2:types", "\t".join(list(map(lambda x: "numeric" if x in step00.numeric_columns else "categorical", list(data.columns)[1:]))), sep="\t")
     for index, row in data.iterrows():
         print("\t".join(list(map(str, row))))

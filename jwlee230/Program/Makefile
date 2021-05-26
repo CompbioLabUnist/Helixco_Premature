@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step09 step10 step11 step12 step21 step22 step26
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step28 step29-depth
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -75,7 +75,7 @@ Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) 
 Output/Manifest/Stool.tsv: Python/step01-4.py $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-Output/Manifest/everything.tsv: Python/step01-5.py Data/Metadata/readable.xlsx $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) | Output/Manifest build.log
+Output/Manifest/everything.tsv: Python/step01-5.py Data/Metadata/readable.xlsx $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
 	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
 
 step01: Output/Manifest/first.tsv Output/Manifest/second.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv Output/Manifest/Stool.tsv Output/Manifest/everything.tsv
@@ -241,41 +241,44 @@ Output/ANCOM/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur
 Output/ANCOM/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Taxonomy/%.Deblur.silva.qza | Output/ANCOM build.log
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/ANCOM/everything.%.Mouth.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site]='Mouth'" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/everything.%.Cervix.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site]='Cervix'" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/everything.%.Vagina.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site]='Vagina'" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/everything.%.Baby.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site] IN ('Baby-1day', 'Baby-3day', 'Baby-5day')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/ANCOM/everything.%.Stool.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site] IN ('Stool-1day', 'Stool-3day', 'Stool-5day')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/first.%.Site.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.Premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
+Output/ANCOM/everything.%.PTB.qzv: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/ANCOM/%.Detail_Premature.qzv: Output/ANCOM/%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Detail_Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/first.%.C-section.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "C-section" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/first.%.PROM.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "PROM" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/first.%.Steroid.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Steroid" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/first.%.Antibiotic.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Antibiotic" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/ANCOM/everything.%.Detail_PTB.qzv: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Detail Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%/ancom.tsv Output/ANCOM/%/data.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D))
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/ANCOM/%.pdf: Python/step08.py Output/ANCOM/%/ancom.tsv Output/ANCOM/%/data.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step08-DADA2-gg: Output/ANCOM/first.DADA2.gg.qza Output/ANCOM/first.DADA2.gg.pseudocount.qza Output/ANCOM/first.DADA2.gg.Site.qzv Output/ANCOM/first.DADA2.gg.Site/ancom.tsv Output/ANCOM/first.DADA2.gg.Site.pdf Output/ANCOM/first.DADA2.gg.Site.pdf Output/ANCOM/first.DADA2.gg.Premature.qzv Output/ANCOM/first.DADA2.gg.Premature/ancom.tsv Output/ANCOM/first.DADA2.gg.Premature.pdf Output/ANCOM/first.DADA2.gg.Detail_Premature.qzv Output/ANCOM/first.DADA2.gg.Detail_Premature/ancom.tsv Output/ANCOM/first.DADA2.gg.Detail_Premature.pdf Output/ANCOM/first.DADA2.gg.PROM.qzv Output/ANCOM/first.DADA2.gg.PROM/ancom.tsv Output/ANCOM/first.DADA2.gg.PROM.pdf Output/ANCOM/first.DADA2.gg.C-section.qzv Output/ANCOM/first.DADA2.gg.C-section/ancom.tsv Output/ANCOM/first.DADA2.gg.C-section.pdf Output/ANCOM/first.DADA2.gg.Steroid.qzv Output/ANCOM/first.DADA2.gg.Steroid/ancom.tsv Output/ANCOM/first.DADA2.gg.Steroid.pdf Output/ANCOM/first.DADA2.gg.Antibiotic.qzv Output/ANCOM/first.DADA2.gg.Antibiotic/ancom.tsv Output/ANCOM/first.DADA2.gg.Antibiotic.pdf
-step08-DADA2-silva: Output/ANCOM/first.DADA2.silva.qza Output/ANCOM/first.DADA2.silva.pseudocount.qza Output/ANCOM/first.DADA2.silva.Site.qzv Output/ANCOM/first.DADA2.silva.Site/ancom.tsv Output/ANCOM/first.DADA2.silva.Site.pdf Output/ANCOM/first.DADA2.silva.Premature.qzv Output/ANCOM/first.DADA2.silva.Premature/ancom.tsv Output/ANCOM/first.DADA2.silva.Premature.pdf Output/ANCOM/first.DADA2.silva.Detail_Premature.qzv Output/ANCOM/first.DADA2.silva.Detail_Premature/ancom.tsv Output/ANCOM/first.DADA2.silva.Detail_Premature.pdf Output/ANCOM/first.DADA2.silva.PROM.qzv Output/ANCOM/first.DADA2.silva.PROM/ancom.tsv Output/ANCOM/first.DADA2.silva.PROM.pdf Output/ANCOM/first.DADA2.silva.C-section.qzv Output/ANCOM/first.DADA2.silva.C-section/ancom.tsv Output/ANCOM/first.DADA2.silva.C-section.pdf Output/ANCOM/first.DADA2.silva.Steroid.qzv Output/ANCOM/first.DADA2.silva.Steroid/ancom.tsv Output/ANCOM/first.DADA2.silva.Steroid.pdf Output/ANCOM/first.DADA2.silva.Antibiotic.qzv Output/ANCOM/first.DADA2.silva.Antibiotic/ancom.tsv Output/ANCOM/first.DADA2.silva.Antibiotic.pdf
-step08-Deblur-gg: Output/ANCOM/first.Deblur.gg.qza Output/ANCOM/first.Deblur.gg.pseudocount.qza Output/ANCOM/first.Deblur.gg.Site.qzv Output/ANCOM/first.Deblur.gg.Site/ancom.tsv Output/ANCOM/first.Deblur.gg.Site.pdf Output/ANCOM/first.Deblur.gg.Premature.qzv Output/ANCOM/first.Deblur.gg.Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.Premature.pdf Output/ANCOM/first.Deblur.gg.Detail_Premature.qzv Output/ANCOM/first.Deblur.gg.Detail_Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.Detail_Premature.pdf Output/ANCOM/first.Deblur.gg.PROM.qzv Output/ANCOM/first.Deblur.gg.PROM/ancom.tsv Output/ANCOM/first.Deblur.gg.PROM.pdf Output/ANCOM/first.Deblur.gg.C-section.qzv Output/ANCOM/first.Deblur.gg.C-section/ancom.tsv Output/ANCOM/first.Deblur.gg.C-section.pdf Output/ANCOM/first.Deblur.gg.Steroid.qzv Output/ANCOM/first.Deblur.gg.Steroid/ancom.tsv Output/ANCOM/first.Deblur.gg.Steroid.pdf Output/ANCOM/first.Deblur.gg.Antibiotic.qzv Output/ANCOM/first.Deblur.gg.Antibiotic/ancom.tsv Output/ANCOM/first.Deblur.gg.Antibiotic.pdf
-step08-Deblur-silva: Output/ANCOM/first.Deblur.silva.qza Output/ANCOM/first.Deblur.silva.pseudocount.qza Output/ANCOM/first.Deblur.silva.Site.qzv Output/ANCOM/first.Deblur.silva.Site/ancom.tsv Output/ANCOM/first.Deblur.gg.Site.pdf Output/ANCOM/first.Deblur.silva.Premature.qzv Output/ANCOM/first.Deblur.silva.Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.Premature.pdf Output/ANCOM/first.Deblur.silva.Detail_Premature.qzv Output/ANCOM/first.Deblur.silva.Detail_Premature/ancom.tsv Output/ANCOM/first.Deblur.gg.Detail_Premature.pdf Output/ANCOM/first.Deblur.silva.PROM.qzv Output/ANCOM/first.Deblur.silva.PROM/ancom.tsv Output/ANCOM/first.Deblur.gg.PROM.pdf Output/ANCOM/first.Deblur.silva.C-section.qzv Output/ANCOM/first.Deblur.silva.C-section/ancom.tsv Output/ANCOM/first.Deblur.silva.Steroid.qzv Output/ANCOM/first.Deblur.silva.Steroid/ancom.tsv Output/ANCOM/first.Deblur.gg.Steroid.pdf Output/ANCOM/first.Deblur.silva.Antibiotic.qzv Output/ANCOM/first.Deblur.silva.Antibiotic/ancom.tsv Output/ANCOM/first.Deblur.gg.Antibiotic.pdf
+step08-DADA2-gg: Output/ANCOM/everything.DADA2.gg.qza Output/ANCOM/everything.DADA2.gg.Mouth.qza Output/ANCOM/everything.DADA2.gg.Cervix.qza Output/ANCOM/everything.DADA2.gg.Vagina.qza Output/ANCOM/everything.DADA2.gg.Baby.qza Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.pdf
+step08-DADA2-silva: 
+step08-Deblur-gg: 
+step08-Deblur-silva: 
 step08: step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 .PHONY: step08 step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 
@@ -313,7 +316,13 @@ Output/TSV/HMP.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/HMP.table.qza Outp
 Output/TSV/HMP.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/TSV/first.DADA2.gg.tsv Output/TSV/first.DADA2.silva.tsv Output/TSV/first.Deblur.gg.tsv Output/TSV/first.Deblur.silva.tsv Output/TSV/second.DADA2.gg.tsv  Output/TSV/second.DADA2.silva.tsv Output/TSV/second.Deblur.gg.tsv Output/TSV/second.Deblur.silva.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv
+Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv
 .PHONY: step09
 
 # Step 10 (Select & Clearify TSV)
@@ -359,7 +368,10 @@ Output/TSV/EBI.%.tar.gz: Python/step21.py Output/TSV/EBI.%.tsv | build.log
 Output/TSV/HMP.%.tar.gz: Python/step21.py Output/TSV/HMP.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/first.DADA2.gg.tar.gz Output/TSV/first.DADA2.silva.tar.gz Output/TSV/first.Deblur.gg.tar.gz Output/TSV/first.Deblur.silva.tar.gz Output/TSV/second.DADA2.gg.tar.gz Output/TSV/second.DADA2.silva.tar.gz Output/TSV/second.Deblur.gg.tar.gz Output/TSV/second.Deblur.silva.tar.gz Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz
+Output/TSV/everything.%.tar.gz: Python/step21.py Output/TSV/everything.%.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -440,7 +452,7 @@ Output/Step28/%.DADA2.aligned-rep-seqs.qza Output/Step28/%.DADA2.masked-aligned-
 Output/Step28/%.Deblur.aligned-rep-seqs.qza Output/Step28/%.Deblur.masked-aligned-rep-seqs.qza Output/Step28/%.Deblur.unrooted-tree.qza Output/Step28/%.Deblur.rooted-tree.qza: Output/Deblur/%.seq.qza | Output/Step28 build.log
 	$(DOCKER) qiime phylogeny align-to-tree-mafft-fasttree --i-sequences $(addprefix /,$<) --o-alignment $(addprefix /,$(basename $(basename $@))).aligned-rep-seqs.qza --o-masked-alignment $(addprefix /,$(basename $(basename $@))).masked-aligned-rep-seqs.qza --o-tree $(addprefix /,$(basename $(basename $@))).unrooted-tree.qza --o-rooted-tree $(addprefix /,$(basename $(basename $@))).rooted-tree.qza --p-n-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step28: Output/Step28/first.DADA2.rooted-tree.qza Output/Step28/second.DADA2.rooted-tree.qza Output/Step28/Stool.DADA2.rooted-tree.qza Output/Step28/first.Deblur.rooted-tree.qza Output/Step28/second.Deblur.rooted-tree.qza Output/Step28/Stool.Deblur.rooted-tree.qza
+step28: Output/Step28/everything.DADA2.rooted-tree.qza
 .PHONY: step28
 
 # Step 29 (Core phylogenetic metrics)
@@ -459,16 +471,16 @@ Output/Step29/%.Deblur.table.qzv: Output/Deblur/%.table.qza Output/Metadata/%.ts
 Output/Step29/%.Deblur.seq.qzv: Output/Deblur/%.seq.qza | Output/Step29 build.log
 	$(DOCKER) qiime feature-table tabulate-seqs --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step29/DADA2/first.faith_pd_vector.qza Output/Step29/DADA2/first.unweighted_unifrac_distance_matrix.qza Output/Step29/DADA2/first.bray_curtis_pcoa_results.qza Output/Step29/DADA2/first.shannon_vector.qza Output/Step29/DADA2/first.rarefied_table.qza Output/Step29/DADA2/first.weighted_unifrac_distance_matrix.qza Output/Step29/DADA2/first.jaccard_pcoa_results.qza Output/Step29/DADA2/first.weighted_unifrac_pcoa_results.qza Output/Step29/DADA2/first.observed_features_vector.qza Output/Step29/DADA2/first.jaccard_distance_matrix.qza Output/Step29/DADA2/first.evenness_vector.qza Output/Step29/DADA2/first.bray_curtis_distance_matrix.qza Output/Step29/DADA2/first.unweighted_unifrac_pcoa_results.qza Output/Step29/DADA2/first.unweighted_unifrac_emperor.qzv Output/Step29/DADA2/first.jaccard_emperor.qzv Output/Step29/DADA2/first.bray_curtis_emperor.qzv Output/Step29/DADA2/first.weighted_unifrac_emperor.qzv: Output/Step28/first.DADA2.rooted-tree.qza Output/DADA2/first.table.qza Output/Metadata/first.tsv | Output/Step29/DADA2 build.log
+Output/Step29/DADA2/everything.faith_pd_vector.qza Output/Step29/DADA2/everything.unweighted_unifrac_distance_matrix.qza Output/Step29/DADA2/everything.bray_curtis_pcoa_results.qza Output/Step29/DADA2/everything.shannon_vector.qza Output/Step29/DADA2/everything.rarefied_table.qza Output/Step29/DADA2/everything.weighted_unifrac_distance_matrix.qza Output/Step29/DADA2/everything.jaccard_pcoa_results.qza Output/Step29/DADA2/everything.weighted_unifrac_pcoa_results.qza Output/Step29/DADA2/everything.observed_features_vector.qza Output/Step29/DADA2/everything.jaccard_distance_matrix.qza Output/Step29/DADA2/everything.evenness_vector.qza Output/Step29/DADA2/everything.bray_curtis_distance_matrix.qza Output/Step29/DADA2/everything.unweighted_unifrac_pcoa_results.qza Output/Step29/DADA2/everything.unweighted_unifrac_emperor.qzv Output/Step29/DADA2/everything.jaccard_emperor.qzv Output/Step29/DADA2/everything.bray_curtis_emperor.qzv Output/Step29/DADA2/everything.weighted_unifrac_emperor.qzv: Output/Step28/everything.DADA2.rooted-tree.qza Output/DADA2/everything.table.qza Output/Metadata/everything.tsv | Output/Step29/DADA2 build.log
 	@echo "You have to check the sequencing depth manually!!"
 	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "8062" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step29/Deblur/first.faith_pd_vector.qza Output/Step29/Deblur/first.unweighted_unifrac_distance_matrix.qza Output/Step29/Deblur/first.bray_curtis_pcoa_results.qza Output/Step29/Deblur/first.shannon_vector.qza Output/Step29/Deblur/first.rarefied_table.qza Output/Step29/Deblur/first.weighted_unifrac_distance_matrix.qza Output/Step29/Deblur/first.jaccard_pcoa_results.qza Output/Step29/Deblur/first.weighted_unifrac_pcoa_results.qza Output/Step29/Deblur/first.observed_features_vector.qza Output/Step29/Deblur/first.jaccard_distance_matrix.qza Output/Step29/Deblur/first.evenness_vector.qza Output/Step29/Deblur/first.bray_curtis_distance_matrix.qza Output/Step29/Deblur/first.unweighted_unifrac_pcoa_results.qza Output/Step29/Deblur/first.unweighted_unifrac_emperor.qzv Output/Step29/Deblur/first.jaccard_emperor.qzv Output/Step29/Deblur/first.bray_curtis_emperor.qzv Output/Step29/Deblur/first.weighted_unifrac_emperor.qzv: Output/Step28/first.Deblur.rooted-tree.qza Output/Deblur/first.table.qza Output/Metadata/first.tsv | Output/Step29/Deblur build.log
+Output/Step29/Deblur/everything.faith_pd_vector.qza Output/Step29/Deblur/everything.unweighted_unifrac_distance_matrix.qza Output/Step29/Deblur/everything.bray_curtis_pcoa_results.qza Output/Step29/Deblur/everything.shannon_vector.qza Output/Step29/Deblur/everything.rarefied_table.qza Output/Step29/Deblur/everything.weighted_unifrac_distance_matrix.qza Output/Step29/Deblur/everything.jaccard_pcoa_results.qza Output/Step29/Deblur/everything.weighted_unifrac_pcoa_results.qza Output/Step29/Deblur/everything.observed_features_vector.qza Output/Step29/Deblur/.jaccard_distance_matrix.qza Output/Step29/Deblur/everything.evenness_vector.qza Output/Step29/Deblur/everything.bray_curtis_distance_matrix.qza Output/Step29/Deblur/everything.unweighted_unifrac_pcoa_results.qza Output/Step29/Deblur/everything.unweighted_unifrac_emperor.qzv Output/Step29/Deblur/everything.jaccard_emperor.qzv Output/Step29/Deblur/everything.bray_curtis_emperor.qzv Output/Step29/Deblur/everything.weighted_unifrac_emperor.qzv: Output/Step28/everything.Deblur.rooted-tree.qza Output/Deblur/everything.table.qza Output/Metadata/everything.tsv | Output/Step29/Deblur build.log
 	@echo "You have to check the sequencing depth manually!!"
 	$(DOCKER) qiime diversity core-metrics-phylogenetic --i-phylogeny $(addprefix /,$(word 1,$^)) --i-table $(addprefix /,$(word 2,$^)) --m-metadata-file $(addprefix /,$(word 3,$^)) --p-sampling-depth "7239" --o-rarefied-table $(addprefix /,$(basename $(basename $@))).rarefied_table.qza --o-faith-pd-vector $(addprefix /,$(basename $(basename $@))).faith_pd_vector.qza --o-observed-features-vector $(addprefix /,$(basename $(basename $@))).observed_features_vector.qza --o-shannon-vector $(addprefix /,$(basename $(basename $@))).shannon_vector.qza --o-evenness-vector $(addprefix /,$(basename $(basename $@))).evenness_vector.qza --o-unweighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_distance_matrix.qza --o-weighted-unifrac-distance-matrix $(addprefix /,$(basename $(basename $@))).weighted_unifrac_distance_matrix.qza --o-jaccard-distance-matrix $(addprefix /,$(basename $(basename $@))).jaccard_distance_matrix.qza --o-bray-curtis-distance-matrix $(addprefix /,$(basename $(basename $@))).bray_curtis_distance_matrix.qza --o-unweighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_pcoa_results.qza --o-weighted-unifrac-pcoa-results $(addprefix /,$(basename $(basename $@))).weighted_unifrac_pcoa_results.qza --o-unweighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).unweighted_unifrac_emperor.qzv --o-weighted-unifrac-emperor $(addprefix /,$(basename $(basename $@))).weighted_unifrac_emperor.qzv --o-jaccard-emperor $(addprefix /,$(basename $(basename $@))).jaccard_emperor.qzv --o-bray-curtis-emperor $(addprefix /,$(basename $(basename $@))).bray_curtis_emperor.qzv --o-jaccard-pcoa-results $(addprefix /,$(basename $(basename $@))).jaccard_pcoa_results.qza --o-bray-curtis-pcoa-results $(addprefix /,$(basename $(basename $@))).bray_curtis_pcoa_results.qza --p-n-jobs-or-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step29-depth: Output/Step29/first.DADA2.table.qzv Output/Step29/first.DADA2.seq.qzv Output/Step29/first.Deblur.table.qzv Output/Step29/first.Deblur.seq.qzv
-step29: Output/Step29/DADA2/first.faith_pd_vector.qza Output/Step29/Deblur/first.faith_pd_vector.qza
+step29-depth: Output/Step29/everything.DADA2.table.qzv Output/Step29/everything.DADA2.seq.qzv Output/Step29/everything.Deblur.table.qzv Output/Step29/everything.Deblur.seq.qzv
+step29: Output/Step29/DADA2/everything.faith_pd_vector.qza Output/Step29/Deblur/everything.faith_pd_vector.qza
 .PHONY: step29-depth step29
 
 # Step 30 (Alpha-diversity)
