@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step22 step26 step28 step29 step30
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30
 .PHONY: latest
 
 # Step 01 (Make manifest files)
