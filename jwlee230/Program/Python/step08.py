@@ -17,6 +17,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if not args.ancom.endswith(".tsv"):
+        raise ValueError("ANCOM file must end with .TSV!!")
+    elif not args.data.endswith(".tsv"):
+        raise ValueError("Data file must end with .TSV!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output file must end with .PDF!!")
+
     ancom_data = pandas.read_csv(args.ancom, sep="\t", names=["id", "W", "Reject null hypothesis"], usecols=["id", "Reject null hypothesis"], header=0, index_col="id")
     print(ancom_data)
 

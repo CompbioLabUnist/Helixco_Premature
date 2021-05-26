@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 50
+CPUS = 20
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS = 
@@ -325,23 +325,6 @@ Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everythin
 step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv
 .PHONY: step09
 
-# Step 10 (Select & Clearify TSV)
-Output/TSV/Site.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/Premature.%.tar.gz: Python/step10.py Output/TSV/first.%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^) $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-step10: Output/TSV/Site.DADA2.gg.tar.gz Output/TSV/Site.DADA2.silva.tar.gz Output/TSV/Site.Deblur.gg.tar.gz Output/TSV/Site.Deblur.silva.tar.gz Output/TSV/Premature.DADA2.gg.tar.gz Output/TSV/Premature.DADA2.silva.tar.gz Output/TSV/Premature.Deblur.gg.tar.gz Output/TSV/Premature.Deblur.silva.tar.gz
-.PHONY: step10
-
-# Step 12 (Draw t-SNE)
-Output/TSNE/%.pdf: Python/step12.py Output/TSNE/%.tar.gz Output/Metadata/first.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-step12: Output/TSNE/Site.DADA2.gg.pdf Output/TSNE/Premature.DADA2.gg.pdf Output/TSNE/Site.DADA2.silva.pdf Output/TSNE/Premature.DADA2.silva.pdf Output/TSNE/Site.Deblur.gg.pdf Output/TSNE/Premature.Deblur.gg.pdf Output/TSNE/Site.Deblur.silva.pdf Output/TSNE/Premature.Deblur.silva.pdf
-.PHONY: step12
-
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/everything.%.merge.tsv: Python/step21.py Output/TSV/everything.%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -467,4 +450,11 @@ Output/Step30/Deblur/%.tsv: Output/Step29/Deblur/%_vector.qza | Output/Step30/De
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $@.stdout 2> $@.stderr
 	$(DOCKER) mv -f $(addprefix /,$(@D))/alpha-diversity.tsv $(addprefix /,$@)
 
-step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv
+step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv
+.PHONY: step30
+
+# Step 31 (Violin plots from ANCOM)
+Output/ANCOM/everything.DADA2.gg.%.tar: Python/step31.py Output/ANCOM/everything.DADA2.gg.%/ancom.tsv Output/TSV/everything.DADA2.gg.merge.tsv Output/Metadata/everything.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@)
+
+step31: Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar# Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.tar
