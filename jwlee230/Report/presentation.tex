@@ -416,85 +416,79 @@
     \begin{frame}
         \frametitle{ANCOM with ...}
 
-        \begin{itemize}
-            \item Site where get the microbiome
-            \item Premature -- Before 37 weeks and After 37 weeks
-            \item Detailed Premature -- Before 34 weeks, After 37 weeks, and the other
-            \item C-section
-            \item PROM -- Premature rupture of membranes
-            \item Using Steroid?
-            \item Using anti-biotic?
-        \end{itemize}
+        Site selection:
+        \begin{enumerate}
+            \item Neonatal mouth: 1-day, 3-day, and 5-day
+            \item Cervix
+            \item Maternal mouth
+            \item Vagina
+        \end{enumerate}
+
+        PTB:
+        \begin{enumerate}
+            \item Premature
+            \item Detail premature
+        \end{enumerate}
     \end{frame}
 
     \begin{frame}
-        \frametitle{ANCOM with Detailed Premature}
+        \frametitle{ANCOM with Neonatal Mouth}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.DADA2.gg.Detail_Premature.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.Deblur.gg.Detail_Premature.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.pdf}
                 \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) Deblur + GG} \\
+                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
             \end{array}$
-            \caption{ANCOM results with Detailed Premature}
-        \end{figure}
-
-        \begin{itemize}
-            \item \textit{Ureaplasma} genus
-            \item \textit{Aerococcus} genus
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Site}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.DADA2.gg.Site.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.DADA2.silva.Site.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/first.Deblur.gg.Site.pdf}
-                \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + Silva} & \mbox{(c) Deblur + GG} \\
-            \end{array}$
-            \caption{ANCOM results with Site}
+            \caption{ANCOM with Neonatal Mouth}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{ANCOM with PROM}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/ANCOM/first.DADA2.gg.PROM.pdf}
-            \caption{ANCOM result with PROM (DADA2 + GG)}
-        \end{figure}
-
-        \begin{itemize}
-            \item \textit{Campylobacteraceae} genus \textit{Campylobacter} species
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Using Steroid}
+        \frametitle{ANCOM with Maternal Mouth}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.DADA2.gg.Steroid.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/first.Deblur.gg.Steroid.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.pdf}
                 \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) Deblur + GG} \\
+                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
             \end{array}$
-            \caption{ANCOM results with Using Steroid}
+            \caption{ANCOM with Neonatal Mouth}
         \end{figure}
+    \end{frame}
 
-        \begin{itemize}
-            \item \textit{Ureaplasma} genus
-            \item \textit{Aerococcus} genus
-        \end{itemize}
+    \begin{frame}
+        \frametitle{ANCOM with Cervix}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.pdf}
+                \\
+                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
+            \end{array}$
+            \caption{ANCOM with Neonatal Mouth}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{ANCOM with Vagina}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.pdf}
+                \\
+                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
+            \end{array}$
+            \caption{ANCOM with Neonatal Mouth}
+        \end{figure}
     \end{frame}
 
     \subsection{Rarefaction}
