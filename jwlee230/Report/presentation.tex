@@ -314,7 +314,7 @@
         \end{itemize}
     \end{frame}
 
-    \subsection{t-SNE with Site/Premature Information}
+    \subsection{t-SNE with Clinical Information}
     \begin{frame}
         \frametitle{Workflow for t-SNE with Site/Premature Information}
 
@@ -324,56 +324,7 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
-        \frametitle{t-SNE with Site Information}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/site.DADA2.gg.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/site.DADA2.silva.pdf}
-                \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
-            \end{array}$
-            \caption{t-SNE with Site by DADA2}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/site.Deblur.gg.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Site/site.Deblur.silva.pdf}
-                \\
-                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
-            \end{array}$
-            \caption{t-SNE with Site by Deblur}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{t-SNE with Premature Information}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Premature/premature.DADA2.gg.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Premature/premature.DADA2.silva.pdf}
-                \\
-                \mbox{(a) DADA2 + GG} & \mbox{(b) DADA2 + SILVA} \\
-            \end{array}$
-            \caption{t-SNE with Premature by DADA2}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Premature/premature.Deblur.gg.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/TSNE/Premature/premature.Deblur.silva.pdf}
-                \\
-                \mbox{(c) Deblur + GG} & \mbox{(d) Deblur + SILVA} \\
-            \end{array}$
-            \caption{t-SNE with Premature by Deblur}
-        \end{figure}
+    \begin{frame}
     \end{frame}
 
     \subsection{Bacterial Abundance Test with ANCOM}
@@ -486,18 +437,18 @@
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/first.DADA2.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.DADA2.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/first.Deblur.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.Deblur.pdf}
                 \\
                 \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
             \end{array}$
-            \caption{Rarefaction from the First Data}
+            \caption{Rarefaction from the Data}
         \end{figure}
 
         \begin{itemize}
-            \item DADA2: 8062
-            \item Deblur: 7239
+            \item $min(\ell_{DADA2})$: 1046
+            \item $min(\ell_{Deblur})$: 4864
         \end{itemize}
     \end{frame}
 
