@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step22 step28 step29-depth
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step11 step21 step22 step26 step28 step29 step30
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -345,43 +345,11 @@ Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 b
 step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar
 .PHONY: step22
 
-# Step 23 (Draw histogram)
-Output/Step23:
-	mkdir -p $@
-
-Output/Step23/age.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "나이"
-
-Output/Step23/weight.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "임신전 몸무게"
-
-Output/Step23/BMI.png: Python/step23.py Data/Metadata/샘플정보.xlsx | Output/Step23 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "BMI"
-
-step23: Output/Step23/age.png Output/Step23/weight.png Output/Step23/BMI.png
-.PHONY: step23
-
-# Step 24 (Draw histogram with parsing)
-Output/Step24:
-	mkdir -p $@
-
-Output/Step24/weight_now.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 0 "/" 1> $@.stdout 2> $@.stderr
-
-Output/Step24/height.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "체중/키" 1 "/" 1> $@.stdout 2> $@.stderr
-
-Output/Step24/weeks.png: Python/step24.py Data/Metadata/샘플정보.xlsx | Output/Step24 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) "분만주수" 0 "+" 1> $@.stdout 2> $@.stderr
-
-step24: Output/Step24/weight_now.png Output/Step24/height.png Output/Step24/weeks.png
-.PHONY: step24
-
 # Step 26 (RandomForest Classifier)
 Output/Step26:
 	mkdir -p $@
 
-Output/Step26/RF.%.tar: Python/step26.py Output/TSV/first.%.tar.gz Output/Metadata/first.tsv | Output/Step26 build.log
+Output/Step26/RF.%.tar: Python/step26.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step26 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar
@@ -450,7 +418,7 @@ Output/Step30/Deblur/%.tsv: Output/Step29/Deblur/%_vector.qza | Output/Step30/De
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $@.stdout 2> $@.stderr
 	$(DOCKER) mv -f $(addprefix /,$(@D))/alpha-diversity.tsv $(addprefix /,$@)
 
-step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv
+step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv
 .PHONY: step30
 
 # Step 31 (Violin plots from ANCOM)

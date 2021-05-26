@@ -44,14 +44,15 @@ if __name__ == "__main__":
     taxa = list(input_data.columns)
     print(input_data)
 
-    metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1])
+    metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
-    input_data["Detail_Premature"] = list(metadata["Detail_Premature"])
+    input_data["Answer"] = list(map(lambda x: metadata.loc[x, "Detail Premature"], input_data.index))
+    orders = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
 
     # Get Feature Importances
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0)
-    classifier.fit(input_data[taxa], input_data["Detail_Premature"])
+    classifier.fit(input_data[taxa], input_data["Answer"])
     feature_importances = classifier.feature_importances_
     best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, taxa))), reverse=True)))
 
@@ -77,12 +78,18 @@ if __name__ == "__main__":
         print(len(best_features), "features!!")
 
         flag = False
-        classifier.fit(input_data[best_features], input_data["Detail_Premature"])
+        classifier.fit(input_data[best_features], input_data["Answer"])
         feature_importances = classifier.feature_importances_
-        best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, best_features))), reverse=True)))
+        best_features = list(map(lambda x: x[1], sorted(filter(lambda x: x[0] > 0, zip(feature_importances, best_features)), reverse=True)))
 
         if list(filter(lambda x: x <= 0, feature_importances)):
             flag = True
+        else:
+            tar_files.append("importances.tsv")
+            with open(tar_files[-1], "w") as f:
+                f.write("Feature\tImportance\n")
+                for feature, importance in sorted(filter(lambda x: x[0] > 0, zip(feature_importances, best_features)), reverse=True):
+                    f.write("{0}\t{1}\t".format(feature, importance))
 
     # Run K-fold
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=10)
@@ -90,9 +97,9 @@ if __name__ == "__main__":
     for i in range(1, len(best_features) + 1):
         print("With", i, "/", len(best_features), "features!!")
         used_columns = taxa[:i]
-        for j, (train_index, test_index) in enumerate(k_fold.split(input_data[used_columns], input_data["Detail_Premature"])):
+        for j, (train_index, test_index) in enumerate(k_fold.split(input_data[used_columns], input_data["Answer"])):
             x_train, x_test = input_data.iloc[train_index][used_columns], input_data.iloc[test_index][used_columns]
-            y_train, y_test = input_data.iloc[train_index]["Detail_Premature"], input_data.iloc[test_index]["Detail_Premature"]
+            y_train, y_test = input_data.iloc[train_index]["Answer"], input_data.iloc[test_index]["Answer"]
 
             classifier.fit(x_train, y_train)
 
@@ -112,18 +119,16 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    orders = ["NonlatePremature", "LatePremature", "Normal"]
     for i, feature in enumerate(taxa):
         matplotlib.use("Agg")
         matplotlib.rcParams.update(step00.matplotlib_parameters)
         seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-        seaborn.violinplot(data=input_data, x="Detail_Premature", y=feature, order=orders, ax=ax, inner="box")
-        statannot.add_stat_annotation(ax, data=input_data, x="Detail_Premature", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0, test="t-test_ind")
+        seaborn.violinplot(data=input_data, x="Answer", y=feature, order=orders, ax=ax, inner="box")
+        statannot.add_stat_annotation(ax, data=input_data, x="Answer", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0, test="t-test_ind")
 
-        matplotlib.pyplot.title(step00.simplified_taxonomy(feature))
-        matplotlib.pyplot.ylabel("")
+        matplotlib.pyplot.ylabel(step00.simplified_taxonomy(feature))
 
         tar_files.append("Violin_" + str(i) + ".pdf")
         fig.savefig(tar_files[-1])
