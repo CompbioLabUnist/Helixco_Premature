@@ -43,7 +43,7 @@
     \end{frame}
 }
 
-\title[Premature]{Metagenome Analysis of Premature Birth}
+\title[PTB]{Metagenome Analysis of Premature Birth}
 
 \author[Jaewoong Lee]
 {
@@ -83,7 +83,7 @@
             \item Microbiome: $10^{13}$ to $10^{14}$ microorganisms whose which collective genome \cite{micro2}
         \end{itemize}
 
-        \begin{figure}[h!]
+        \begin{figure}
             \includegraphics[width=0.3 \linewidth]{figures/microbiome.jpg}
             \caption{Concept of a core human microbiome \protect \cite{micro1}}
         \end{figure}
@@ -99,18 +99,23 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Premature Birth (Preterm Birth)}
+        \frametitle{Premature Birth (Preterm Birth; PTB)}
 
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/premature.png}
-            \caption{Definitions of Premature \protect\cite{premature1}}
-        \end{figure}
+        PTB:
+        \begin{enumerate}
+            \item PTB $<$ 37 GW (Gestational week)
+            \item Normal $\ge$ 37 GW
+        \end{enumerate}
 
-        $\therefore$ Hence, in this study,
-        \begin{itemize}
-            \item Premature: $<$ 37 weeks
-            \item Normal: $\ge$ 37 weeks
-        \end{itemize}
+        Detailed PTB:
+        \begin{enumerate}
+            \item Extremely PTB $<$ 28 GW
+            \item 28 GW $\le$ Very PTB $<$ 32 GW
+            \item 32 GW $\le$ Late PTB $<$ 37 GW
+            \item Normal $\ge$ 37 GW
+        \end{enumerate}
+
+        \cite{premature1, premature2}
     \end{frame}
 
     \section{Materials}
@@ -457,8 +462,12 @@
                 \\
                 \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
             \end{array}$
-            \caption{ANCOM with Neonatal Mouth}
+            \caption{ANCOM with Maternal Mouth}
         \end{figure}
+
+        \begin{itemize}
+            \item \textit{Bacteria Proteobacteria Alphaproteobacteria Rickettsiales mitochondria} family
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -472,7 +481,7 @@
                 \\
                 \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
             \end{array}$
-            \caption{ANCOM with Neonatal Mouth}
+            \caption{ANCOM with Cervix}
         \end{figure}
     \end{frame}
 
@@ -487,15 +496,15 @@
                 \\
                 \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
             \end{array}$
-            \caption{ANCOM with Neonatal Mouth}
+            \caption{ANCOM with Vagina}
         \end{figure}
+
+        \begin{itemize}
+            \item \textit{Bacteria  Proteobacteria Epsilonproteobacteria Campylobacterales Campylobacteraceae Campylobacter} genus
+        \end{itemize}
     \end{frame}
 
-    \subsection{Rarefaction}
-    \begin{frame}
-        \frametitle{Rarefaction?}
-    \end{frame}
-
+    \subsection{Diversity Index}
     \begin{frame}
         \frametitle{Rarefaction from First Data}
 
@@ -516,28 +525,12 @@
         \end{itemize}
     \end{frame}
 
-    \subsection{Alpha-Diversity}
     \begin{frame}
         \frametitle{Alpha-Diversity}
     \end{frame}
 
-    \subsection{Beta-Diversity}
     \begin{frame}
         \frametitle{Beta-Diversity}
-    \end{frame}
-
-    \subsection{Classification}
-    \begin{frame}
-        \frametitle{Workflow for Classification}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/tikz/classification.pdf}
-            \caption{Workflow with Classification}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest Classifier}
     \end{frame}
 
    	\begin{frame}[allowframebreaks]
