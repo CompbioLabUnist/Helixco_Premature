@@ -11,7 +11,6 @@ if __name__ == "__main__":
     parser.add_argument("--first", help="Input FASTQ.gz files", action="append", default=[])
     parser.add_argument("--second", help="Input FASTQ.gz files", action="append", default=[])
     parser.add_argument("--third", help="Input FASTQ.gz files", action="append", default=[])
-    parser.add_argument("--stool", help="Input FASTQ.gz files", action="append", default=[])
 
     args = parser.parse_args()
 
@@ -23,7 +22,6 @@ if __name__ == "__main__":
     args.first.sort()
     args.second.sort()
     args.third.sort()
-    args.stool.sort()
 
     print("sample-id\tforward-absolute-filepath\treverse-absolute-filepath")
     print("# Group-Mother-Newborn-Site")
@@ -74,14 +72,4 @@ if __name__ == "__main__":
         else:
             name = "Third-" + "-".join(data[:3])
 
-        print(name, fa, fb, sep="\t")
-
-    f1 = list(filter(lambda x: x.endswith("R1_001.fastq.gz"), args.stool))
-    f2 = list(filter(lambda x: x.endswith("R2_001.fastq.gz"), args.stool))
-    assert len(f1) == len(f2)
-    for fa, fb in zip(f1, f2):
-        name = fa[:-19]
-        name = name[name.rfind("/") + 1:].replace("_", "-").split("-")[3]
-        data = metadata.loc[(metadata["Sample"].isin(["S1", "S3", "S5"])) & (metadata["ID"] == name), :].to_numpy()[0]
-        name = "Stool-" + "-".join(data[:3])
         print(name, fa, fb, sep="\t")
