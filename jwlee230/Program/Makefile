@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30
+latest: step01 step02 step03 step04 step05 step06# step07 step08 step09 step21 step22 step26 step28 step29 step30
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -72,13 +72,13 @@ Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/
 Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) | Output/Manifest build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-Output/Manifest/Stool.tsv: Python/step01-4.py $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+Output/Manifest/Stool.tsv: Python/step01-4.py Data/Metadata/readable.xlsx $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
+	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
 
 Output/Manifest/everything.tsv: Python/step01-5.py Data/Metadata/readable.xlsx $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
+	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) > $@
 
-step01: Output/Manifest/first.tsv Output/Manifest/second.tsv Output/Manifest/EBI.tsv Output/Manifest/HMP.tsv Output/Manifest/Stool.tsv Output/Manifest/everything.tsv
+step01: Output/Manifest/Stool.tsv Output/Manifest/everything.tsv
 .PHONY: step01
 
 # Step 02 (De-multiplexing)
@@ -106,7 +106,7 @@ Output/Demux/everything.qza: Output/Manifest/everything.tsv | Output/Demux build
 Output/Demux/%.qzv: Output/Demux/%.qza | build.log
 	$(DOCKER) qiime demux summarize --i-data $(addprefix /,$<) --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/Demux/first.qza Output/Demux/first.qzv Output/Demux/second.qza Output/Demux/second.qzv Output/Demux/EBI.qza Output/Demux/EBI.qzv Output/Demux/HMP.qza Output/Demux/HMP.qzv Output/Demux/Stool.qza Output/Demux/Stool.qzv Output/Demux/everything.qza Output/Demux/everything.qzv
+step02: Output/Demux/Stool.qza Output/Demux/Stool.qzv Output/Demux/everything.qza Output/Demux/everything.qzv
 .PHONY: step02
 
 # Step 03 (Quality filter)
@@ -116,7 +116,7 @@ Output/Filter:
 Output/Filter/%.seq.qza Output/Filter/%.stat.qza: Output/Demux/%.qza | Output/Filter build.log
 	$(DOCKER) qiime quality-filter q-score --i-demux $(addprefix /,$<) --o-filtered-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-filter-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step03: Output/Filter/first.seq.qza Output/Filter/second.seq.qza Output/Filter/EBI.seq.qza Output/Filter/HMP.seq.qza Output/Filter/Stool.seq.qza Output/Filter/everything.seq.qza
+step03: Output/Filter/Stool.seq.qza Output/Filter/everything.seq.qza
 .PHONY: step03
 
 # Step 04 (DADA2 Denoising)
@@ -147,7 +147,7 @@ Output/DADA2/everything.table.qza Output/DADA2/everything.seq.qza Output/DADA2/e
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime dada2 denoise-paired --i-demultiplexed-seqs $(addprefix /,$<) --p-n-threads $(CPUS) --p-trunc-len-f "300" --p-trunc-len-r "245" --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-denoising-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step04: Output/DADA2/first.seq.qza Output/DADA2/second.seq.qza Output/DADA2/EBI.seq.qza Output/DADA2/HMP.seq.qza Output/DADA2/Stool.seq.qza Output/DADA2/everything.seq.qza
+step04: Output/DADA2/Stool.seq.qza Output/DADA2/everything.seq.qza
 .PHONY: step04
 
 # Step 05 (Deblur Denoising)
@@ -178,7 +178,7 @@ Output/Deblur/everything.table.qza Output/Deblur/everything.seq.qza Output/Deblu
 	@echo "You have to check the length manually!!"
 	$(DOCKER) qiime deblur denoise-16S --i-demultiplexed-seqs $(addprefix /,$<) --p-trim-length "245" --p-jobs-to-start $(CPUS) --o-table $(addprefix /,$(basename $(basename $@))).table.qza --o-representative-sequences $(addprefix /,$(basename $(basename $@))).seq.qza --o-stats $(addprefix /,$(basename $(basename $@))).stat.qza 1> $@.stdout 2> $@.stderr
 
-step05: Output/Deblur/first.seq.qza Output/Deblur/second.seq.qza Output/Deblur/EBI.seq.qza Output/Deblur/HMP.seq.qza Output/Deblur/Stool.seq.qza Output/Deblur/everything.seq.qza
+step05: Output/Deblur/Stool.seq.qza Output/Deblur/everything.seq.qza
 .PHONY: step05
 
 # Step 06 (Taxonomy information)
@@ -203,7 +203,7 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/first.DADA2.silva.qza Output/Taxonomy/first.DADA2.gg.qza Output/Taxonomy/first.Deblur.silva.qza Output/Taxonomy/first.Deblur.gg.qza Output/Taxonomy/second.DADA2.silva.qza Output/Taxonomy/second.DADA2.gg.qza Output/Taxonomy/second.Deblur.gg.qza Output/Taxonomy/second.Deblur.silva.qza Output/Taxonomy/EBI.DADA2.silva.qza Output/Taxonomy/EBI.DADA2.gg.qza Output/Taxonomy/EBI.Deblur.silva.qza Output/Taxonomy/EBI.Deblur.gg.qza Output/Taxonomy/HMP.DADA2.silva.qza Output/Taxonomy/HMP.DADA2.gg.qza Output/Taxonomy/HMP.Deblur.silva.qza Output/Taxonomy/HMP.Deblur.gg.qza Output/Taxonomy/everything.DADA2.gg.qza Output/Taxonomy/everything.DADA2.silva.qza Output/Taxonomy/everything.Deblur.gg.qza Output/Taxonomy/everything.Deblur.silva.qza
+step06: Output/Taxonomy/everything.DADA2.gg.qza Output/Taxonomy/everything.DADA2.silva.qza Output/Taxonomy/everything.Deblur.gg.qza Output/Taxonomy/everything.Deblur.silva.qza Output/Taxonomy/Stool.DADA2.gg.qza Output/Taxonomy/Stool.DADA2.silva.qza Output/Taxonomy/Stool.Deblur.gg.qza Output/Taxonomy/Stool.Deblur.silva.qza
 .PHONY: step06
 
 # Step 07 (Build Metadata)
@@ -222,7 +222,10 @@ Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.
 Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step07: Output/Metadata/first.tsv Output/Metadata/everything.tsv
+Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stoo.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
+	$(DOCKER) python3 $(addprefix /,$^) > $@
+
+step07: Output/Metadata/Stool.tsv Output/Metadata/everything.tsv
 .PHONY: step07
 
 # Step 08 (Run ANCOM)
