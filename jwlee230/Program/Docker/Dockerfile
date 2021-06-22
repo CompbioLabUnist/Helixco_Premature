@@ -9,6 +9,6 @@ RUN mkdir /Tools
 
 # PIP
 ADD requirements.txt /
-RUN pip install --requirement /requirements.txt
+RUN pip install --requirement /requirements.txt && pip install scikit-bio
 
 CMD ["/bin/bash"]
