@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     mother_data = pandas.read_excel(args.info, sheet_name=0)
 
-    numeric_columns = {"Utero_Week", "Mother_Age", "Mother_Weight", "Mother_Height", "Mother_BMI"}
+    numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
 
     data = pandas.DataFrame()
     data["#SampleID"] = sorted(list(set(list(map(lambda x: x.split("_")[0], list(map(lambda x: x.split("/")[-1], args.input)))))))

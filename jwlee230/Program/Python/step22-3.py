@@ -36,6 +36,7 @@ if __name__ == "__main__":
     print(categorical_columns)
 
     for c in numeric_columns:
+        print("Numeric:", c)
         matplotlib.use("Agg")
         matplotlib.rcParams.update(step00.matplotlib_parameters)
         seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -48,6 +49,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
     for c in categorical_columns:
+        print("Categorical:", c)
         matplotlib.use("Agg")
         matplotlib.rcParams.update(step00.matplotlib_parameters)
         seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
