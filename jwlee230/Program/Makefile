@@ -325,14 +325,14 @@ Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.
 Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv
+step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv
 .PHONY: step09
 
 # Step 21 (Read & clearify first TSV into pandas)
-Output/TSV/everything.%.merge.tsv: Python/step21.py Output/TSV/everything.%.tsv | build.log
+Output/TSV/%.merge.tsv: Python/step21.py Output/TSV/%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/everything.DADA2.gg.merge.tsv Output/TSV/everything.DADA2.silva.merge.tsv Output/TSV/everything.Deblur.gg.merge.tsv Output/TSV/everything.Deblur.silva.merge.tsv
+step21: Output/TSV/everything.DADA2.gg.merge.tsv Output/TSV/everything.DADA2.silva.merge.tsv Output/TSV/everything.Deblur.gg.merge.tsv Output/TSV/everything.Deblur.silva.merge.tsv Output/TSV/Stool.DADA2.gg.merge.tsv Output/TSV/Stool.DADA2.silva.merge.tsv Output/TSV/Stool.Deblur.gg.merge.tsv Output/TSV/Stool.Deblur.silva.merge.tsv
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -342,10 +342,13 @@ Output/Step22:
 Output/Step22/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step22/Stool.%.tar.gz: Python/step11.py Output/TSV/Stool.%.tsv Output/Metadata/Stool.tsv | Output/Step22 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar
+step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/Stool.DADA2.gg.tar.gz Output/Step22/Stool.DADA2.gg.tar Output/Step22/Stool.DADA2.silva.tar.gz Output/Step22/Stool.DADA2.silva.tar Output/Step22/Stool.Deblur.gg.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Stool.Deblur.silva.tar.gz Output/Step22/Stool.Deblur.gg.tar
 .PHONY: step22
 
 # Step 26 (RandomForest Classifier)

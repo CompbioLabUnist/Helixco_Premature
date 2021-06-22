@@ -31,7 +31,7 @@ if __name__ == "__main__":
     metadata = metadata.loc[list(raw_data.index), :]
     print(metadata)
 
-    tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus).fit_transform(raw_data), columns=["tSNE1", "tSNE2"])
+    tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(raw_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):
         tsne_data[column] = sklearn.preprocessing.scale(tsne_data[column])
