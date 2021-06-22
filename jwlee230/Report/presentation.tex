@@ -333,26 +333,13 @@
         \frametitle{Used Clinical Information}
 
         \begin{enumerate}
-            \small
-
-            \item Apgar score
-            \item C-section
-            \item CPAP (Continuous positive airway pressure)
-            \item Detail premature \& Premature
-            \item Dyspnea
-            \item Gender
-            \item Gestational diabetes for maternity
-            \item Gestational week (Gestational age)
-            \item Hospitalized day
-            \item Hypertension for maternity
-            \item LGA (Large for GA) \& SGA (Small for GA)
-            \item Maternal age
-            \item Antibiotic usage for maternity \& for neonate
-            \item PROM (Premature rupture of membranes)
-            \item Preterm labor
-            \item Usage of respirator for neonate
-            \item Sepsis against neonate
-            \item Birth weight of neonate
+            \item Gestational Diabetes
+            \item Maternal Weight
+            \item Maternal Weight Gain
+            \item Hypertension
+            \item PROM
+            \item Antibiotic
+            \item Steroid
         \end{enumerate}
     \end{frame}
 
@@ -360,45 +347,32 @@
         \frametitle{Selected t-SNE Plots}
 
         \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/tSNE/everything.DADA2.gg/Gestational_Diabetes.pdf}
+            \caption{t-SNE about Gestational Diabetes}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Weight.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Weight_gain.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Too_much_weight_gain.pdf}
+                \\
+                \mbox{(a) Overweight} & \mbox{(b) Weight gain} & \mbox{(c) Too much gain} \\
+            \end{array}$
+            \caption{t-SNE about Maternal Weight}
+        \end{figure}
+
+        \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Premature.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Hypertension.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Detail_Premature.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/PROM.pdf}
                 \\
-                \mbox{(a) Premature} & \mbox{(b) Detail Premature} \\
+                \mbox{(a) Hypertension} & \mbox{(b) PROM} \\
             \end{array}$
-            \caption{Selected t-SNE Plots (PTBs)}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/C-section.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Gender.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Data.pdf}
-                \\
-                \mbox{(a) C-section} & \mbox{(b) Gender} & \mbox{(c) Data Batch} \\
-            \end{array}$
-            \caption{Selected t-SNE Plots (Not severe condition)}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/PROM.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Sepsis.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Respirator.pdf}
-                \\
-                \mbox{(a) PROM} & \mbox{(b) Sepsis} & \mbox{(c) Usage of Respirator} \\
-            \end{array}$
-            \caption{Selected t-SNE Plots (Severe conditions)}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/tSNE/everything.DADA2.gg/Site.pdf}
-            \caption{t-SNE Plot with Site}
+            \caption{t-SNE about Disease}
         \end{figure}
     \end{frame}
 
@@ -504,34 +478,34 @@
         \end{itemize}
     \end{frame}
 
-%    \subsection{Diversity Index}
-%    \begin{frame}
-%        \frametitle{Rarefaction from First Data}
-%
-%        \begin{figure}
-%            $\begin{array}{cc}
-%                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.DADA2.pdf}
-%                &
-%                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.Deblur.pdf}
-%                \\
-%                \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
-%            \end{array}$
-%            \caption{Rarefaction from the Data}
-%        \end{figure}
-%
-%        \begin{itemize}
-%            \item $min(\ell_{DADA2})$: 1046
-%            \item $min(\ell_{Deblur})$: 4864
-%        \end{itemize}
-%    \end{frame}
-%
-%    \begin{frame}
-%        \frametitle{Alpha-Diversity}
-%    \end{frame}
-%
-%    \begin{frame}
-%        \frametitle{Beta-Diversity}
-%    \end{frame}
+    \subsection{Diversity Index}
+    \begin{frame}
+        \frametitle{Rarefaction from First Data}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.DADA2.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.Deblur.pdf}
+                \\
+                \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
+            \end{array}$
+            \caption{Rarefaction from the Data}
+        \end{figure}
+
+        \begin{itemize}
+            \item $min(\ell_{DADA2})$: 1046
+            \item $min(\ell_{Deblur})$: 4864
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Alpha-Diversity}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Beta-Diversity}
+    \end{frame}
 
    	\begin{frame}[allowframebreaks]
         \frametitle{References}
