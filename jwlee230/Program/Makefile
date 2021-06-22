@@ -222,10 +222,10 @@ Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.
 Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stoo.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
+Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stool.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
 
-step07: Output/Metadata/Stool.tsv Output/Metadata/everything.tsv
+step07: Output/Metadata/everything.tsv Output/Metadata/Stool.tsv
 .PHONY: step07
 
 # Step 08 (Run ANCOM)
