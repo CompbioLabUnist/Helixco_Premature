@@ -55,7 +55,7 @@ if __name__ == "__main__":
         seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-        seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="full", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=300, style_order=sorted(set(input_data[c])), hue_order=sorted(set(input_data[c])))
+        seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="full", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=1000, style_order=sorted(set(input_data[c])), hue_order=sorted(set(input_data[c])))
 
         tar_files.append(c.replace(" ", "_") + ".pdf")
         fig.savefig(tar_files[-1])
