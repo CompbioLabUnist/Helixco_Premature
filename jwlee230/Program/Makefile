@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step09 step21 step22# step26 step28 step29 step30
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22# step26 step28 step29 step30
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -254,16 +254,10 @@ Output/ANCOM/everything.%.Vagina.qza: Output/ANCOM/everything.%.qza Output/Metad
 	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site]='Vagina'" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/everything.%.Baby.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
-	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site] IN ('Baby-1day', 'Baby-3day', 'Baby-5day')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/everything.%.Stool.qza: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
-	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site] IN ('Stool-1day', 'Stool-3day', 'Stool-5day')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) qiime feature-table filter-samples --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --p-where "[Site] IN ('Neonate-1day', 'Neonate-3day', 'Neonate-5day')" --o-filtered-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/%.pseudocount.qza: Output/ANCOM/%.qza | build.log
 	$(DOCKER) qiime composition add-pseudocount --i-table $(addprefix /,$(word 1,$^)) --o-composition-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
-
-Output/ANCOM/first.%.Site.qzv: Output/ANCOM/first.%.pseudocount.qza Output/Metadata/first.tsv | build.log
-	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Site" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/ANCOM/everything.%.PTB.qzv: Output/ANCOM/everything.%.qza Output/Metadata/everything.tsv | build.log
 	$(DOCKER) qiime composition ancom --i-table $(addprefix /,$(word 1,$^)) --m-metadata-file $(addprefix /,$(word 2,$^)) --m-metadata-column "Premature" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -279,9 +273,9 @@ Output/ANCOM/%.pdf: Python/step08.py Output/ANCOM/%/ancom.tsv Output/ANCOM/%/dat
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step08-DADA2-gg: Output/ANCOM/everything.DADA2.gg.qza Output/ANCOM/everything.DADA2.gg.Mouth.qza Output/ANCOM/everything.DADA2.gg.Cervix.qza Output/ANCOM/everything.DADA2.gg.Vagina.qza Output/ANCOM/everything.DADA2.gg.Baby.qza Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB/ancom.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.pdf
-step08-DADA2-silva: 
-step08-Deblur-gg: 
-step08-Deblur-silva: 
+step08-DADA2-silva:
+step08-Deblur-gg:
+step08-Deblur-silva:
 step08: step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 .PHONY: step08 step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 
