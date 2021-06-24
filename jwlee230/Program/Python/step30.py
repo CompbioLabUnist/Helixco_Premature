@@ -13,6 +13,7 @@ import statannot
 import step00
 
 data = pandas.DataFrame()
+selected_sites = ["Neonate-3day"]
 
 
 def read(file_name: str) -> pandas.DataFrame:
@@ -28,9 +29,14 @@ def draw(alpha: str, disease: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
-    statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(sorted(set(data[disease])), 2), text_format="star", loc="outside", verbose=0)
+
+    try:
+        statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(sorted(set(data[disease])), 2), text_format="star", loc="outside", verbose=1)
+    except Exception:
+        print("Annotation Failed!!")
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
+    matplotlib.pyplot.tight_layout()
 
     file_name = "{0}+{1}.pdf".format(alpha, disease.replace(" ", "_"))
     fig.savefig(file_name)
@@ -62,11 +68,12 @@ if __name__ == "__main__":
     print(raw_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(raw_data.index), :].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[list(raw_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = list(metadata.columns)
     print(metadata)
 
     data = pandas.concat(objs=[raw_data, metadata], axis="columns", verify_integrity=True)
+    data = data.loc[(data["Site"].isin(selected_sites))]
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:
@@ -74,5 +81,5 @@ if __name__ == "__main__":
 
     with tarfile.open(args.output, "w") as tar:
         for f in files:
-            print(f)
+            print("Compressing:", f)
             tar.add(f, arcname=f)
