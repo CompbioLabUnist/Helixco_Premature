@@ -15,6 +15,7 @@ matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize"
 derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
 markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
+detailed_PTB = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
 
 
 def file_list(path: str) -> typing.List[str]:
