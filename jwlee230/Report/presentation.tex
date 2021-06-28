@@ -557,6 +557,7 @@
                 \item Hypertension
                 \item PROM
                 \item Antibiotics
+                \item Premature
             \end{enumerate}
 
             \item Site Selection
@@ -567,12 +568,94 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Alpha-diveristy Violin Plots}
+        \frametitle{Alpha-diversity Violin Plots}
 
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/pielou_evenness+Premature.pdf}
+                &
+                \includegraphics[width=0.4  \linewidth]{figures/AlphaDiversity/everything.DADA2/shannon_entropy+Premature.pdf}
+                \\
+                \mbox{(a) Pielou Evenness} & \mbox{(b) Shannon Entropy} \\
+            \end{array}$
+            \caption{Alpha Diversity upon Premature}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
         \frametitle{Beta-diversity}
+
+        \begin{itemize}
+            \item Beta diversity indices
+            \begin{enumerate}
+                \item Bray-Curtis distance
+                \item Jaccard distance
+                \item Unweighted UniFrac distance
+                \item Weighted UniFrac distance
+            \end{enumerate}
+
+            \item Diseases/Conditions
+            \begin{enumerate}
+                \item Gestational Diabetes
+                \item Too much Weight Gain
+                \item Overweight/Obesity
+                \item Hypertension
+                \item PROM
+                \item Antibiotics
+                \item Premature
+            \end{enumerate}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Beta-diversity Scatter Plots}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/PROM.pdf} \\
+                \mbox{(a) Unweighted UniFrac}
+            \end{array}$
+            \caption{Beta Diversity upon PROM}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Mother_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Mother_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Mother_Antibiotics.pdf}
+                \\
+                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted UniFrac} \\
+            \end{array}$
+            \caption{Beta Diversity upon Maternal Antibiotics}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Neonate_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Neonate_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Neonate_Antibiotics.pdf}
+                \\
+                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted UniFrac} \\
+            \end{array}$
+            \caption{Beta Diversity upon Neonatal Antibiotics}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Detail_Premature.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Detail_Premature.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Detail_Premature.pdf}
+                \\
+                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Weighted UniFrac} \\
+            \end{array}$
+            \caption{Beta Diversity upon Detailed PTB}
+        \end{figure}
     \end{frame}
 
     \section{Discussion}
