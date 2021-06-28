@@ -1,5 +1,5 @@
 """
-step30.py: draw alpha-diveristy violin plots
+step30.py: draw alpha-diversity violin plots
 """
 import argparse
 import itertools
@@ -13,7 +13,6 @@ import statannot
 import step00
 
 data = pandas.DataFrame()
-selected_sites = ["Mouth"]
 
 
 def read(file_name: str) -> pandas.DataFrame:
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     print(metadata)
 
     data = pandas.concat(objs=[raw_data, metadata], axis="columns", verify_integrity=True)
-    data = data.loc[(data["Site"].isin(selected_sites))]
+    data = data.loc[(data["Site"].isin(step00.selected_sites))]
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:

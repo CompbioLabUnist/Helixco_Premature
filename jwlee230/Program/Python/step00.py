@@ -16,6 +16,7 @@ derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "P
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
 markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
 detailed_PTB = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
+selected_sites = ["Mouth"]
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -120,3 +121,18 @@ def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str 
         return TP / 2 * (TP + FN) + TN / 2 * (TN + FP)
     else:
         raise Exception("Something went wrong!!")
+
+
+def star(p: float) -> str:
+    if 0 <= p <= 1.00e-04:
+        return "****"
+    elif 1.00e-04 < p <= 1.00e-03:
+        return "***"
+    elif 1.00e-03 < p <= 1.00e-02:
+        return "**"
+    elif 1.00e-02 < p <= 5.00e-02:
+        return "*"
+    elif 5.00e-02 < p <= 1.00e+00:
+        return "ns"
+    else:
+        raise ValueError("Something went wrong: {0} !!".format(p))
