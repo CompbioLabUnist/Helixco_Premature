@@ -571,12 +571,15 @@
         \frametitle{Alpha-diversity Violin Plots}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/pielou_evenness+Premature.pdf}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/everything.DADA2/faith_pd+Gestational_Diabetes.pdf}
                 &
-                \includegraphics[width=0.4  \linewidth]{figures/AlphaDiversity/everything.DADA2/shannon_entropy+Premature.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/everything.DADA2/faith_pd+Gestational_Diabetes.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/everything.DADA2/faith_pd+Gestational_Diabetes.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/everything.DADA2/faith_pd+Gestational_Diabetes.pdf}
                 \\
-                \mbox{(a) Pielou Evenness} & \mbox{(b) Shannon Entropy} \\
             \end{array}$
             \caption{Alpha Diversity upon Premature}
         \end{figure}
@@ -604,6 +607,11 @@
                 \item Antibiotics
                 \item Premature
             \end{enumerate}
+
+            \item Site Selection
+            \begin{enumerate}
+                \item Maternal Mouth
+            \end{enumerate}
         \end{itemize}
     \end{frame}
 
@@ -611,50 +619,93 @@
         \frametitle{Beta-diversity Scatter Plots}
 
         \begin{figure}
-            $\begin{array}{c}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/PROM.pdf} \\
-                \mbox{(a) Unweighted UniFrac}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Gestational_Diabetes.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/Gestational_Diabetes.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Gestational_Diabetes.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Gestational_Diabetes.pdf}
+                \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
             \end{array}$
-            \caption{Beta Diversity upon PROM}
+            \caption{Beta-diversity upon Gestational Diabetes}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Mother_Antibiotics.pdf}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Too_much_weight_gain.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Mother_Antibiotics.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/Too_much_weight_gain.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Mother_Antibiotics.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Too_much_weight_gain.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Too_much_weight_gain.pdf}
                 \\
-                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted UniFrac} \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
             \end{array}$
-            \caption{Beta Diversity upon Maternal Antibiotics}
+            \caption{Beta-diversity upon Too much Weight Gain}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Neonate_Antibiotics.pdf}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Overweight_or_Obesity.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Neonate_Antibiotics.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/Overweight_or_Obesity.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Neonate_Antibiotics.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Overweight_or_Obesity.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Overweight_or_Obesity.pdf}
                 \\
-                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted UniFrac} \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
             \end{array}$
-            \caption{Beta Diversity upon Neonatal Antibiotics}
+            \caption{Beta-diversity upon Overweight/Obesity}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Detail_Premature.pdf}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Hypertension.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.jaccard/Detail_Premature.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/Hypertension.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Detail_Premature.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Hypertension.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Hypertension.pdf}
                 \\
-                \mbox{(a) Bray-Curtis} & \mbox{(b) Jaccard} & \mbox{(c) Weighted UniFrac} \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
             \end{array}$
-            \caption{Beta Diversity upon Detailed PTB}
+            \caption{Beta-diversity upon Hypertension}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/PROM.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/PROM.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/PROM.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/PROM.pdf}
+                \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
+            \end{array}$
+            \caption{Beta-diversity upon PROM}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.bray_curtis/Mother_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.jaccard/Mother_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.unweighted_unifrac/Mother_Antibiotics.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/BetaDiversity/everything.weighted_unifrac/Mother_Antibiotics.pdf}
+                \\
+                \mbox{(a) Bray-curtis} & \mbox{(b) Jaccard} & \mbox{(c) Unweighted} & \mbox{(d) Weighted} \\
+            \end{array}$
+            \caption{Beta-diversity upon Maternal Antibiotics}
         \end{figure}
     \end{frame}
 
