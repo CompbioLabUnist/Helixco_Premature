@@ -58,6 +58,10 @@ if __name__ == "__main__":
     diseases = list(metadata.columns)
     print(metadata)
 
+    distance_data = distance_data.loc[(metadata["Site"].isin(step00.selected_sites))]
+    distance_data = distance_data[list(distance_data.index)]
+    metadata = metadata.loc[(metadata["Site"].isin(step00.selected_sites))]
+
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):

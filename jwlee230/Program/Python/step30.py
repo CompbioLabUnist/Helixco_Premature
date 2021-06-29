@@ -27,12 +27,9 @@ def draw(alpha: str, disease: str) -> str:
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
+    seaborn.violinplot(data=data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    try:
-        statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(sorted(set(data[disease])), 2), text_format="star", loc="outside", verbose=1)
-    except Exception:
-        print("Annotation Failed!!")
+    statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="star", loc="outside", verbose=2, fontsize=step00.matplotlib_parameters["font.size"])
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
