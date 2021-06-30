@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 10
+CPUS = 20
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS =
@@ -53,7 +53,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30# step31
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -462,3 +462,16 @@ Output/Step32/Deblur/%.tar: Python/step32.py Output/Step32/Deblur/%.tsv Output/M
 
 step32: Output/Step32/DADA2/everything.bray_curtis.tsv Output/Step32/DADA2/everything.bray_curtis.tar Output/Step32/DADA2/everything.jaccard.tsv Output/Step32/DADA2/everything.jaccard.tar Output/Step32/DADA2/everything.unweighted_unifrac.tsv Output/Step32/DADA2/everything.unweighted_unifrac.tar Output/Step32/DADA2/everything.weighted_unifrac.tsv Output/Step32/DADA2/everything.weighted_unifrac.tar Output/Step32/Deblur/everything.bray_curtis.tsv Output/Step32/Deblur/everything.bray_curtis.tar Output/Step32/Deblur/everything.jaccard.tsv Output/Step32/Deblur/everything.jaccard.tar Output/Step32/Deblur/everything.unweighted_unifrac.tsv Output/Step32/Deblur/everything.unweighted_unifrac.tar Output/Step32/Deblur/everything.weighted_unifrac.tsv Output/Step32/Deblur/everything.weighted_unifrac.tar
 .PHONY: step32
+
+# Step 33 (LEfSe analysis)
+Output/Step33:
+	mkdir -p $@
+
+Output/Step33/%.DADA2.qza: Output/DADA2/%.table.qza | Output/Step33 build.log
+	$(DOCKER) qiime feature-table relative-frequency --i-table $(addprefix /,$(word 1,$^)) --o-relative-frequency-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.Deblur.qza: Output/Deblur/%.table.qza | Output/Step33 build.log
+	$(DOCKER) qiime feature-table relative-frequency --i-table $(addprefix /,$(word 1,$^)) --o-relative-frequency-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step33: Output/Step33/everything.DADA2.qza Output/Step33/everything.Deblur.qza
+.PHONY: step33
