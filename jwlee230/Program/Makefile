@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 50
+CPUS = 10
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS =
@@ -50,7 +50,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31
+latest: step01 step02 step03 step04 step05 step06# step07 step08 step09 step21 step22 step26 step28 step29 step30 step31
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -183,15 +183,36 @@ Output/Taxonomy:
 	mkdir -p $@
 
 Output/Taxonomy/silva.qza: | Output/Taxonomy build.log
-	wget "https://data.qiime2.org/2020.6/common/silva-138-99-nb-classifier.qza" -O $@
+	wget "https://data.qiime2.org/2021.4/common/silva-138-99-nb-classifier.qza" -O $@
 
 Output/Taxonomy/gg.qza: | Output/Taxonomy build.log
-	wget "https://data.qiime2.org/2020.6/common/gg-13-8-99-nb-classifier.qza" -O $@
+	wget "https://data.qiime2.org/2021.4/common/gg-13-8-99-nb-classifier.qza" -O $@
+
+Output/Taxonomy/homd.fasta: | Output/Taxonomy
+	wget "http://www.homd.org/ftp/16S_rRNA_refseq/HOMD_16S_rRNA_RefSeq/V15.22/HOMD_16S_rRNA_RefSeq_V15.22.fasta" -O $@
+
+Output/Taxonomy/homd.txt: | Output/Taxonomy
+	wget "http://www.homd.org/ftp/16S_rRNA_refseq/HOMD_16S_rRNA_RefSeq/V15.22/HOMD_16S_rRNA_RefSeq_V15.22.qiime.taxonomy" -O $@
+
+Output/Taxonomy/homd_fasta.qza: Output/Taxonomy/homd.fasta | build.log
+	$(DOCKER) qiime tools import --type "FeatureData[Sequence]" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Taxonomy/homd_taxo.qza: Output/Taxonomy/homd.txt | build.log
+	$(DOCKER) qiime tools import --type "FeatureData[Taxonomy]" --input-format "HeaderlessTSVTaxonomyFormat" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Taxonomy/homd_seqs.qza: Output/Taxonomy/homd_fasta.qza | build.log
+	$(DOCKER) qiime feature-classifier extract-reads --i-sequences $(addprefix /,$<) --p-f-primer "GTGCCAGCMGCCGCGGTAA" --p-r-primer "GGACTACHVGGGTWTCTAAT" --o-reads $(addprefix /,$@) --p-n-jobs $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Taxonomy/homd.qza: Output/Taxonomy/homd_seqs.qza Output/Taxonomy/homd_taxo.qza | build.log
+	$(DOCKER) qiime feature-classifier fit-classifier-naive-bayes --i-reference-reads $(addprefix /,$(word 1,$^)) --i-reference-taxonomy $(addprefix /,$(word 2,$^)) --o-classifier $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Taxonomy/%.DADA2.silva.qza: Output/Taxonomy/silva.qza Output/DADA2/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Taxonomy/%.DADA2.gg.qza: Output/Taxonomy/gg.qza Output/DADA2/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Taxonomy/%.DADA2.homd.qza: Output/Taxonomy/homd.qza Output/DADA2/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.seq.qza | build.log
@@ -200,8 +221,13 @@ Output/Taxonomy/%.Deblur.silva.qza: Output/Taxonomy/silva.qza Output/Deblur/%.se
 Output/Taxonomy/%.Deblur.gg.qza: Output/Taxonomy/gg.qza Output/Deblur/%.seq.qza | build.log
 	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step06: Output/Taxonomy/everything.DADA2.gg.qza Output/Taxonomy/everything.DADA2.silva.qza Output/Taxonomy/everything.Deblur.gg.qza Output/Taxonomy/everything.Deblur.silva.qza Output/Taxonomy/Stool.DADA2.gg.qza Output/Taxonomy/Stool.DADA2.silva.qza Output/Taxonomy/Stool.Deblur.gg.qza Output/Taxonomy/Stool.Deblur.silva.qza
-.PHONY: step06
+Output/Taxonomy/%.Deblur.homd.qza: Output/Taxonomy/homd.qza Output/Deblur/%.seq.qza | build.log
+	$(DOCKER) qiime feature-classifier classify-sklearn --i-classifier $(addprefix /,$(word 1,$^)) --i-reads $(addprefix /,$(word 2,$^)) --p-n-jobs $(CPUS) --o-classification $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step06-reference: Output/Taxonomy/silva.qza Output/Taxonomy/gg.qza Output/Taxonomy/homd.fasta Output/Taxonomy/homd.txt Output/Taxonomy/homd_fasta.qza Output/Taxonomy/homd_taxo.qza Output/Taxonomy/homd_seqs.qza Output/Taxonomy/homd.qza
+step06-mapping: Output/Taxonomy/everything.DADA2.gg.qza Output/Taxonomy/everything.DADA2.silva.qza Output/Taxonomy/everything.DADA2.homd.qza Output/Taxonomy/everything.Deblur.gg.qza Output/Taxonomy/everything.Deblur.silva.qza Output/Taxonomy/everything.Deblur.homd.qza Output/Taxonomy/Stool.DADA2.gg.qza Output/Taxonomy/Stool.DADA2.silva.qza Output/Taxonomy/Stool.DADA2.homd.qza Output/Taxonomy/Stool.Deblur.gg.qza Output/Taxonomy/Stool.Deblur.silva.qza Output/Taxonomy/Stool.Deblur.homd.qza
+step06: step06-reference step06-mapping
+.PHONY: step06 step06-reference step06-mapping
 
 # Step 07 (Build Metadata)
 Output/Metadata:
