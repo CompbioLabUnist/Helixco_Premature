@@ -759,7 +759,53 @@
         \end{figure}
     \end{frame}
 
+    \subsection{Random Forest Classifier}
+    \begin{frame}
+        \frametitle{Random Forest Classifier?}
+
+        \begin{itemize}
+            \item One of the best machine learning techniques
+            \item Give importance of each feature
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Random Forest Classifier Results}
+
+        762 features $\Rightarrow$ 219 features
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.gg/importances.pdf}
+            \caption{Feature Importances}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.gg/metrics.pdf}
+            \caption{Classification Metrics by Features}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.gg/Violin_0.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.gg/Violin_1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.gg/Violin_2.pdf}
+                \\
+            \end{array}$
+            \caption{Most Important three Features}
+        \end{figure}
+    \end{frame}
+
     \section{Discussion}
+    \begin{frame}
+        \frametitle{To-do List}
+
+        \begin{itemize}
+            \item Human Oral Microbiome Database
+            \item LEfSe: explain differences between classes for statistical significance
+        \end{itemize}
+    \end{frame}
 
    	\begin{frame}[allowframebreaks]
         \frametitle{References}

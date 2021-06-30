@@ -7,7 +7,6 @@ import tarfile
 import typing
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import seaborn
 import sklearn.ensemble
 import sklearn.manifold
@@ -47,14 +46,14 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
-    input_data["Answer"] = list(map(lambda x: metadata.loc[x, "Detail Premature"], input_data.index))
-    orders = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
+    input_data["Answer"] = list(map(lambda x: metadata.loc[x, "Premature"], input_data.index))
+    orders = ("PTB", "Normal")
 
     # Get Feature Importances
-    classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0)
+    classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     classifier.fit(input_data[taxa], input_data["Answer"])
     feature_importances = classifier.feature_importances_
-    best_features = list(map(lambda x: x[1], sorted(list(filter(lambda x: x[0] > 0, zip(feature_importances, taxa))), reverse=True)))
+    best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, taxa), reverse=True)))
 
     # Draw Feature Importances
     matplotlib.use("Agg")
@@ -82,7 +81,7 @@ if __name__ == "__main__":
         feature_importances = classifier.feature_importances_
         best_features = list(map(lambda x: x[1], sorted(filter(lambda x: x[0] > 0, zip(feature_importances, best_features)), reverse=True)))
 
-        if list(filter(lambda x: x <= 0, feature_importances)):
+        if list(filter(lambda x: x == 0, feature_importances)):
             flag = True
         else:
             tar_files.append("importances.tsv")
@@ -92,11 +91,11 @@ if __name__ == "__main__":
                     f.write("{0}\t{1}\t".format(feature, importance))
 
     # Run K-fold
-    k_fold = sklearn.model_selection.StratifiedKFold(n_splits=10)
+    k_fold = sklearn.model_selection.StratifiedKFold(n_splits=5)
     test_scores = list()
-    for i in range(1, len(best_features) + 1):
-        print("With", i, "/", len(best_features), "features!!")
-        used_columns = taxa[:i]
+    for i in range(5, 101, 5):
+        print("With", i, "/ 100% !!")
+        used_columns = taxa[:len(taxa) * i // 100]
         for j, (train_index, test_index) in enumerate(k_fold.split(input_data[used_columns], input_data["Answer"])):
             x_train, x_test = input_data.iloc[train_index][used_columns], input_data.iloc[test_index][used_columns]
             y_train, y_test = input_data.iloc[train_index]["Answer"], input_data.iloc[test_index]["Answer"]
@@ -104,7 +103,7 @@ if __name__ == "__main__":
             classifier.fit(x_train, y_train)
 
             for metric in step00.derivations:
-                test_scores.append(("First", i, metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                test_scores.append(("First", i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
 
     # Draw K-fold
     score_data = pandas.DataFrame.from_records(test_scores, columns=["Database", "Features", "Metrics", "Values"])
@@ -115,18 +114,20 @@ if __name__ == "__main__":
     seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
+    ax.invert_xaxis()
     tar_files.append("metrics.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    for i, feature in enumerate(taxa):
+    for i, feature in enumerate(taxa[:10]):
+        print(i, feature)
         matplotlib.use("Agg")
         matplotlib.rcParams.update(step00.matplotlib_parameters)
         seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         seaborn.violinplot(data=input_data, x="Answer", y=feature, order=orders, ax=ax, inner="box")
-        statannot.add_stat_annotation(ax, data=input_data, x="Answer", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="star", loc="inside", verbose=0, test="t-test_ind")
+        statannot.add_stat_annotation(ax, data=input_data, x="Answer", y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="simple", loc="inside", verbose=2, test="t-test_ind")
 
         matplotlib.pyplot.ylabel(step00.simplified_taxonomy(feature))
 
@@ -137,4 +138,5 @@ if __name__ == "__main__":
     # Save data
     with tarfile.open(args.output, "w") as tar:
         for file_name in tar_files:
+            print(file_name)
             tar.add(file_name, arcname=file_name)

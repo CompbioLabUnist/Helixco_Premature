@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 20
+CPUS = 50
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS =
@@ -50,7 +50,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30# step31
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -475,6 +475,9 @@ Output/Step33/%.DADA2.tsv: Bash/export_TSV2.bash Output/Step33/%.DADA2.qza | bui
 
 Output/Step33/%.Deblur.tsv: Bash/export_TSV2.bash Output/Step33/%.Deblur.qza | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.in: Output/Step33/%.tsv | build.log
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1
 
 step33: Output/Step33/everything.DADA2.qza Output/Step33/everything.Deblur.qza Output/Step33/everything.DADA2.tsv Output/Step33/everything.Deblur.tsv
 .PHONY: step33
