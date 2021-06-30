@@ -12,9 +12,4 @@ ADD Tools/* /Tools/
 ADD requirements.txt /
 RUN pip install --requirement /requirements.txt && pip install scikit-bio
 
-# LEfSe
-RUN cd /Tools && bash Miniconda.sh -b
-ENV PATH=/home/qiime2/anaconda2/bin:$PATH
-RUN conda install -c biobakery lefse
-
 CMD ["/bin/bash"]
