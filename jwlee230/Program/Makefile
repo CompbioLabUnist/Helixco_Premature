@@ -20,9 +20,9 @@ log Output Docker/Tools:
 	mkdir $@
 
 # Tools
-Docker/Tools/Mothur.zip: | Docker/Tools
-	wget "https://github.com/mothur/mothur/releases/download/v1.44.2/Mothur.Ubuntu_18.zip" -O $@
-TOOLS += Docker/Tools/Mothur.zip
+Docker/Tools/Miniconda.sh: | Docker/Tools
+	wget "https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-x86_64.sh" -O $@
+TOOLS += Docker/Tools/Miniconda.sh
 
 # Docker
 TOOLS += $(wildcard Docker/*)
@@ -473,5 +473,11 @@ Output/Step33/%.DADA2.qza: Output/DADA2/%.table.qza | Output/Step33 build.log
 Output/Step33/%.Deblur.qza: Output/Deblur/%.table.qza | Output/Step33 build.log
 	$(DOCKER) qiime feature-table relative-frequency --i-table $(addprefix /,$(word 1,$^)) --o-relative-frequency-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step33: Output/Step33/everything.DADA2.qza Output/Step33/everything.Deblur.qza
+Output/Step33/%.DADA2.tsv: Bash/export_TSV.bash Output/DADA2/%.table.qza Output/Step33/%.DADA2.qza | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.Deblur.tsv: Bash/export_TSV.bash Output/Deblur/%.table.qza Output/Step33/%.Deblur.qza | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step33: Output/Step33/everything.DADA2.qza Output/Step33/everything.Deblur.qza Output/Step33/everything.DADA2.tsv Output/Step33/everything.Deblur.tsv
 .PHONY: step33
