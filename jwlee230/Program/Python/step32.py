@@ -26,7 +26,7 @@ def draw(disease: str) -> str:
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", style=disease, hue_order=sorted(set(data["Detail Premature"])), markers={x: y for x, y in zip(sorted(set(data[disease])), itertools.cycle(step00.markers))}, s=40 ** 2)
+    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Premature", style=disease, hue_order=sorted(set(data["Premature"])), markers={x: y for x, y in zip(sorted(set(data[disease])), itertools.cycle(step00.markers))}, s=40 ** 2)
 
     try:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
