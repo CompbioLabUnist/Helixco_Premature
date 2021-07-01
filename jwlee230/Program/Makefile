@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 10
+CPUS = 20
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS =
@@ -50,7 +50,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06# step07 step08 step09 step21 step22 step26 step28 step29 step30 step31
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -184,15 +184,19 @@ Output/Taxonomy:
 
 Output/Taxonomy/silva.qza: | Output/Taxonomy build.log
 	wget "https://data.qiime2.org/2021.4/common/silva-138-99-nb-classifier.qza" -O $@
+	touch $@
 
 Output/Taxonomy/gg.qza: | Output/Taxonomy build.log
 	wget "https://data.qiime2.org/2021.4/common/gg-13-8-99-nb-classifier.qza" -O $@
+	touch $@
 
 Output/Taxonomy/homd.fasta: | Output/Taxonomy
 	wget "http://www.homd.org/ftp/16S_rRNA_refseq/HOMD_16S_rRNA_RefSeq/V15.22/HOMD_16S_rRNA_RefSeq_V15.22.fasta" -O $@
+	touch $@
 
 Output/Taxonomy/homd.txt: | Output/Taxonomy
 	wget "http://www.homd.org/ftp/16S_rRNA_refseq/HOMD_16S_rRNA_RefSeq/V15.22/HOMD_16S_rRNA_RefSeq_V15.22.qiime.taxonomy" -O $@
+	touch $@
 
 Output/Taxonomy/homd_fasta.qza: Output/Taxonomy/homd.fasta | build.log
 	$(DOCKER) qiime tools import --type "FeatureData[Sequence]" --input-path $(addprefix /,$<) --output-path $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -232,15 +236,6 @@ step06: step06-reference step06-mapping
 # Step 07 (Build Metadata)
 Output/Metadata:
 	mkdir -p $@
-
-Output/Metadata/first.tsv: Python/step07.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/RawData/*.fastq.gz)) | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
-
-Output/Metadata/EBI.tsv: Python/step07-2.py Data/EBIData/filereport_read_run_PRJEB10914.tsv $(sort $(wildcard Data/EBIData/ena_files/*/*.fastq.gz)) | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^)
-
-Output/Metadata/second.tsv: Python/step07-3.py Data/Metadata/sample_information.xlsx $(sort $(wildcard Data/HN00145920/*.fastq.gz)) | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^)
 
 Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) python3 $(addprefix /,$^) > $@
@@ -315,34 +310,10 @@ step08: step08-DADA2-gg step08-DADA2-silva step08-Deblur-gg step08-Deblur-silva
 Output/TSV:
 	mkdir -p $@
 
-Output/TSV/first.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/first.table.qza Output/Taxonomy/first.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/first.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/first.table.qza Output/Taxonomy/first.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/second.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/second.table.qza Output/Taxonomy/second.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/second.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/second.table.qza Output/Taxonomy/second.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
 Output/TSV/Stool.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/Stool.table.qza Output/Taxonomy/Stool.DADA2.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/Stool.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/Stool.table.qza Output/Taxonomy/Stool.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/EBI.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/EBI.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/HMP.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/HMP.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
@@ -351,14 +322,14 @@ Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.
 Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv
+step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
 .PHONY: step09
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.merge.tsv: Python/step21.py Output/TSV/%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/everything.DADA2.gg.merge.tsv Output/TSV/everything.DADA2.silva.merge.tsv Output/TSV/everything.Deblur.gg.merge.tsv Output/TSV/everything.Deblur.silva.merge.tsv Output/TSV/Stool.DADA2.gg.merge.tsv Output/TSV/Stool.DADA2.silva.merge.tsv Output/TSV/Stool.Deblur.gg.merge.tsv Output/TSV/Stool.Deblur.silva.merge.tsv
+step21: Output/TSV/everything.DADA2.gg.merge.tsv Output/TSV/everything.DADA2.silva.merge.tsv Output/TSV/everything.Deblur.gg.merge.tsv Output/TSV/everything.Deblur.silva.merge.tsv Output/TSV/everything.Deblur.homd.merge.tsv Output/TSV/Stool.DADA2.gg.merge.tsv Output/TSV/Stool.DADA2.silva.merge.tsv Output/TSV/Stool.DADA2.homd.merge.tsv Output/TSV/Stool.Deblur.gg.merge.tsv Output/TSV/Stool.Deblur.silva.merge.tsv Output/TSV/Stool.Deblur.homd.merge.tsv
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
