@@ -19,22 +19,24 @@ def read(file_name: str) -> pandas.DataFrame:
     return pandas.read_csv(file_name, sep="\t", index_col=0)
 
 
-def draw(alpha: str, disease: str) -> str:
-    print(alpha, disease)
+def draw(alpha: str, disease: str, site: str) -> str:
+    print(alpha, disease, site)
+
+    drawing_data = data.loc[(data["Site"] == site)]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.violinplot(data=data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
+    seaborn.violinplot(data=drawing_data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=2, fontsize=step00.matplotlib_parameters["font.size"])
+    statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=2, fontsize=step00.matplotlib_parameters["font.size"])
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
 
-    file_name = "{0}+{1}.pdf".format(alpha, disease.replace(" ", "_"))
+    file_name = "{0}+{1}+{2}.pdf".format(alpha, disease.replace(" ", "_"), site)
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -69,11 +71,10 @@ if __name__ == "__main__":
     print(metadata)
 
     data = pandas.concat(objs=[raw_data, metadata], axis="columns", verify_integrity=True)
-    data = data.loc[(data["Site"].isin(step00.selected_sites))]
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = pool.starmap(draw, itertools.product(alphas, diseases))
+        files = pool.starmap(draw, itertools.product(alphas, diseases, set(data["Site"])))
 
     with tarfile.open(args.output, "w") as tar:
         for f in files:

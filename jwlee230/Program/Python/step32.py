@@ -18,23 +18,23 @@ distance_data = pandas.DataFrame()
 data = pandas.DataFrame()
 
 
-def draw(disease: str) -> str:
-    print(disease)
+def draw(disease: str, site: str) -> str:
+    print(disease, site)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Premature", style=disease, hue_order=sorted(set(data["Premature"])), markers={x: y for x, y in zip(sorted(set(data[disease])), itertools.cycle(step00.markers))}, s=40 ** 2)
+    seaborn.scatterplot(data=data.loc[(data["Site"] == site)], x="tSNE1", y="tSNE2", ax=ax, hue="Premature", style=disease, hue_order=sorted(set(data["Premature"])), markers={x: y for x, y in zip(sorted(set(data[disease])), itertools.cycle(step00.markers))}, s=40 ** 2)
 
     try:
-        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
+        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data.loc[(data["Site"] == site), (data["Site"] == site)]), list(data[disease]))["p-value"]
     except ValueError:
         p_value = 1.0
     matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
 
-    file_name = "{0}.pdf".format(disease.replace(" ", "_"))
+    file_name = "{0}+{1}.pdf".format(disease.replace(" ", "_"), site)
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -58,10 +58,6 @@ if __name__ == "__main__":
     diseases = list(metadata.columns)
     print(metadata)
 
-    distance_data = distance_data.loc[(metadata["Site"].isin(step00.selected_sites))]
-    distance_data = distance_data[list(distance_data.index)]
-    metadata = metadata.loc[(metadata["Site"].isin(step00.selected_sites))]
-
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):
@@ -74,7 +70,7 @@ if __name__ == "__main__":
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = pool.map(draw, diseases)
+        files = pool.starmap(draw, itertools.product(diseases, set(data["Site"])))
 
     with tarfile.open(args.output, "w") as tar:
         for f in files:
