@@ -46,7 +46,7 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
-    input_data["Premature"] = list(map(lambda x: metadata.loc[x, "Premature"], input_data.index))
+    input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
     orders = ("PTB", "Normal")
     print(input_data)
 
