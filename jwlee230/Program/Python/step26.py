@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     tar_files: typing.List[str] = list()
 
-    input_data = step00.read_pickle(args.input)
+    input_data = step00.read_pickle(args.input).T
     taxa = list(input_data.columns)
     print(input_data)
 
