@@ -36,7 +36,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
 
-    file_name = "{0}+{1}+{2}.pdf".format(alpha, disease.replace(" ", "_"), site)
+    file_name = "{2}+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"), site)
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name

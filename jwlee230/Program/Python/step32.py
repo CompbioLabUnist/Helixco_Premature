@@ -26,15 +26,39 @@ def draw(disease: str, site: str) -> str:
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.scatterplot(data=data.loc[(data["Site"] == site)], x="tSNE1", y="tSNE2", ax=ax, hue="Premature", style=disease, hue_order=sorted(set(data["Premature"])), markers={x: y for x, y in zip(sorted(set(data[disease])), itertools.cycle(step00.markers))}, s=40 ** 2)
+    tmp_data = data.loc[(data["Site"] == site)]
+    seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style="Premature", hue_order=sorted(set(tmp_data[disease])), markers={x: y for x, y in zip(sorted(set(tmp_data["Premature"])), itertools.cycle(step00.markers))}, s=40 ** 2)
 
     try:
-        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data.loc[(data["Site"] == site), (data["Site"] == site)]), list(data[disease]))["p-value"]
+        tmp_distance_data = distance_data.loc[(data["Site"] == site), (data["Site"] == site)]
+        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(tmp_distance_data), list(tmp_data[disease]))["p-value"]
     except ValueError:
         p_value = 1.0
     matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
 
-    file_name = "{0}+{1}.pdf".format(disease.replace(" ", "_"), site)
+    file_name = "{0}+{1}.pdf".format(site, disease.replace(" ", "_"))
+    fig.savefig(file_name)
+    matplotlib.pyplot.close(fig)
+    return file_name
+
+
+def draw_all(disease: str) -> str:
+    print(disease)
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style="Premature", hue_order=sorted(set(data[disease])), markers={x: y for x, y in zip(sorted(set(data["Premature"])), itertools.cycle(step00.markers))}, s=40 ** 2)
+
+    try:
+        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
+    except ValueError:
+        p_value = 1.0
+    matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
+
+    file_name = "{0}+All.pdf".format(disease.replace(" ", "_"))
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -71,6 +95,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         files = pool.starmap(draw, itertools.product(diseases, set(data["Site"])))
+        files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:
         for f in files:
