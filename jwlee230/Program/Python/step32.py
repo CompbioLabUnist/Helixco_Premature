@@ -92,7 +92,8 @@ if __name__ == "__main__":
     print(tsne_data)
 
     data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
-    sites = set(data["Site"])
+    # sites = set(data["Site"])
+    sites = {"Mouth", "Neonate-3day"}
     print(data)
     print(sorted(sites))
 

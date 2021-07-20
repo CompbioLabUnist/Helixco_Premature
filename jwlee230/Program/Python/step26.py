@@ -51,7 +51,8 @@ if __name__ == "__main__":
     print(metadata)
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
-    sites = set(input_data["Site"])
+    # sites = set(input_data["Site"])
+    sites = {"Mouth", "Neonate-3day"}
     print(input_data)
 
     target = "Detail Premature"

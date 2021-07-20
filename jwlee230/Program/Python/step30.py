@@ -31,7 +31,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     seaborn.violinplot(data=drawing_data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="inside", verbose=2, fontsize=step00.matplotlib_parameters["font.size"])
+    statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=2, fontsize=step00.matplotlib_parameters["font.size"])
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
@@ -94,7 +94,8 @@ if __name__ == "__main__":
     print(sorted(diseases))
 
     data = pandas.concat(objs=[raw_data, metadata], axis="columns", verify_integrity=True)
-    sites = set(data["Site"])
+    # sites = set(data["Site"])
+    sites = {"Mouth", "Neonate-3day"}
     print(data)
     print(sorted(sites))
 

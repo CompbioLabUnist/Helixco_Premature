@@ -20,7 +20,7 @@ if __name__ == "__main__":
     raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
     print(raw_data)
 
-    output_data = raw_data.groupby(["taxonomy"]).mean()
+    output_data = raw_data.groupby(["taxonomy"]).sum()
     print(output_data)
 
     step00.make_pickle(args.output, output_data)
