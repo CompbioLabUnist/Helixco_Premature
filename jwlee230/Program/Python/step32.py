@@ -31,7 +31,7 @@ def draw(disease: str, site: str) -> str:
 
     try:
         tmp_distance_data = distance_data.loc[(data["Site"] == site), (data["Site"] == site)]
-        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(tmp_distance_data), list(tmp_data[disease]))["p-value"]
+        p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(tmp_distance_data), list(tmp_data[disease]), permutations=10 ** 5)["p-value"]
     except ValueError:
         p_value = 1.0
     matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
@@ -79,8 +79,9 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(distance_data.index), :].replace(to_replace=-1, value=None)
-    diseases = list(metadata.columns)
+    diseases = set(metadata.columns)
     print(metadata)
+    print(sorted(diseases))
 
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
@@ -91,10 +92,13 @@ if __name__ == "__main__":
     print(tsne_data)
 
     data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
+    sites = set(data["Site"])
     print(data)
+    print(sorted(sites))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = pool.starmap(draw, itertools.product(diseases, set(data["Site"])))
+        # files = pool.starmap(draw, itertools.product(diseases, sites))
+        files = pool.starmap(draw, itertools.product(diseases, {"Mouth", "Neonate-3day"}))
         files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:
