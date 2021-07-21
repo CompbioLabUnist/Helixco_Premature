@@ -58,7 +58,7 @@ def draw_all(disease: str) -> str:
         p_value = 1.0
     matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
 
-    file_name = "{0}+All.pdf".format(disease.replace(" ", "_"))
+    file_name = "All+{0}.pdf".format(disease.replace(" ", "_"))
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -79,7 +79,8 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(distance_data.index), :].replace(to_replace=-1, value=None)
-    diseases = set(metadata.columns)
+    # diseases = set(metadata.columns)
+    diseases = {"Gestational Diabetes", "Overweight or Obesity", "Too much weight gain", "Hypertension", "PROM", "Mother Antibiotics", "Neonate Antibiotics", "Mother Steroid", "Data"}
     print(metadata)
     print(sorted(diseases))
 
