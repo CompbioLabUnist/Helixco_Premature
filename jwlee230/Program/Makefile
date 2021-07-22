@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 50
+CPUS = 10
 MEMS = 300G
 PWD := $(shell pwd)
 TOOLS =

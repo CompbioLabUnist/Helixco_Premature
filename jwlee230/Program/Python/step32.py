@@ -34,7 +34,7 @@ def draw(disease: str, site: str) -> str:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(tmp_distance_data), list(tmp_data[disease]), permutations=10 ** 5)["p-value"]
     except ValueError:
         p_value = 1.0
-    matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
+    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(disease, p_value))
 
     file_name = "{0}+{1}.pdf".format(site, disease.replace(" ", "_"))
     fig.savefig(file_name)
@@ -79,8 +79,7 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(distance_data.index), :].replace(to_replace=-1, value=None)
-    # diseases = set(metadata.columns)
-    diseases = {"Gestational Diabetes", "Overweight or Obesity", "Too much weight gain", "Hypertension", "PROM", "Mother Antibiotics", "Neonate Antibiotics", "Mother Steroid", "Data"}
+    diseases = set(metadata.columns) - step00.numeric_columns
     print(metadata)
     print(sorted(diseases))
 
@@ -93,14 +92,12 @@ if __name__ == "__main__":
     print(tsne_data)
 
     data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
-    # sites = set(data["Site"])
-    sites = {"Mouth", "Neonate-3day"}
+    sites = set(data["Site"])
     print(data)
     print(sorted(sites))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        # files = pool.starmap(draw, itertools.product(diseases, sites))
-        files = pool.starmap(draw, itertools.product(diseases, {"Mouth", "Neonate-3day"}))
+        files = pool.starmap(draw, itertools.product(diseases, sites))
         files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:

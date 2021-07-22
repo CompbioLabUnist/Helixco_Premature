@@ -89,19 +89,16 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(raw_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
-    # diseases = set(metadata.columns) - step00.numeric_columns
-    diseases = {"Gestational Diabetes", "Overweight or Obesity", "Too much weight gain", "Hypertension", "PROM", "Mother Antibiotics", "Neonate Antibiotics", "Mother Steroid", "Data"}
+    diseases = set(metadata.columns) - step00.numeric_columns
     print(metadata)
     print(sorted(diseases))
 
     data = pandas.concat(objs=[raw_data, metadata], axis="columns", verify_integrity=True)
-    # sites = set(data["Site"])
-    sites = {"Mouth", "Neonate-3day"}
+    sites = set(data["Site"])
     print(data)
     print(sorted(sites))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        # files = pool.starmap(draw, itertools.product(alphas, diseases, set(data["Site"])))
         files = pool.starmap(draw, itertools.product(alphas, diseases, sites))
         files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
