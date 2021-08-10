@@ -50,7 +50,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -460,21 +460,34 @@ step32: Output/Step32/DADA2/everything.bray_curtis.tsv Output/Step32/DADA2/every
 # Step 33 (LEfSe analysis)
 Output/Step33:
 	mkdir -p $@
+	chmod 777 $@
 
-Output/Step33/%.DADA2.qza: Output/DADA2/%.table.qza | Output/Step33 build.log
-	$(DOCKER) qiime feature-table relative-frequency --i-table $(addprefix /,$(word 1,$^)) --o-relative-frequency-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.gg.tsv: Python/step33.py Output/TSV/%.DADA2.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.Deblur.qza: Output/Deblur/%.table.qza | Output/Step33 build.log
-	$(DOCKER) qiime feature-table relative-frequency --i-table $(addprefix /,$(word 1,$^)) --o-relative-frequency-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.silva.tsv: Python/step33.py Output/TSV/%.DADA2.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.DADA2.tsv: Bash/export_TSV2.bash Output/Step33/%.DADA2.qza | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.homd.tsv: Python/step33.py Output/TSV/%.DADA2.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.Deblur.tsv: Bash/export_TSV2.bash Output/Step33/%.Deblur.qza | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.Deblur.gg.tsv: Python/step33.py Output/TSV/%.Deblur.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.Deblur.silva.tsv: Python/step33.py Output/TSV/%.Deblur.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.Deblur.homd.tsv: Python/step33.py Output/TSV/%.Deblur.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.in: Output/Step33/%.tsv | build.log
-	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1 1> $@.stdout 2> $@.stderr
 
-step33: Output/Step33/everything.DADA2.qza Output/Step33/everything.Deblur.qza Output/Step33/everything.DADA2.tsv Output/Step33/everything.Deblur.tsv
+Output/Step33/%.res: Output/Step33/%.in | build.log
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse run_lefse.py $(addprefix /,$^ $@) --verbose 1 1> $@.stdout 2> $@.stderr
+
+Output/Step33/%.pdf: Output/Step33/%.res | build.log
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse plot_res.py $(addprefix /,$^ $@) --format pdf 1> $@.stdout 2> $@.stderr
+
+step33: Output/Step33/everything.DADA2.gg.tsv Output/Step33/everything.DADA2.silva.tsv Output/Step33/everything.DADA2.homd.tsv Output/Step33/everything.Deblur.gg.tsv Output/Step33/everything.Deblur.silva.tsv Output/Step33/everything.Deblur.homd.tsv Output/Step33/everything.DADA2.gg.in Output/Step33/everything.DADA2.silva.in Output/Step33/everything.DADA2.homd.in Output/Step33/everything.Deblur.gg.in Output/Step33/everything.Deblur.silva.in Output/Step33/everything.Deblur.homd.in Output/Step33/everything.DADA2.gg.res Output/Step33/everything.DADA2.silva.res Output/Step33/everything.DADA2.homd.res Output/Step33/everything.Deblur.gg.res Output/Step33/everything.Deblur.silva.res Output/Step33/everything.Deblur.homd.res Output/Step33/everything.DADA2.gg.pdf Output/Step33/everything.DADA2.silva.pdf Output/Step33/everything.DADA2.homd.pdf Output/Step33/everything.Deblur.gg.pdf Output/Step33/everything.Deblur.silva.pdf Output/Step33/everything.Deblur.homd.pdf
 .PHONY: step33
