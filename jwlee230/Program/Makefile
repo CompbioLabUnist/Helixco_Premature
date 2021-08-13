@@ -462,23 +462,23 @@ Output/Step33:
 	mkdir -p $@
 	chmod 777 $@
 
-Output/Step33/%.DADA2.gg.tsv: Python/step33.py Output/TSV/%.DADA2.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.gg.Cervix.tsv Output/Step33/%.DADA2.gg.Mouth.tsv Output/Step33/%.DADA2.gg.Neonate-1day.tsv Output/Step33/%.DADA2.gg.Neonate-3day.tsv Output/Step33/%.DADA2.gg.Neonate-5day.tsv Output/Step33/%.DADA2.gg.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.DADA2.silva.tsv: Python/step33.py Output/TSV/%.DADA2.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.silva.Cervix.tsv Output/Step33/%.DADA2.silva.Mouth.tsv Output/Step33/%.DADA2.silva.Neonate-1day.tsv Output/Step33/%.DADA2.silva.Neonate-3day.tsv Output/Step33/%.DADA2.silva.Neonate-5day.tsv Output/Step33/%.DADA2.silva.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.DADA2.homd.tsv: Python/step33.py Output/TSV/%.DADA2.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.DADA2.homd.Cervix.tsv Output/Step33/%.DADA2.homd.Mouth.tsv Output/Step33/%.DADA2.homd.Neonate-1day.tsv Output/Step33/%.DADA2.homd.Neonate-3day.tsv Output/Step33/%.DADA2.homd.Neonate-5day.tsv Output/Step33/%.DADA2.homd.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.Deblur.gg.tsv: Python/step33.py Output/TSV/%.Deblur.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.Deblur.gg.Cervix.tsv Output/Step33/%.Deblur.gg.Mouth.tsv Output/Step33/%.Deblur.gg.Neonate-1day.tsv Output/Step33/%.Deblur.gg.Neonate-3day.tsv Output/Step33/%.Deblur.gg.Neonate-5day.tsv Output/Step33/%.Deblur.gg.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.Deblur.silva.tsv: Python/step33.py Output/TSV/%.Deblur.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.Deblur.silva.Cervix.tsv Output/Step33/%.Deblur.silva.Mouth.tsv Output/Step33/%.Deblur.silva.Neonate-1day.tsv Output/Step33/%.Deblur.silva.Neonate-3day.tsv Output/Step33/%.Deblur.silva.Neonate-5day.tsv Output/Step33/%.Deblur.silva.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step33/%.Deblur.homd.tsv: Python/step33.py Output/TSV/%.Deblur.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step33/%.Deblur.homd.Cervix.tsv Output/Step33/%.Deblur.homd.Mouth.tsv Output/Step33/%.Deblur.homd.Neonate-1day.tsv Output/Step33/%.Deblur.homd.Neonate-3day.tsv Output/Step33/%.Deblur.homd.Neonate-5day.tsv Output/Step33/%.Deblur.homd.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.in: Output/Step33/%.tsv | build.log
 	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1 1> $@.stdout 2> $@.stderr
@@ -489,5 +489,7 @@ Output/Step33/%.res: Output/Step33/%.in | build.log
 Output/Step33/%.pdf: Output/Step33/%.res | build.log
 	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse plot_res.py $(addprefix /,$^ $@) --format pdf 1> $@.stdout 2> $@.stderr
 
-step33: Output/Step33/everything.DADA2.gg.tsv Output/Step33/everything.DADA2.silva.tsv Output/Step33/everything.DADA2.homd.tsv Output/Step33/everything.Deblur.gg.tsv Output/Step33/everything.Deblur.silva.tsv Output/Step33/everything.Deblur.homd.tsv Output/Step33/everything.DADA2.gg.in Output/Step33/everything.DADA2.silva.in Output/Step33/everything.DADA2.homd.in Output/Step33/everything.Deblur.gg.in Output/Step33/everything.Deblur.silva.in Output/Step33/everything.Deblur.homd.in Output/Step33/everything.DADA2.gg.res Output/Step33/everything.DADA2.silva.res Output/Step33/everything.DADA2.homd.res Output/Step33/everything.Deblur.gg.res Output/Step33/everything.Deblur.silva.res Output/Step33/everything.Deblur.homd.res Output/Step33/everything.DADA2.gg.pdf Output/Step33/everything.DADA2.silva.pdf Output/Step33/everything.DADA2.homd.pdf Output/Step33/everything.Deblur.gg.pdf Output/Step33/everything.Deblur.silva.pdf Output/Step33/everything.Deblur.homd.pdf
-.PHONY: step33
+step33-tsv: Output/Step33/everything.DADA2.gg.Cervix.tsv Output/Step33/everything.DADA2.silva.Cervix.tsv Output/Step33/everything.DADA2.homd.Cervix.tsv Output/Step33/everything.Deblur.gg.Cervix.tsv Output/Step33/everything.Deblur.silva.Cervix.tsv Output/Step33/everything.Deblur.homd.Cervix.tsv
+step33-lefse: $(addprefix Output/Step33/everything.DADA2.gg.,$(addsuffix .in,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.gg.,$(addsuffix .res,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.silva.,$(addsuffix .in,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.silva.,$(addsuffix .res,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.homd.,$(addsuffix .in,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.homd.,$(addsuffix .res,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.silva.,$(addsuffix .in,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.silva.,$(addsuffix .res,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.homd.,$(addsuffix .in,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.homd.,$(addsuffix .res,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step33/everything.Deblur.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-1day Neonate-3day Neonate-5day Vagina))
+step33: step33-tsv step33-lefse
+.PHONY: step33-tsv step33-lefse step33
