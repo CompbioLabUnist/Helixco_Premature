@@ -88,7 +88,10 @@ def consistency_taxonomy(taxonomy: str) -> str:
     """
     consistency_taxonomy: make taxonomy information with consistency
     """
-    return ";".join(list(map(lambda x: x.strip(), taxonomy.split(";")))[:-3])
+    if taxonomy == "Unassigned":
+        return taxonomy
+    else:
+        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: x.strip().replace("[", "").replace("]", ""), taxonomy.split(";")))))[-3:])
 
 
 def simplified_taxonomy(taxonomy: str) -> str:
@@ -98,7 +101,7 @@ def simplified_taxonomy(taxonomy: str) -> str:
     if taxonomy == "Unassigned":
         return taxonomy
     else:
-        return " ".join(list(filter(None, list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";")))))[:-3])
+        return " ".join(list(filter(None, list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";")))))[-3:])
 
 
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:

@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1).drop(columns="#OTU ID").groupby(by="taxonomy").sum()
     raw_data["readable_taxonomy"] = list(map(step00.consistency_taxonomy, list(raw_data.index)))
-    raw_data.set_index(keys="readable_taxonomy", inplace=True, verify_integrity=True)
+    raw_data.set_index(keys="readable_taxonomy", inplace=True)
     print(raw_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1])
