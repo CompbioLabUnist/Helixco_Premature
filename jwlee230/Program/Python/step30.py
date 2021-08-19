@@ -31,7 +31,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     seaborn.violinplot(data=drawing_data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
+    statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="Mann-Whitney", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
@@ -52,7 +52,7 @@ def draw_all(alpha: str, disease: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     seaborn.violinplot(data=data, x=disease, y=alpha, hue="Premature", hue_order=sorted(set(data["Premature"])), order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="t-test_ind", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
+    statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, hue="Premature", order=sorted(set(data[disease])), test="Mann-Whitney", box_pairs=itertools.combinations(itertools.product(sorted(set(data[disease])), sorted(set(data["Premature"]))), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()

@@ -56,7 +56,7 @@ def draw_all(disease: str) -> str:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
     except ValueError:
         p_value = 1.0
-    matplotlib.pyplot.title("{0} (p={1:.3f})".format(disease, p_value))
+    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(disease, p_value))
 
     file_name = "All+{0}.pdf".format(disease.replace(" ", "_"))
     fig.savefig(file_name)
