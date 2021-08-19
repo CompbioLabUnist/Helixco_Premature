@@ -21,7 +21,7 @@ if __name__ == "__main__":
         raise ValueError("Metadata file must end with .TSV!!")
 
     raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1).drop(columns="#OTU ID").groupby(by="taxonomy").sum()
-    raw_data["readable_taxonomy"] = list(map(step00.consistency_taxonomy, list(raw_data.index)))
+    raw_data["readable_taxonomy"] = list(map(step00.simplified_taxonomy, list(raw_data.index)))
     raw_data.set_index(keys="readable_taxonomy", inplace=True)
     print(raw_data)
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     assert args.c in list(metadata.columns)
     print(metadata)
 
-    raw_data.loc["Subject"] = list(metadata[args.c])
+    raw_data.loc["!Subject"] = list(metadata[args.c])
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
