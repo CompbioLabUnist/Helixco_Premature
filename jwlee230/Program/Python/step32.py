@@ -16,6 +16,7 @@ import step00
 
 distance_data = pandas.DataFrame()
 data = pandas.DataFrame()
+wanted_column = "Obesity"
 
 
 def draw(disease: str, site: str) -> str:
@@ -27,7 +28,7 @@ def draw(disease: str, site: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     tmp_data = data.loc[(data["Site"] == site)]
-    seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style="Premature", hue_order=sorted(set(tmp_data[disease])), markers={x: y for x, y in zip(sorted(set(tmp_data["Premature"])), itertools.cycle(step00.markers))}, s=40 ** 2)
+    seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style=wanted_column, hue_order=sorted(set(tmp_data[disease])), markers={x: y for x, y in zip(sorted(set(tmp_data[wanted_column])), itertools.cycle(step00.markers))}, s=40 ** 2)
 
     try:
         tmp_distance_data = distance_data.loc[(data["Site"] == site), (data["Site"] == site)]
@@ -50,7 +51,7 @@ def draw_all(disease: str) -> str:
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
-    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style="Premature", hue_order=sorted(set(data[disease])), markers={x: y for x, y in zip(sorted(set(data["Premature"])), itertools.cycle(step00.markers))}, s=40 ** 2)
+    seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, style=wanted_column, hue_order=sorted(set(data[disease])), markers={x: y for x, y in zip(sorted(set(data[wanted_column])), itertools.cycle(step00.markers))}, s=40 ** 2)
 
     try:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
