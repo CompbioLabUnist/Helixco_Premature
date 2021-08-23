@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Premature")
+    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Obesity")
 
     args = parser.parse_args()
 
@@ -30,11 +30,11 @@ if __name__ == "__main__":
     assert args.c in list(metadata.columns)
     print(metadata)
 
-    raw_data.loc["!Subject"] = list(metadata[args.c])
+    raw_data.loc["!Subject"] = list(map(str, metadata[args.c]))
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
-    for site in ["Cervix", "Mouth", "Neonate-1day", "Neonate-3day", "Neonate-5day", "Vagina"]:
+    for site in ["Cervix", "Mouth", "Neonate-3day", "Neonate-5day", "Vagina"]:
         selected_IDs = metadata.loc[(metadata["Site"] == site), "#SampleID"]
         tmp_data = raw_data.loc[:, selected_IDs]
         print(tmp_data)

@@ -101,7 +101,7 @@ def simplified_taxonomy(taxonomy: str) -> str:
     if taxonomy == "Unassigned":
         return taxonomy
     else:
-        return ";".join(list(filter(None, list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";")))))[-3:])
+        return ";".join(list(list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";")))))
 
 
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:
