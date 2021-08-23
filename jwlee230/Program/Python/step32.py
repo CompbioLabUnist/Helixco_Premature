@@ -25,7 +25,7 @@ def draw(disease: str, site: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tmp_data = data.loc[(data["Site"] == site)]
     seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(tmp_data[disease])), s=40 ** 2)
 
@@ -49,7 +49,7 @@ def draw_all(disease: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(data[disease])), s=40 ** 2)
 
     try:
