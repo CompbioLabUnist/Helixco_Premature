@@ -28,7 +28,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(12, 12))
     seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
     try:
@@ -52,7 +52,7 @@ def draw_all(alpha: str, disease: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(12, 12))
     seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
     try:
