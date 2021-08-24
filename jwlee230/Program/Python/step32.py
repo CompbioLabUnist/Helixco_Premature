@@ -25,7 +25,7 @@ def draw(disease: str, site: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tmp_data = data.loc[(data["Site"] == site)]
     seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(tmp_data[disease])), s=40 ** 2)
 
@@ -34,7 +34,7 @@ def draw(disease: str, site: str) -> str:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(tmp_distance_data), list(tmp_data[disease]), permutations=10 ** 5)["p-value"]
     except ValueError:
         p_value = 1.0
-    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(disease, p_value))
+    matplotlib.pyplot.title("{0} (p={1:.2f})".format(disease, p_value))
 
     file_name = "{0}+{1}.pdf".format(site, disease.replace(" ", "_"))
     fig.savefig(file_name)
@@ -49,14 +49,14 @@ def draw_all(disease: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(data[disease])), s=40 ** 2)
 
     try:
         p_value = skbio.stats.distance.permanova(skbio.stats.distance.DistanceMatrix(distance_data), list(data[disease]))["p-value"]
     except ValueError:
         p_value = 1.0
-    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(disease, p_value))
+    matplotlib.pyplot.title("{0} (p={1:.2f})".format(disease, p_value))
 
     file_name = "All+{0}.pdf".format(disease.replace(" ", "_"))
     fig.savefig(file_name)
