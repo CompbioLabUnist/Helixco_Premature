@@ -766,7 +766,7 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{LEfSe Results}
+        \frametitle{LEfSe Results with PTB}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.Deblur.homd.Cervix.pdf}
@@ -774,28 +774,50 @@
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.DADA2.gg.Neonate-1day.pdf}
-            \caption{DADA2+Greengenes in Neonate 1-day}
-        \end{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Default/everything.DADA2.gg.Neonate-1day.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Default/everything.Deblur.gg.Neonate-1day.pdf}
+                \\
+                \mbox{(a) DADA2+GG} & \mbox{(b) Deblur+GG} \\
 
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.Deblur.gg.Neonate-1day.pdf}
-            \caption{Deblur+Greengenes in Neonate 1-day}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Neonate-1day.pdf}
-            \caption{Deblur+Silva in Neonate 1-day}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.Deblur.homd.Neonate-1day.pdf}
-            \caption{Deblur+HOMD in Neonate 1-day}
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Neonate-1day.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Default/everything.Deblur.homd.Neonate-1day.pdf}
+                \\
+                \mbox{(c) Deblur+Silva} & \mbox{(d) Deblur+HOMD} \\
+            \end{array}$
+            \caption{LEfSe in Neonate 1-day}
         \end{figure}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Vagina.pdf}
             \caption{Deblur+Silva in Vagina}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LEfSe Results with Obesity}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.gg.Cervix.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.silva.Cervix.pdf}
+                \\
+                \mbox{(a) Deblur+GG} & \mbox{(b) Deblur+Silva} \\
+
+                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.homd.Cervix.pdf}
+                &
+                \\
+                \mbox{(c) Deblur+HOMD} & \\
+            \end{array}$
+            \caption{LEfSe in Cervix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/LEfSe/Obesity-Default/everything.DADA2.gg.Vagina.pdf}
+            \caption{DADA2+GG in Vagina}
         \end{figure}
     \end{frame}
 
