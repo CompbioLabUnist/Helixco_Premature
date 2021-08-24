@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Obesity")
+    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Premature")
 
     args = parser.parse_args()
 
