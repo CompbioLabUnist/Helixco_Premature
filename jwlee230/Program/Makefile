@@ -322,14 +322,17 @@ Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.
 Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
+Output/TSV/Macrogen.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv Output/TSV/Macrogen.tsv
 .PHONY: step09
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.tar.gz: Python/step21.py Output/TSV/%.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz
+step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz Output/TSV/Macrogen.tar.gz
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -342,10 +345,13 @@ Output/Step22/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv 
 Output/Step22/Stool.%.tar.gz: Python/step11.py Output/TSV/Stool.%.tsv Output/Metadata/Stool.tsv | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step22/Macrogen.tar.gz: Python/step11-2.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tar.gz Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tar.gz Output/Step22/everything.Deblur.homd.tar Output/Step22/Stool.DADA2.gg.tar.gz Output/Step22/Stool.DADA2.gg.tar Output/Step22/Stool.DADA2.silva.tar.gz Output/Step22/Stool.DADA2.silva.tar Output/Step22/Stool.Deblur.gg.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Stool.Deblur.silva.tar.gz Output/Step22/Stool.Deblur.gg.tar
+step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tar.gz Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tar.gz Output/Step22/everything.Deblur.homd.tar Output/Step22/Stool.DADA2.gg.tar.gz Output/Step22/Stool.DADA2.gg.tar Output/Step22/Stool.DADA2.silva.tar.gz Output/Step22/Stool.DADA2.silva.tar Output/Step22/Stool.Deblur.gg.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Stool.Deblur.silva.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Macrogen.tar.gz Output/Step22/Macrogen.tar
 .PHONY: step22
 
 # Step 26 (RandomForest Classifier)
@@ -431,7 +437,7 @@ step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everythi
 .PHONY: step30
 
 # Step 31 (Violin plots from ANCOM)
-Output/ANCOM/everything.DADA2.gg.%.tar: Python/step31.py Output/ANCOM/everything.DADA2.gg.%/ancom.tsv Output/TSV/everything.DADA2.gg.merge.tsv Output/Metadata/everything.tsv | build.log
+Output/ANCOM/everything.DADA2.gg.%.tar: Python/step31.py Output/ANCOM/everything.DADA2.gg.%/ancom.tsv Output/TSV/everything.DADA2.gg.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step31: Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.tar

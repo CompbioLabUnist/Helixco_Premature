@@ -36,11 +36,7 @@ if __name__ == "__main__":
             sample = sample.split(".")
             name = ""
 
-            try:
-                int(sample[0])
-            except ValueError:
-                name = "Second-" if (int(sample[-1]) <= 35) else "Third-"
-            else:
+            if sample[0].isdigit():
                 name = "First-"
 
             if name == "First-":
@@ -54,6 +50,15 @@ if __name__ == "__main__":
                     raise Exception("Something went wrong!!")
             else:
                 tmp_data = metadata.loc[(metadata["Sample"] == sample[0]) & (metadata["ID"] == str(int(sample[1]))), :].to_numpy()[0]
+                if int(tmp_data[0]) <= 33:
+                    name = "Second-"
+                elif (int(tmp_data[0]) == 34) and (sample[0] != "B5"):
+                    name = "Second-"
+                elif (int(tmp_data[0]) == 35) and (sample[0] != "B3"):
+                    name = "Second-"
+                else:
+                    name = "Third-"
+
                 if tmp_data[1] == "Mother":
                     name += tmp_data[0] + "-Mother-" + tmp_data[2]
                 else:
