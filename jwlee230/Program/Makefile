@@ -433,7 +433,10 @@ Output/Step30/everything.DADA2.tar: Python/step30.py Output/Step30/DADA2/everyth
 Output/Step30/everything.Deblur.tar: Python/step30.py Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/everything.DADA2.tar Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Step30/everything.Deblur.tar
+Output/Step30/Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/everything.DADA2.tar Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Step30/everything.Deblur.tar Output/Step30/Macrogen.tar
 .PHONY: step30
 
 # Step 31 (Violin plots from ANCOM)
