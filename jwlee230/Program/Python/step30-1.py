@@ -119,6 +119,6 @@ if __name__ == "__main__":
         files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sort(files):
+        for f in sorted(files):
             print("Compressing:", f)
             tar.add(f, arcname=f)
