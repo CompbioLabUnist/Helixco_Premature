@@ -416,7 +416,7 @@ step29: Output/Step29/DADA2/everything.faith_pd_vector.qza Output/Step29/Deblur/
 .PHONY: step29-depth step29
 
 # Step 30 (Alpha-diversity)
-Output/Step30/DADA2 Output/Step30/Deblur:
+Output/Step30 Output/Step30/DADA2 Output/Step30/Deblur:
 	mkdir -p $@
 
 Output/Step30/DADA2/%.tsv: Output/Step29/DADA2/%_vector.qza | Output/Step30/DADA2 build.log
@@ -433,7 +433,7 @@ Output/Step30/everything.DADA2.tar: Python/step30.py Output/Step30/DADA2/everyth
 Output/Step30/everything.Deblur.tar: Python/step30.py Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step30/Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | build.log
+Output/Step30/Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step30 build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step30: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/everything.DADA2.tar Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Step30/everything.Deblur.tar Output/Step30/Macrogen.tar
@@ -447,7 +447,7 @@ step31: Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output
 .PHONY: step31
 
 # Step 32 (Beta-diversity)
-Output/Step32/DADA2 Output/Step32/Deblur:
+Output/Step32/DADA2 Output/Step32/Deblur Output/Step32/Macrogen:
 	mkdir -p $@
 
 Output/Step32/DADA2/%.tsv: Output/Step29/DADA2/%_distance_matrix.qza | Output/Step32/DADA2 build.log
@@ -464,7 +464,10 @@ Output/Step32/DADA2/%.tar: Python/step32.py Output/Step32/DADA2/%.tsv Output/Met
 Output/Step32/Deblur/%.tar: Python/step32.py Output/Step32/Deblur/%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step32: Output/Step32/DADA2/everything.bray_curtis.tsv Output/Step32/DADA2/everything.bray_curtis.tar Output/Step32/DADA2/everything.jaccard.tsv Output/Step32/DADA2/everything.jaccard.tar Output/Step32/DADA2/everything.unweighted_unifrac.tsv Output/Step32/DADA2/everything.unweighted_unifrac.tar Output/Step32/DADA2/everything.weighted_unifrac.tsv Output/Step32/DADA2/everything.weighted_unifrac.tar Output/Step32/Deblur/everything.bray_curtis.tsv Output/Step32/Deblur/everything.bray_curtis.tar Output/Step32/Deblur/everything.jaccard.tsv Output/Step32/Deblur/everything.jaccard.tar Output/Step32/Deblur/everything.unweighted_unifrac.tsv Output/Step32/Deblur/everything.unweighted_unifrac.tar Output/Step32/Deblur/everything.weighted_unifrac.tsv Output/Step32/Deblur/everything.weighted_unifrac.tar
+Output/Step32/Macrogen/everything.%.tar: Python/step32-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step32/Macrogen build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" 1> $@.stdout 2> $@.stderr
+
+step32: Output/Step32/DADA2/everything.bray_curtis.tsv Output/Step32/DADA2/everything.bray_curtis.tar Output/Step32/DADA2/everything.jaccard.tsv Output/Step32/DADA2/everything.jaccard.tar Output/Step32/DADA2/everything.unweighted_unifrac.tsv Output/Step32/DADA2/everything.unweighted_unifrac.tar Output/Step32/DADA2/everything.weighted_unifrac.tsv Output/Step32/DADA2/everything.weighted_unifrac.tar Output/Step32/Deblur/everything.bray_curtis.tsv Output/Step32/Deblur/everything.bray_curtis.tar Output/Step32/Deblur/everything.jaccard.tsv Output/Step32/Deblur/everything.jaccard.tar Output/Step32/Deblur/everything.unweighted_unifrac.tsv Output/Step32/Deblur/everything.unweighted_unifrac.tar Output/Step32/Deblur/everything.weighted_unifrac.tsv Output/Step32/Deblur/everything.weighted_unifrac.tar Output/Step32/Macrogen/everything.unweighted_unifrac.tar Output/Step32/Macrogen/everything.weighted_unifrac.tar
 .PHONY: step32
 
 # Step 33 (LEfSe analysis)

@@ -84,6 +84,14 @@ def read_pickle(path: str) -> typing.Any:
     return pickle.loads(pkl)
 
 
+def remove_preceding_underscores(x: str) -> str:
+    x = x.strip()
+    if x.startswith("__"):
+        return x[2:]
+    else:
+        return x[3:]
+
+
 def consistency_taxonomy(taxonomy: str) -> str:
     """
     consistency_taxonomy: make taxonomy information with consistency
@@ -91,7 +99,7 @@ def consistency_taxonomy(taxonomy: str) -> str:
     if taxonomy == "Unassigned":
         return taxonomy
     else:
-        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: x.strip().replace("[", "").replace("]", ""), taxonomy.split(";")))))[-3:])
+        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: remove_preceding_underscores(x).replace("[", "").replace("]", ""), taxonomy.split(";")))))[-3:])
 
 
 def simplified_taxonomy(taxonomy: str) -> str:
@@ -101,7 +109,7 @@ def simplified_taxonomy(taxonomy: str) -> str:
     if taxonomy == "Unassigned":
         return taxonomy
     else:
-        return ";".join(list(list(map(lambda x: x.strip().replace("[", "").replace("]", "")[3:], taxonomy.split(";")))))
+        return ";".join(list(list(map(lambda x: remove_preceding_underscores(x).replace("[", "").replace("]", ""), taxonomy.split(";")))))
 
 
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:

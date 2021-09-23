@@ -1,5 +1,5 @@
 """
-step11.py: making t-SNE
+step30-1.py: calculate & draw alpha-diversity indices
 """
 import argparse
 import itertools
@@ -49,7 +49,7 @@ def draw_all(alpha: str, disease: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(12, 12))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
     try:
@@ -118,9 +118,7 @@ if __name__ == "__main__":
         files = pool.starmap(draw, itertools.product(alphas, diseases, sites))
         files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
-    files.sort()
-
     with tarfile.open(args.output, "w") as tar:
-        for f in files:
+        for f in sort(files):
             print("Compressing:", f)
             tar.add(f, arcname=f)

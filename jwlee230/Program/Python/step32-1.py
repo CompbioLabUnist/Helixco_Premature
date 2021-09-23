@@ -1,5 +1,5 @@
 """
-step32.py: Draw beta-diversity scatter plots
+step32-1.py: calculat & draw beta-diversity indices
 """
 import argparse
 import itertools
@@ -9,7 +9,8 @@ import matplotlib
 import matplotlib.pyplot
 import pandas
 import seaborn
-import skbio.stats.distance
+import skbio.diversity
+import skbio.tree
 import sklearn.manifold
 import sklearn.preprocessing
 import step00
@@ -70,19 +71,46 @@ if __name__ == "__main__":
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output TAR file")
+    parser.add_argument("--beta", choices=skbio.diversity.get_beta_diversity_metrics(), required=True)
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
     args = parser.parse_args()
 
-    distance_data = pandas.read_csv(args.input, sep="\t", index_col=0)
-    print(distance_data)
+    if not args.input.endswith(".tsv"):
+        raise ValueError("Input file must end with .TSV!!")
+    elif not args.metadata.endswith(".tsv"):
+        raise ValueError("Metadata file must end with .TSV!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output file must end with .TAR!!")
+    elif args.cpus < 1:
+        raise ValueError("CPUS must be greater than zero!!")
+
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
+    del input_data["#Hash"]
+    input_data = input_data.groupby("taxonomy").sum().T
+    del input_data["; __; __; __; __; __; __"]
+    print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(distance_data.index), :].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[list(input_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate"}
+    sites = set(metadata["Site"])
     print(metadata)
     print(sorted(diseases))
+    print(sorted(sites))
 
+    tree = skbio.tree.TreeNode.from_taxonomy([(x, step00.simplified_taxonomy(x).split(";")) for x in list(input_data.columns)])
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    for e in tree.traverse():
+        if e.is_root():
+            continue
+        e.length = len(e.name.split(";"))
+
+    distance_data = skbio.diversity.beta_diversity(args.beta, input_data.to_numpy(), list(input_data.index), otu_ids=list(input_data.columns), tree=tree).to_data_frame()
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):
@@ -92,9 +120,7 @@ if __name__ == "__main__":
     print(tsne_data)
 
     data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
-    sites = set(data["Site"])
     print(data)
-    print(sorted(sites))
 
     with multiprocessing.Pool(args.cpus) as pool:
         files = pool.starmap(draw, itertools.product(diseases, sites))
