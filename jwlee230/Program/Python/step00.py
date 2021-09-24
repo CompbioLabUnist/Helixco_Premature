@@ -88,8 +88,10 @@ def remove_preceding_underscores(x: str) -> str:
     x = x.strip()
     if x.startswith("__"):
         return x[2:]
-    else:
+    elif x[1:3] == "__":
         return x[3:]
+    else:
+        return x
 
 
 def consistency_taxonomy(taxonomy: str) -> str:

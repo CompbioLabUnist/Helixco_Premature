@@ -20,7 +20,7 @@ if __name__ == "__main__":
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
 
-    raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1).drop(columns="#OTU ID").groupby(by="taxonomy").sum()
+    raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby(by="taxonomy").sum()
     raw_data["readable_taxonomy"] = list(map(step00.simplified_taxonomy, list(raw_data.index)))
     raw_data.set_index(keys="readable_taxonomy", inplace=True)
     print(raw_data)
