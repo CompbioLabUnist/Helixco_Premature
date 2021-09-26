@@ -13,6 +13,7 @@ import skbio.diversity
 import skbio.tree
 import sklearn.manifold
 import sklearn.preprocessing
+import tqdm
 import step00
 
 distance_data = pandas.DataFrame()
@@ -20,8 +21,6 @@ data = pandas.DataFrame()
 
 
 def draw(disease: str, site: str) -> str:
-    print(disease, site)
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -44,8 +43,6 @@ def draw(disease: str, site: str) -> str:
 
 
 def draw_all(disease: str) -> str:
-    print(disease)
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -105,7 +102,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    for e in tree.traverse():
+    for e in tqdm.tqdm(tree.traverse()):
         if e.is_root():
             continue
         e.length = len(e.name.split(";"))
@@ -123,10 +120,9 @@ if __name__ == "__main__":
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = pool.starmap(draw, itertools.product(diseases, sites))
-        files += pool.map(draw_all, diseases)
+        files = list(tqdm.tqdm(pool.starmap(draw, itertools.product(diseases, sites))))
+        files += list(tqdm.tqdm(pool.map(draw_all, diseases)))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sorted(files):
-            print("Compressing:", f)
+        for f in tqdm.tqdm(sorted(files)):
             tar.add(f, arcname=f)

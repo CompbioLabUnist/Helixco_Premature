@@ -11,14 +11,13 @@ import pandas
 import seaborn
 import skbio.diversity
 import statannot
+import tqdm
 import step00
 
 data = pandas.DataFrame()
 
 
 def draw(alpha: str, disease: str, site: str) -> str:
-    print(alpha, disease, site)
-
     drawing_data = data.loc[(data["Site"] == site)]
 
     matplotlib.use("Agg")
@@ -43,8 +42,6 @@ def draw(alpha: str, disease: str, site: str) -> str:
 
 
 def draw_all(alpha: str, disease: str) -> str:
-    print(alpha, disease)
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -102,7 +99,7 @@ if __name__ == "__main__":
     print(sorted(sites))
 
     alphas = list()
-    for alpha in list(filter(lambda x: not x.endswith("_ci"), skbio.diversity.get_alpha_diversity_metrics())):
+    for alpha in tqdm.tqdm(list(filter(lambda x: not x.endswith("_ci"), skbio.diversity.get_alpha_diversity_metrics()))):
         if alpha in ["kempton_taylor_q", "osd"]:
             continue
         try:
@@ -115,10 +112,9 @@ if __name__ == "__main__":
     print(alphas)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = pool.starmap(draw, itertools.product(alphas, diseases, sites))
-        files += pool.starmap(draw_all, itertools.product(alphas, diseases))
+        files = list(tqdm.tqdm(pool.starmap(draw, itertools.product(alphas, diseases, sites))))
+        files += list(tqdm.tqdm(pool.starmap(draw_all, itertools.product(alphas, diseases))))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sorted(files):
-            print("Compressing:", f)
+        for f in tqdm.tqdm(sorted(files)):
             tar.add(f, arcname=f)
