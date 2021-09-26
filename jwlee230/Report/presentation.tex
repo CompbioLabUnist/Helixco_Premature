@@ -543,9 +543,9 @@
         \begin{itemize}
             \item Alpha diveristy indices
             \begin{enumerate}
-                \item Faith PD
-                \item Observed Features
-                \item Pielou Evenness
+                \item Fisher alpha
+                \item Observed OTUs
+                \item Pielou eveness
                 \item Shannon Entropy
             \end{enumerate}
 
@@ -582,7 +582,7 @@
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Mouth+Obesity+shannon.pdf}
                 \\
-                \mbox{(c) Pielou e} & \mbox{(d) Shannon} \\
+                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
             \end{array}$
             \caption{Alpha-diversities by Overweight/Obesity in Maternal Mouth}
         \end{figure}
@@ -598,7 +598,7 @@
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Neonate-3day+Obesity+shannon.pdf}
                 \\
-                \mbox{(c) Pielou e} & \mbox{(d) Shannon} \\
+                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
             \end{array}$
             \caption{Alpha-diversities by Overweight/Obesity in Neonatal-3day}
         \end{figure}
@@ -610,8 +610,6 @@
         \begin{itemize}
             \item Beta diversity indices
             \begin{enumerate}
-                \item Bray-Curtis distance
-                \item Jaccard distance
                 \item Unweighted UniFrac distance
                 \item Weighted UniFrac distance
             \end{enumerate}
@@ -698,26 +696,6 @@
     \begin{frame}[allowframebreaks]
         \frametitle{LEfSe Results with Obesity}
 
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.gg.Cervix.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.silva.Cervix.pdf}
-                \\
-                \mbox{(a) Deblur+GG} & \mbox{(b) Deblur+Silva} \\
-
-                \includegraphics[width=0.4 \linewidth]{figures/LEfSe/Obesity-Default/everything.Deblur.homd.Cervix.pdf}
-                &
-                \\
-                \mbox{(c) Deblur+HOMD} & \\
-            \end{array}$
-            \caption{LEfSe in Cervix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/LEfSe/Obesity-Default/everything.DADA2.gg.Vagina.pdf}
-            \caption{DADA2+GG in Vagina}
-        \end{figure}
     \end{frame}
 
     \section{Discussion}
