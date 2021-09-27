@@ -71,6 +71,10 @@ if __name__ == "__main__":
     parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
+    data_group = parser.add_mutually_exclusive_group()
+    data_group.add_argument("--first", help="Select First data", action="store_true", default=False)
+    data_group.add_argument("--second", help="Select Second+Third data", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if not args.input.endswith(".tsv"):
@@ -85,6 +89,12 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
     del input_data["#Hash"]
     input_data = input_data.groupby("taxonomy").sum().T
+
+    if args.first:
+        input_data = input_data.loc[list(filter(lambda x: x.startswith("First"), list(input_data.index))), :]
+    elif args.second:
+        input_data = input_data.loc[list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(input_data.index))), :]
+
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
@@ -112,8 +122,8 @@ if __name__ == "__main__":
     print(alphas)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = list(tqdm.tqdm(pool.starmap(draw, itertools.product(alphas, diseases, sites))))
-        files += list(tqdm.tqdm(pool.starmap(draw_all, itertools.product(alphas, diseases))))
+        files = pool.starmap(draw, itertools.product(alphas, diseases, sites))
+        files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(sorted(files)):

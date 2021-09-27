@@ -10,6 +10,7 @@ import matplotlib.pyplot
 import pandas
 import seaborn
 import statannot
+import tqdm
 import step00
 
 data = pandas.DataFrame()
@@ -28,7 +29,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(12, 12))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
     try:
@@ -52,7 +53,7 @@ def draw_all(alpha: str, disease: str) -> str:
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(12, 12))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
     try:
@@ -77,6 +78,10 @@ if __name__ == "__main__":
     parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
+    data_group = parser.add_mutually_exclusive_group()
+    data_group.add_argument("--first", help="Select First data", action="store_true", default=False)
+    data_group.add_argument("--second", help="Select Second+Third data", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
@@ -90,6 +95,12 @@ if __name__ == "__main__":
 
     raw_data = pandas.concat(objs=list(map(read, args.input)), axis="columns", verify_integrity=True)
     alphas = set(raw_data.columns)
+
+    if args.first:
+        raw_data = raw_data.loc[list(filter(lambda x: x.startswith("First"), list(raw_data.index))), :]
+    elif args.second:
+        raw_data = raw_data.loc[list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(raw_data.index))), :]
+
     print(raw_data)
     print(sorted(alphas))
 
@@ -109,6 +120,5 @@ if __name__ == "__main__":
         files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in files:
-            print("Compressing:", f)
+        for f in tqdm.tqdm(files):
             tar.add(f, arcname=f)

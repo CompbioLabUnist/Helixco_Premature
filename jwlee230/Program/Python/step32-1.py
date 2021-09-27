@@ -71,6 +71,10 @@ if __name__ == "__main__":
     parser.add_argument("--beta", choices=skbio.diversity.get_beta_diversity_metrics(), required=True)
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
+    data_group = parser.add_mutually_exclusive_group()
+    data_group.add_argument("--first", help="Select First data", action="store_true", default=False)
+    data_group.add_argument("--second", help="Select Second+Third data", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if not args.input.endswith(".tsv"):
@@ -108,6 +112,12 @@ if __name__ == "__main__":
         e.length = len(e.name.split(";"))
 
     distance_data = skbio.diversity.beta_diversity(args.beta, input_data.to_numpy(), list(input_data.index), otu_ids=list(input_data.columns), tree=tree).to_data_frame()
+
+    if args.first:
+        distance_data = distance_data.loc[list(filter(lambda x: x.startswith("First"), list(distance_data.index))), list(filter(lambda x: x.startswith("First"), list(distance_data.columns)))]
+    elif args.second:
+        distance_data = distance_data.loc[list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(distance_data.index))), list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(distance_data.columns)))]
+
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):

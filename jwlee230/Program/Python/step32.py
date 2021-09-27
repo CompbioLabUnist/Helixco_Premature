@@ -12,6 +12,7 @@ import seaborn
 import skbio.stats.distance
 import sklearn.manifold
 import sklearn.preprocessing
+import tqdm
 import step00
 
 distance_data = pandas.DataFrame()
@@ -72,9 +73,19 @@ if __name__ == "__main__":
     parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
+    data_group = parser.add_mutually_exclusive_group()
+    data_group.add_argument("--first", help="Select First data", action="store_true", default=False)
+    data_group.add_argument("--second", help="Select Second+Third data", action="store_true", default=False)
+
     args = parser.parse_args()
 
     distance_data = pandas.read_csv(args.input, sep="\t", index_col=0)
+
+    if args.first:
+        distance_data = distance_data.loc[list(filter(lambda x: x.startswith("First"), list(distance_data.index))), list(filter(lambda x: x.startswith("First"), list(distance_data.columns)))]
+    elif args.second:
+        distance_data = distance_data.loc[list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(distance_data.index))), list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(distance_data.columns)))]
+
     print(distance_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
@@ -101,6 +112,5 @@ if __name__ == "__main__":
         files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sorted(files):
-            print("Compressing:", f)
+        for f in tqdm.tqdm(sorted(files)):
             tar.add(f, arcname=f)
