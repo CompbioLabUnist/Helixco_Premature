@@ -99,11 +99,11 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(input_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
-    diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate"}
+    diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))
 
-    data = pandas.concat(objs=[input_data, metadata], axis="columns", verify_integrity=True)
+    data = pandas.concat(objs=[input_data, metadata], axis="columns", join="inner", verify_integrity=True)
     sites = set(data["Site"])
     print(data)
     print(sorted(sites))

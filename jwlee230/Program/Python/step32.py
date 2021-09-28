@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[list(distance_data.index), :].replace(to_replace=-1, value=None)
-    diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate"}
+    diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     tsne_data.set_index(keys="index", inplace=True, verify_integrity=True)
     print(tsne_data)
 
-    data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
+    data = pandas.concat(objs=[tsne_data, metadata], axis="columns", join="inner", verify_integrity=True)
     sites = set(data["Site"])
     print(data)
     print(sorted(sites))
