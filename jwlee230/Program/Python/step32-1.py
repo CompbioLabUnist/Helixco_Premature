@@ -123,10 +123,10 @@ if __name__ == "__main__":
     for column in list(tsne_data.columns):
         tsne_data[column] = sklearn.preprocessing.scale(tsne_data[column])
     tsne_data["index"] = list(distance_data.index)
-    tsne_data.set_index(keys="index", inplace=True, join="inner", verify_integrity=True)
+    tsne_data.set_index(keys="index", inplace=True, verify_integrity=True)
     print(tsne_data)
 
-    data = pandas.concat(objs=[tsne_data, metadata], axis="columns", verify_integrity=True)
+    data = pandas.concat(objs=[tsne_data, metadata], axis="columns", join="inner", verify_integrity=True)
     print(data)
 
     with multiprocessing.Pool(args.cpus) as pool:
