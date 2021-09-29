@@ -17,7 +17,7 @@
         \centering
         \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
             \usebeamerfont{title}
-            \insertsectionhead
+            \thesection. \insertsectionhead
             \par
         \end{beamercolorbox}
         \vfill
@@ -31,12 +31,12 @@
         \centering
         \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{title}
-            \insertsectionhead
+            \thesection. \insertsectionhead
             \par
         \end{beamercolorbox}
         \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{subtitle}
-            \insertsubsectionhead
+            \thesection.\thesubsection. \insertsubsectionhead
             \par
         \end{beamercolorbox}
         \vfill
@@ -541,12 +541,13 @@
         \frametitle{Alpha-diversity}
 
         \begin{itemize}
-            \item Alpha diveristy indices
+            \item Alpha diversity indices
             \begin{enumerate}
                 \item Fisher alpha
                 \item Observed OTUs
                 \item Pielou eveness
                 \item Shannon Entropy
+                \item Total: 22 diversity indicies
             \end{enumerate}
 
             \item Diseases/Conditions
