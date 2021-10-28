@@ -2,8 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
-CPUS = 50
-MEMS = 300G
+SHELL := /bin/bash
+CPUS = 30
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -50,7 +51,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -606,3 +607,27 @@ step34-default: $(addprefix Output/Step34/Default/everything.DADA2.gg.,$(addsuff
 step34-cladogram: $(addprefix Output/Step34/Cladogram/everything.DADA2.gg.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.DADA2.silva.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.DADA2.homd.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.gg.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.silva.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.homd.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.DADA2.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.gg.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Deblur.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step34/Cladogram/everything.Macrogen.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina))
 step34: step34-tsv step34-in step34-res step34-default step34-cladogram
 .PHONY: step34-tsv step34-in step34-res step34-default step34-cladogram step34
+
+# Step 35 (Cluster map plot within bacteria)
+Output/Step35:
+	mkdir -p $@
+
+Output/Step35/%.pearson.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step35/%.spearman.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step35/%.kendall.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+Output/Step35/Macrogen.%.pdf: Python/step35-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step35
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
+
+step35-everything-DADA2: Output/Step35/everything.DADA2.gg.pearson.pdf Output/Step35/everything.DADA2.gg.spearman.pdf Output/Step35/everything.DADA2.gg.kendall.pdf Output/Step35/everything.DADA2.silva.pearson.pdf Output/Step35/everything.DADA2.silva.spearman.pdf Output/Step35/everything.DADA2.silva.kendall.pdf Output/Step35/everything.DADA2.homd.pearson.pdf Output/Step35/everything.DADA2.homd.spearman.pdf Output/Step35/everything.DADA2.homd.kendall.pdf
+step35-everything-Deblur: Output/Step35/everything.Deblur.gg.pearson.pdf Output/Step35/everything.Deblur.gg.spearman.pdf Output/Step35/everything.Deblur.gg.kendall.pdf Output/Step35/everything.Deblur.silva.pearson.pdf Output/Step35/everything.Deblur.silva.spearman.pdf Output/Step35/everything.Deblur.silva.kendall.pdf Output/Step35/everything.Deblur.homd.pearson.pdf Output/Step35/everything.Deblur.homd.spearman.pdf Output/Step35/everything.Deblur.homd.kendall.pdf
+step35-Stool-DADA2: Output/Step35/Stool.DADA2.gg.pearson.pdf Output/Step35/Stool.DADA2.gg.spearman.pdf Output/Step35/Stool.DADA2.gg.kendall.pdf Output/Step35/Stool.DADA2.silva.pearson.pdf Output/Step35/Stool.DADA2.silva.spearman.pdf Output/Step35/Stool.DADA2.silva.kendall.pdf Output/Step35/Stool.DADA2.homd.pearson.pdf Output/Step35/Stool.DADA2.homd.spearman.pdf Output/Step35/Stool.DADA2.homd.kendall.pdf
+step35-Stool-Deblur: Output/Step35/Stool.Deblur.gg.pearson.pdf Output/Step35/Stool.Deblur.gg.spearman.pdf Output/Step35/Stool.Deblur.gg.kendall.pdf Output/Step35/Stool.Deblur.silva.pearson.pdf Output/Step35/Stool.Deblur.silva.spearman.pdf Output/Step35/Stool.Deblur.silva.kendall.pdf Output/Step35/Stool.Deblur.homd.pearson.pdf Output/Step35/Stool.Deblur.homd.spearman.pdf Output/Step35/Stool.Deblur.homd.kendall.pdf
+step35-Macrogen: Output/Step35/Macrogen.pearson.pdf Output/Step35/Macrogen.spearman.pdf Output/Step35/Macrogen.kendall.pdf
+step35: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35-Macrogen
+.PHONY: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35-Macrogen step35
