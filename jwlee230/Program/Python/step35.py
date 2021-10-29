@@ -15,25 +15,25 @@ import step00
 input_data = pandas.DataFrame()
 
 
-def pearson(a: str, b: str) -> typing.Union[float, None]:
+def pearson(a: str, b: str, threshold: float) -> typing.Union[float, None]:
     correlation, p = scipy.stats.pearsonr(input_data[a], input_data[b])
-    if p < 0.01:
+    if p < threshold:
         return correlation
     else:
         return None
 
 
-def spearman(a: str, b: str) -> typing.Union[float, None]:
+def spearman(a: str, b: str, threshold: float) -> typing.Union[float, None]:
     correlation, p = scipy.stats.spearmanr(input_data[a], input_data[b])
-    if p < 0.01:
+    if p < threshold:
         return correlation
     else:
         return None
 
 
-def kendall(a: str, b: str) -> typing.Union[float, None]:
+def kendall(a: str, b: str, threshold: float) -> typing.Union[float, None]:
     correlation, p = scipy.stats.kendalltau(input_data[a], input_data[b])
-    if p < 0.01:
+    if p < threshold:
         return correlation
     else:
         return None
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input tar.gz file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of cpus", type=int, default=1)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--pearson", help="Pearson r", action="store_true", default=False)
@@ -59,6 +60,8 @@ if __name__ == "__main__":
         raise ValueError("Output file must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUS must be a positive integer!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-value must be (0, 1)")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -73,11 +76,11 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         for a in list(output_data.index):
             if args.pearson:
-                output_data.loc[a, :] = pool.starmap(pearson, [(a, b) for b in list(output_data.index)])
+                output_data.loc[a, :] = pool.starmap(pearson, [(a, b, args.p) for b in list(output_data.index)])
             elif args.spearman:
-                output_data.loc[a, :] = pool.starmap(spearman, [(a, b) for b in list(output_data.index)])
+                output_data.loc[a, :] = pool.starmap(spearman, [(a, b, args.p) for b in list(output_data.index)])
             elif args.kendall:
-                output_data.loc[a, :] = pool.starmap(kendall, [(a, b) for b in list(output_data.index)])
+                output_data.loc[a, :] = pool.starmap(kendall, [(a, b, args.p) for b in list(output_data.index)])
             else:
                 raise Exception("Something went wrong!!")
 
@@ -85,7 +88,7 @@ if __name__ == "__main__":
     output_data = output_data.loc[output_data.index, output_data.index]
     print(output_data)
 
-    g = seaborn.clustermap(data=output_data, figsize=(32, 32), row_cluster=True, col_cluster=True, cbar_pos=None, xticklabels=False, yticklabels=False, square=False, cmap="bwr", vmin=-1, center=0, vmax=1)
+    g = seaborn.clustermap(data=output_data, figsize=(32, 32), row_cluster=True, col_cluster=True, cbar=True, xticklabels=False, yticklabels=False, square=False, cmap="bwr", vmin=-1, center=0, vmax=1)
     g.ax_heatmap.set_xlabel("")
     g.ax_heatmap.set_ylabel("")
 
