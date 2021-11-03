@@ -612,22 +612,33 @@ step34: step34-tsv step34-in step34-res step34-default step34-cladogram
 Output/Step35:
 	mkdir -p $@
 
-Output/Step35/%.pearson.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+Output/Step35/%.pearson.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
-Output/Step35/%.spearman.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+Output/Step35/%.spearman.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
-Output/Step35/%.kendall.pdf: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
+Output/Step35/%.kendall.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
-Output/Step35/Macrogen.%.pdf: Python/step35-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step35
+Output/Step35/Macrogen.%.png: Python/step35-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step35
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
 
-step35-everything-DADA2: Output/Step35/everything.DADA2.gg.pearson.pdf Output/Step35/everything.DADA2.gg.spearman.pdf Output/Step35/everything.DADA2.gg.kendall.pdf Output/Step35/everything.DADA2.silva.pearson.pdf Output/Step35/everything.DADA2.silva.spearman.pdf Output/Step35/everything.DADA2.silva.kendall.pdf Output/Step35/everything.DADA2.homd.pearson.pdf Output/Step35/everything.DADA2.homd.spearman.pdf Output/Step35/everything.DADA2.homd.kendall.pdf
-step35-everything-Deblur: Output/Step35/everything.Deblur.gg.pearson.pdf Output/Step35/everything.Deblur.gg.spearman.pdf Output/Step35/everything.Deblur.gg.kendall.pdf Output/Step35/everything.Deblur.silva.pearson.pdf Output/Step35/everything.Deblur.silva.spearman.pdf Output/Step35/everything.Deblur.silva.kendall.pdf Output/Step35/everything.Deblur.homd.pearson.pdf Output/Step35/everything.Deblur.homd.spearman.pdf Output/Step35/everything.Deblur.homd.kendall.pdf
-step35-Stool-DADA2: Output/Step35/Stool.DADA2.gg.pearson.pdf Output/Step35/Stool.DADA2.gg.spearman.pdf Output/Step35/Stool.DADA2.gg.kendall.pdf Output/Step35/Stool.DADA2.silva.pearson.pdf Output/Step35/Stool.DADA2.silva.spearman.pdf Output/Step35/Stool.DADA2.silva.kendall.pdf Output/Step35/Stool.DADA2.homd.pearson.pdf Output/Step35/Stool.DADA2.homd.spearman.pdf Output/Step35/Stool.DADA2.homd.kendall.pdf
-step35-Stool-Deblur: Output/Step35/Stool.Deblur.gg.pearson.pdf Output/Step35/Stool.Deblur.gg.spearman.pdf Output/Step35/Stool.Deblur.gg.kendall.pdf Output/Step35/Stool.Deblur.silva.pearson.pdf Output/Step35/Stool.Deblur.silva.spearman.pdf Output/Step35/Stool.Deblur.silva.kendall.pdf Output/Step35/Stool.Deblur.homd.pearson.pdf Output/Step35/Stool.Deblur.homd.spearman.pdf Output/Step35/Stool.Deblur.homd.kendall.pdf
-step35-Macrogen: Output/Step35/Macrogen.pearson.pdf Output/Step35/Macrogen.spearman.pdf Output/Step35/Macrogen.kendall.pdf
+step35-everything-DADA2: Output/Step35/everything.DADA2.gg.pearson.png Output/Step35/everything.DADA2.gg.spearman.png Output/Step35/everything.DADA2.gg.kendall.png Output/Step35/everything.DADA2.silva.pearson.png Output/Step35/everything.DADA2.silva.spearman.png Output/Step35/everything.DADA2.silva.kendall.png Output/Step35/everything.DADA2.homd.pearson.png Output/Step35/everything.DADA2.homd.spearman.png Output/Step35/everything.DADA2.homd.kendall.png
+step35-everything-Deblur: Output/Step35/everything.Deblur.gg.pearson.png Output/Step35/everything.Deblur.gg.spearman.png Output/Step35/everything.Deblur.gg.kendall.png Output/Step35/everything.Deblur.silva.pearson.png Output/Step35/everything.Deblur.silva.spearman.png Output/Step35/everything.Deblur.silva.kendall.png Output/Step35/everything.Deblur.homd.pearson.png Output/Step35/everything.Deblur.homd.spearman.png Output/Step35/everything.Deblur.homd.kendall.png
+step35-Stool-DADA2: Output/Step35/Stool.DADA2.gg.pearson.png Output/Step35/Stool.DADA2.gg.spearman.png Output/Step35/Stool.DADA2.gg.kendall.png Output/Step35/Stool.DADA2.silva.pearson.png Output/Step35/Stool.DADA2.silva.spearman.png Output/Step35/Stool.DADA2.silva.kendall.png Output/Step35/Stool.DADA2.homd.pearson.png Output/Step35/Stool.DADA2.homd.spearman.png Output/Step35/Stool.DADA2.homd.kendall.png
+step35-Stool-Deblur: Output/Step35/Stool.Deblur.gg.pearson.png Output/Step35/Stool.Deblur.gg.spearman.png Output/Step35/Stool.Deblur.gg.kendall.png Output/Step35/Stool.Deblur.silva.pearson.png Output/Step35/Stool.Deblur.silva.spearman.png Output/Step35/Stool.Deblur.silva.kendall.png Output/Step35/Stool.Deblur.homd.pearson.png Output/Step35/Stool.Deblur.homd.spearman.png Output/Step35/Stool.Deblur.homd.kendall.png
+step35-Macrogen: Output/Step35/Macrogen.pearson.png Output/Step35/Macrogen.spearman.png Output/Step35/Macrogen.kendall.png
 step35: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35-Macrogen
 .PHONY: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35-Macrogen step35
+
+# Step 36 (Scatter plot heatmap within bacteria)
+Output/Step36:
+	mkdir -p $@
+
+Output/Step36/Macrogen.%.pdf: Python/step36-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step36
+	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS)
+
+step36-Macrogen: Output/Step36/Macrogen.pearson.pdf Output/Step36/Macrogen.spearman.pdf Output/Step36/Macrogen.kendall.pdf
+step36: step36-Macrogen
+.PHONY: step36-Macrogen step36
