@@ -11,10 +11,13 @@ import typing
 import numpy
 
 key = bytes("asdf", "UTF-8")
+
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 500}
-derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
-numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
 markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
+derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
+taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
+
+numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
 detailed_PTB = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
 
 
@@ -134,7 +137,7 @@ def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str 
     elif derivation == "Accuracy":
         return (TP + TN) / (TP + TN + FP + FN)
     elif derivation == "Balanced_Accuracy":
-        return TP / 2 * (TP + FN) + TN / 2 * (TN + FP)
+        return TP / (2 * (TP + FN)) + TN / (2 * (TN + FP))
     else:
         raise Exception("Something went wrong!!")
 
