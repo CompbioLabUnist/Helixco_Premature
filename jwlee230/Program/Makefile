@@ -46,12 +46,12 @@ stop:
 
 # SGE
 run: | log Output
-	echo "make -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Premature_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
+	echo -e "#!/bin/bash\nmake -C $(PWD) latest" > tmp.sh
+	sbatch --chdir=$(abspath .) --cpus-per-task=$(CPUS) --error="$(abspath log)/%x.e%A" --job-name="Premature_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(MEMS) --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -636,9 +636,22 @@ step35: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step
 Output/Step36:
 	mkdir -p $@
 
-Output/Step36/Macrogen.%.pdf: Python/step36-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step36
-	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS)
+Output/Step36/%.pearson.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
-step36-Macrogen: Output/Step36/Macrogen.pearson.pdf Output/Step36/Macrogen.spearman.pdf Output/Step36/Macrogen.kendall.pdf
-step36: step36-Macrogen
-.PHONY: step36-Macrogen step36
+Output/Step36/%.spearman.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step36/%.kendall.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+Output/Step36/Macrogen.%.png: Python/step36-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step36
+	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step36-everything-DADA2: Output/Step36/everything.DADA2.gg.pearson.png Output/Step36/everything.DADA2.gg.spearman.png Output/Step36/everything.DADA2.gg.kendall.png Output/Step36/everything.DADA2.silva.pearson.png Output/Step36/everything.DADA2.silva.spearman.png Output/Step36/everything.DADA2.silva.kendall.png Output/Step36/everything.DADA2.homd.pearson.png Output/Step36/everything.DADA2.homd.spearman.png Output/Step36/everything.DADA2.homd.kendall.png
+step36-everything-Deblur: Output/Step36/everything.Deblur.gg.pearson.png Output/Step36/everything.Deblur.gg.spearman.png Output/Step36/everything.Deblur.gg.kendall.png Output/Step36/everything.Deblur.silva.pearson.png Output/Step36/everything.Deblur.silva.spearman.png Output/Step36/everything.Deblur.silva.kendall.png Output/Step36/everything.Deblur.homd.pearson.png Output/Step36/everything.Deblur.homd.spearman.png Output/Step36/everything.Deblur.homd.kendall.png
+step36-Stool-DADA2: Output/Step36/Stool.DADA2.gg.pearson.png Output/Step36/Stool.DADA2.gg.spearman.png Output/Step36/Stool.DADA2.gg.kendall.png Output/Step36/Stool.DADA2.silva.pearson.png Output/Step36/Stool.DADA2.silva.spearman.png Output/Step36/Stool.DADA2.silva.kendall.png Output/Step36/Stool.DADA2.homd.pearson.png Output/Step36/Stool.DADA2.homd.spearman.png Output/Step36/Stool.DADA2.homd.kendall.png
+step36-Stool-Deblur: Output/Step36/Stool.Deblur.gg.pearson.png Output/Step36/Stool.Deblur.gg.spearman.png Output/Step36/Stool.Deblur.gg.kendall.png Output/Step36/Stool.Deblur.silva.pearson.png Output/Step36/Stool.Deblur.silva.spearman.png Output/Step36/Stool.Deblur.silva.kendall.png Output/Step36/Stool.Deblur.homd.pearson.png Output/Step36/Stool.Deblur.homd.spearman.png Output/Step36/Stool.Deblur.homd.kendall.png
+step36-Macrogen: Output/Step36/Macrogen.pearson.png Output/Step36/Macrogen.spearman.png Output/Step36/Macrogen.kendall.png
+step36: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36-Macrogen
+.PHONY: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36-Macrogen step36
