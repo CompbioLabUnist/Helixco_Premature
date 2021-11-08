@@ -655,3 +655,21 @@ step36-Stool-Deblur: Output/Step36/Stool.Deblur.gg.pearson.png Output/Step36/Sto
 step36-Macrogen: Output/Step36/Macrogen.pearson.png Output/Step36/Macrogen.spearman.png Output/Step36/Macrogen.kendall.png
 step36: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36-Macrogen
 .PHONY: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36-Macrogen step36
+
+# Step37 (Correlation within sites)
+Output/Step37:
+	mkdir -p $@
+
+Output/Step37/Macrogen.%.pdf: Python/step37-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step37
+	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step37-Macrogen: Output/Step37/Macrogen.pearson.pdf Output/Step37/Macrogen.spearman.pdf Output/Step37/Macrogen.kendall.pdf
+step37: step37-Macrogen
+.PHONY: step37-Macrogen step37
+
+# Step 38 (Violin plots within sites)
+Output/Step38:
+	mkdir -p $@
+
+Output/Step37/Macrogen.%.pdf: Python/step37-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step37
+	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS)
