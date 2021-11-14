@@ -671,5 +671,8 @@ step37: step37-Macrogen
 Output/Step38:
 	mkdir -p $@
 
-Output/Step37/Macrogen.%.pdf: Python/step37-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step37
-	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS)
+Output/Step38/Macrogen.pdf: Python/step38-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step38
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step38: Output/Step38/Macrogen.pdf
+.PHONY: step38
