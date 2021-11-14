@@ -1,14 +1,11 @@
 """
-step38-1.py: Violin plots with sites for Macrogen data
+step38-1.py: Clustermap plot with sites for Macrogen data
 """
 import argparse
 import itertools
-import multiprocessing
 import matplotlib
+import matplotlib.colors
 import matplotlib.pyplot
-import numpy
-import pandas
-import scipy.stats
 import seaborn
 import step00
 
@@ -38,7 +35,12 @@ if __name__ == "__main__":
     input_data = input_data.iloc[:, 1:].T
     print(input_data)
 
-    g = seaborn.clustermap(data=input_data, z_score=1, figsize=(32, 18), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, cmap="bwr", vmin=-3, center=0, vmax=3)
+    sites = sorted(set(map(lambda x: x.split("-")[-1], list(input_data.index))))
+    colorings = dict(zip(sites, itertools.cycle(matplotlib.colors.TABLEAU_COLORS)))
+    site_colors = list(map(lambda x: colorings[x.split("-")[-1]], list(input_data.index)))
+    print(colorings)
+
+    g = seaborn.clustermap(data=input_data, z_score=1, figsize=(32, 18), row_cluster=True, col_cluster=True, row_colors=site_colors, xticklabels=False, yticklabels=False, cmap="coolwarm", vmin=-3, center=0, vmax=3)
     g.ax_heatmap.set_xlabel("Taxonomy")
     g.ax_heatmap.set_ylabel("Sample")
 

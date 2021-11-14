@@ -667,7 +667,7 @@ step37-Macrogen: Output/Step37/Macrogen.pearson.pdf Output/Step37/Macrogen.spear
 step37: step37-Macrogen
 .PHONY: step37-Macrogen step37
 
-# Step 38 (Violin plots within sites)
+# Step 38 (Clustermap plot within sites)
 Output/Step38:
 	mkdir -p $@
 
