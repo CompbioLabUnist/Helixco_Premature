@@ -88,7 +88,6 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
     del input_data["#Hash"]
-    input_data = input_data.groupby("taxonomy").sum().T
     del input_data["; __; __; __; __; __; __"]
 
     if args.first:

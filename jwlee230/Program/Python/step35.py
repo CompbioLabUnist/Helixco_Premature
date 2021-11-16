@@ -88,7 +88,7 @@ if __name__ == "__main__":
     output_data.fillna(0, inplace=True)
     print(output_data)
 
-    g = seaborn.clustermap(data=output_data, figsize=(64, 64), row_cluster=True, col_cluster=True, cbar=True, xticklabels=False, yticklabels=False, square=True, cmap="bwr", vmin=-1, center=0, vmax=1)
+    g = seaborn.clustermap(data=output_data, figsize=(64, 64), row_cluster=True, col_cluster=True, cbar=True, xticklabels=False, yticklabels=False, square=True, cmap="coolwarm", vmin=-1, center=0, vmax=1)
     g.ax_heatmap.set_xlabel("")
     g.ax_heatmap.set_ylabel("")
 

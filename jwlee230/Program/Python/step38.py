@@ -1,5 +1,5 @@
 """
-step38-1.py: Clustermap plot with sites for Macrogen data
+step38.py: Clustermap plot with sites
 """
 import argparse
 import itertools
@@ -33,7 +33,8 @@ if __name__ == "__main__":
 
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
-    input_data = input_data.iloc[:, 1:].T
+    input_data.sort_index(inplace=True)
+    input_data = input_data.groupby(input_data.index).sum().T
     print(input_data)
 
     for index in tqdm.tqdm(list(input_data.index)):

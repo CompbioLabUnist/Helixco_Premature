@@ -20,8 +20,6 @@ all:
 log Output Docker/Tools:
 	mkdir $@
 
-# Tools
-
 # Docker
 TOOLS += $(wildcard Docker/*)
 build.log: Docker/Dockerfile $(TOOLS) | log Output
@@ -51,7 +49,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step28 step29 step31 step32 step33 step34 step35 step36 step37 step38 step39
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -660,19 +658,87 @@ step36: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step
 Output/Step37:
 	mkdir -p $@
 
+Output/Step37/%.pearson.png: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step37/%.spearman.png: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step37/%.kendall.png: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
 Output/Step37/Macrogen.%.pdf: Python/step37-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step37
 	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+step37-everything-DADA2: Output/Step37/everything.DADA2.gg.pearson.png Output/Step37/everything.DADA2.gg.spearman.png Output/Step37/everything.DADA2.gg.kendall.png Output/Step37/everything.DADA2.silva.pearson.png Output/Step37/everything.DADA2.silva.spearman.png Output/Step37/everything.DADA2.silva.kendall.png Output/Step37/everything.DADA2.homd.pearson.png Output/Step37/everything.DADA2.homd.spearman.png Output/Step37/everything.DADA2.homd.kendall.png
+step37-everything-Deblur: Output/Step37/everything.Deblur.gg.pearson.png Output/Step37/everything.Deblur.gg.spearman.png Output/Step37/everything.Deblur.gg.kendall.png Output/Step37/everything.Deblur.silva.pearson.png Output/Step37/everything.Deblur.silva.spearman.png Output/Step37/everything.Deblur.silva.kendall.png Output/Step37/everything.Deblur.homd.pearson.png Output/Step37/everything.Deblur.homd.spearman.png Output/Step37/everything.Deblur.homd.kendall.png
+step37-Stool-DADA2: Output/Step37/Stool.DADA2.gg.pearson.png Output/Step37/Stool.DADA2.gg.spearman.png Output/Step37/Stool.DADA2.gg.kendall.png Output/Step37/Stool.DADA2.silva.pearson.png Output/Step37/Stool.DADA2.silva.spearman.png Output/Step37/Stool.DADA2.silva.kendall.png Output/Step37/Stool.DADA2.homd.pearson.png Output/Step37/Stool.DADA2.homd.spearman.png Output/Step37/Stool.DADA2.homd.kendall.png
+step37-Stool-Deblur: Output/Step37/Stool.Deblur.gg.pearson.png Output/Step37/Stool.Deblur.gg.spearman.png Output/Step37/Stool.Deblur.gg.kendall.png Output/Step37/Stool.Deblur.silva.pearson.png Output/Step37/Stool.Deblur.silva.spearman.png Output/Step37/Stool.Deblur.silva.kendall.png Output/Step37/Stool.Deblur.homd.pearson.png Output/Step37/Stool.Deblur.homd.spearman.png Output/Step37/Stool.Deblur.homd.kendall.png
 step37-Macrogen: Output/Step37/Macrogen.pearson.pdf Output/Step37/Macrogen.spearman.pdf Output/Step37/Macrogen.kendall.pdf
-step37: step37-Macrogen
-.PHONY: step37-Macrogen step37
+step37: step37-everything-DADA2 step37-everything-Deblur step37-Stool-DADA2 step37-Stool-Deblur
+.PHONY: step37-everything-DADA2 step37-everything-Deblur step37-Stool-DADA2 step37-Stool-Deblur step37
 
 # Step 38 (Clustermap plot within sites)
 Output/Step38:
 	mkdir -p $@
 
+Output/Step38/everything.%.pdf: Python/step38.py Output/TSV/everything.%.tar.gz | build.log Output/Step38
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step38/Stool.%.pdf: Python/step38.py Output/TSV/Stool.%.tar.gz | build.log Output/Step38
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 Output/Step38/Macrogen.pdf: Python/step38-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step38
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step38: Output/Step38/Macrogen.pdf
-.PHONY: step38
+step38-everything: Output/Step38/everything.DADA2.gg.pdf Output/Step38/everything.DADA2.silva.pdf Output/Step38/everything.DADA2.homd.pdf Output/Step38/everything.Deblur.gg.pdf Output/Step38/everything.Deblur.silva.pdf Output/Step38/everything.Deblur.homd.pdf
+step38-Stool: Output/Step38/Stool.DADA2.gg.pdf Output/Step38/Stool.DADA2.silva.pdf Output/Step38/Stool.DADA2.homd.pdf Output/Step38/Stool.Deblur.gg.pdf Output/Step38/Stool.Deblur.silva.pdf Output/Step38/Stool.Deblur.homd.pdf
+step38-Macrogen: Output/Step38/Macrogen.pdf
+step38: step38-everything step38-Stool step38-Macrogen
+.PHONY: step38-everything step38-Stool step38-Macrogen step38
+
+# Step 39 (Beta-diversity heatmap plot)
+Output/Step39:
+	mkdir -p $@
+
+Output/Step39/%.DADA2.bray_curtis.pdf: Python/step39.py Output/Step32/DADA2/%.bray_curtis.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.DADA2.jaccard.pdf: Python/step39.py Output/Step32/DADA2/%.jaccard.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.DADA2.unweighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.unweighted_unifrac.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.DADA2.weighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.weighted_unifrac.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.Deblur.bray_curtis.pdf: Python/step39.py Output/Step32/Deblur/%.bray_curtis.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.Deblur.jaccard.pdf: Python/step39.py Output/Step32/Deblur/%.jaccard.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.Deblur.unweighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.unweighted_unifrac.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/%.Deblur.weighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.weighted_unifrac.tsv | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step39/Macrogen.%.pdf: Python/step39-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step39
+	$(DOCKER) python3 $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
+
+step39-DADA2: Output/Step39/everything.DADA2.bray_curtis.pdf Output/Step39/everything.DADA2.jaccard.pdf Output/Step39/everything.DADA2.unweighted_unifrac.pdf Output/Step39/everything.DADA2.weighted_unifrac.pdf
+step39-Deblur: Output/Step39/everything.Deblur.bray_curtis.pdf Output/Step39/everything.Deblur.jaccard.pdf Output/Step39/everything.Deblur.unweighted_unifrac.pdf Output/Step39/everything.Deblur.weighted_unifrac.pdf
+step39-Macrogen: Output/Step39/Macrogen.unweighted_unifrac.pdf Output/Step39/Macrogen.weighted_unifrac.pdf
+step39: step39-DADA2 step39-Deblur step39-Macrogen
+.PHONY: step39-DADA2 step39-Deblur step39-Macrogen step39
+
+# Step 40 (Violin Plot for shared taxonomy)
+Output/Step40:
+	mkdir -p $@
+
+Output/Step40/Macrogen.pdf: Python/step40-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step40
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step40: Output/Step40/Macrogen.pdf

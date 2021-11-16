@@ -18,7 +18,7 @@ derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "P
 taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
-detailed_PTB = ("Extremely PTB", "Very PTB", "Late PTB", "Normal")
+detailed_PTB = ("Early PTB", "Late PTB", "Normal")
 
 
 def file_list(path: str) -> typing.List[str]:

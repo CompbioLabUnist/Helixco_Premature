@@ -1,12 +1,15 @@
 """
-step38-1.py: Clustermap plot with sites for Macrogen data
+step39-1.py: Beta-diversity heatmap plot for Macrogen data
 """
 import argparse
 import itertools
 import matplotlib
 import matplotlib.colors
+import matplotlib.patches
 import matplotlib.pyplot
 import seaborn
+import skbio.diversity
+import skbio.tree
 import tqdm
 import step00
 
@@ -16,7 +19,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input tar.gz file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
-    parser.add_argument("--cpus", help="Number of cpus", type=int, default=1)
+    parser.add_argument("--beta", choices=skbio.diversity.get_beta_diversity_metrics(), required=True)
 
     args = parser.parse_args()
 
@@ -24,8 +27,6 @@ if __name__ == "__main__":
         raise ValueError("Input file must end with .tar.gz!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output file must end with .PDF!!")
-    elif args.cpus < 1:
-        raise ValueError("CPUS must be a positive integer!!")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -33,19 +34,26 @@ if __name__ == "__main__":
 
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
-    input_data = input_data.iloc[:, 1:].T
+    input_data = input_data.iloc[1:, 1:].T
     print(input_data)
-
-    for index in tqdm.tqdm(list(input_data.index)):
-        input_data.loc[index, :] = input_data.loc[index, :] / sum(input_data.loc[index, :])
 
     sites = sorted(set(map(lambda x: x.split("-")[-1], list(input_data.index))))
     colorings = dict(zip(sites, itertools.cycle(matplotlib.colors.TABLEAU_COLORS)))
     site_colors = list(map(lambda x: colorings[x.split("-")[-1]], list(input_data.index)))
     print(colorings)
 
-    g = seaborn.clustermap(data=input_data, figsize=(32, 18), row_cluster=True, col_cluster=True, row_colors=site_colors, xticklabels=False, yticklabels=False, cmap="Reds", vmin=0, vmax=1)
-    g.ax_heatmap.set_xlabel("Taxonomy")
-    g.ax_heatmap.set_ylabel("Sample")
+    tree = skbio.tree.TreeNode.from_taxonomy([(x, step00.simplified_taxonomy(x).split(";")) for x in list(input_data.columns)])
+
+    for e in tqdm.tqdm(tree.traverse()):
+        if e.is_root():
+            continue
+        e.length = len(e.name.split(";"))
+
+    distance_data = skbio.diversity.beta_diversity(args.beta, input_data.to_numpy(), list(input_data.index), otu_ids=list(input_data.columns), tree=tree).to_data_frame()
+    print(distance_data)
+
+    g = seaborn.clustermap(data=distance_data, figsize=(32, 32), row_cluster=True, col_cluster=True, row_colors=site_colors, col_colors=site_colors, xticklabels=False, yticklabels=False, cmap="Reds_r")
+
+    matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=colorings[site]) for site in sites], sites, title="Sites", bbox_to_anchor=(1, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure, loc="best")
 
     g.savefig(args.output)
