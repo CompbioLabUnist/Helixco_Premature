@@ -1,5 +1,5 @@
 """
-step40-1.py: Shared taxonomy proportion with neonates and mother
+step40.py: Shared taxonomy proportion with neonates and mother for Macrogen
 """
 import argparse
 import itertools
@@ -57,7 +57,8 @@ if __name__ == "__main__":
 
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
-    input_data = input_data.iloc[:, 1:]
+    input_data.sort_index(inplace=True)
+    input_data = input_data.groupby(input_data.index).sum()
     print(input_data)
 
     baby_index = sorted(filter(lambda x: (x.split("-")[-1] in {"B1", "B3", "B5"}), list(input_data.columns)))
