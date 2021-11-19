@@ -72,7 +72,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(30, 24))
 
     seaborn.violinplot(data=output_data, x="BabyType", y="Shared", order=["B1", "B3", "B5"], hue="MotherType", hue_order=["C", "M", "V"], inner="box", ax=ax)
     statannotations.Annotator.Annotator(ax, [((b, m1), (b, m2)) for m1, m2 in list(itertools.combinations(["C", "M", "V"], 2)) for b in ["B1", "B3", "B5"]], data=output_data, x="BabyType", y="Shared", order=["B1", "B3", "B5"], hue="MotherType", hue_order=["C", "M", "V"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
