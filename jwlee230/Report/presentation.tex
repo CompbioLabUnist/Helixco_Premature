@@ -238,7 +238,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{ANCOM with PTB}
+        \frametitle{ANCOM with Detail PTB}
 
         \begin{figure}
             $\begin{array}{ccc}
@@ -257,6 +257,28 @@
     \subsection{Abundance Test with LefSe}
     \begin{frame}
         \frametitle{LefSe}
+
+        \begin{itemize}
+            \item Linear discriminant analysis Effect Size \cite{lefse1}
+            \item LefSe finds the features likely to explicate differences between groups
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LefSe with Detail PTB}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Cervix.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Mouth.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Vagina.pdf}
+                \\
+                \mbox{(a) Cervix} & \mbox{(b) Maternal Mouth} & \mbox{(c) Vagina} \\
+            \end{array}$
+            \caption{LefSe for Detail PTB with Deblur + Silva}
+        \end{figure}
     \end{frame}
 
     \subsection{Diversity Index}
@@ -277,6 +299,11 @@
 
     \begin{frame}
         \frametitle{Cluster map with Correlations within Bacteria abundance}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/Step35/Everything/DADA2/gg/everything.DADA2.gg.spearman.png}
+            \caption{Spearman correlation with DADA2+GG}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
