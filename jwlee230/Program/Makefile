@@ -693,18 +693,18 @@ step37: step37-everything-DADA2 step37-everything-Deblur step37-Stool-DADA2 step
 Output/Step38:
 	mkdir -p $@
 
-Output/Step38/everything.%.pdf: Python/step38.py Output/TSV/everything.%.tar.gz | build.log Output/Step38
+Output/Step38/everything.%.png: Python/step38.py Output/TSV/everything.%.tar.gz | build.log Output/Step38
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step38/Stool.%.pdf: Python/step38.py Output/TSV/Stool.%.tar.gz | build.log Output/Step38
+Output/Step38/Stool.%.png: Python/step38.py Output/TSV/Stool.%.tar.gz | build.log Output/Step38
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step38/Macrogen.pdf: Python/step38-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step38
+Output/Step38/Macrogen.png: Python/step38-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step38
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step38-everything: Output/Step38/everything.DADA2.gg.pdf Output/Step38/everything.DADA2.silva.pdf Output/Step38/everything.DADA2.homd.pdf Output/Step38/everything.Deblur.gg.pdf Output/Step38/everything.Deblur.silva.pdf Output/Step38/everything.Deblur.homd.pdf
-step38-Stool: Output/Step38/Stool.DADA2.gg.pdf Output/Step38/Stool.DADA2.silva.pdf Output/Step38/Stool.DADA2.homd.pdf Output/Step38/Stool.Deblur.gg.pdf Output/Step38/Stool.Deblur.silva.pdf Output/Step38/Stool.Deblur.homd.pdf
-step38-Macrogen: Output/Step38/Macrogen.pdf
+step38-everything: Output/Step38/everything.DADA2.gg.png Output/Step38/everything.DADA2.silva.png Output/Step38/everything.DADA2.homd.png Output/Step38/everything.Deblur.gg.png Output/Step38/everything.Deblur.silva.png Output/Step38/everything.Deblur.homd.png
+step38-Stool: Output/Step38/Stool.DADA2.gg.png Output/Step38/Stool.DADA2.silva.png Output/Step38/Stool.DADA2.homd.png Output/Step38/Stool.Deblur.gg.png Output/Step38/Stool.Deblur.silva.png Output/Step38/Stool.Deblur.homd.png
+step38-Macrogen: Output/Step38/Macrogen.png
 step38: step38-everything step38-Stool step38-Macrogen
 .PHONY: step38-everything step38-Stool step38-Macrogen step38
 
