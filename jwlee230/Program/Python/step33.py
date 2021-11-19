@@ -30,7 +30,7 @@ if __name__ == "__main__":
     assert args.c in list(metadata.columns)
     print(metadata)
 
-    raw_data.loc["!Subject"] = list(map(lambda x: str(x), metadata[args.c]))
+    raw_data.loc["!Subject"] = list(map(lambda x: str(x).replace(" ", "_"), metadata[args.c]))
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
