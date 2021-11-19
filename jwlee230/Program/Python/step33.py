@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Premature")
+    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Detail Premature")
 
     args = parser.parse_args()
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         raise ValueError("Metadata file must end with .TSV!!")
 
     raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby(by="taxonomy").sum()
-    raw_data["readable_taxonomy"] = list(map(step00.simplified_taxonomy, list(raw_data.index)))
+    raw_data["readable_taxonomy"] = list(map(lambda x: step00.simplified_taxonomy(x).replace(" ", "_").replace(".", ""), list(raw_data.index)))
     raw_data.set_index(keys="readable_taxonomy", inplace=True)
     print(raw_data)
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     assert args.c in list(metadata.columns)
     print(metadata)
 
-    raw_data.loc["!Subject"] = list(map(str, metadata[args.c]))
+    raw_data.loc["!Subject"] = list(map(lambda x: str(x), metadata[args.c]))
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
