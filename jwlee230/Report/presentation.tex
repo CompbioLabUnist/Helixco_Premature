@@ -109,8 +109,7 @@
 
         Detailed PTB:
         \begin{enumerate}
-            \item Extremely PTB $<$ 28 GW
-            \item 28 GW $\le$ Very PTB $<$ 34 GW
+            \item Early PTB $<$ 34 GW
             \item 34 GW $\le$ Late PTB $<$ 37 GW
             \item Normal $\ge$ 37 GW
         \end{enumerate}
@@ -127,13 +126,13 @@
         Three main reasons \cite{16S2}:
         \begin{itemize}
             \item 16S rRNA exists in almost all bacteria
-            \item Functions of the 16S rRNA has not changed over time
+            \item Functions of the 16S rRNA has not changed over evolution.
             \item 16S rRNA is large enough for bioinformatics
         \end{itemize}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Train/Test Data vs. Validate Data}
+        \frametitle{Data Composition}
         \begin{itemize}
             \item JBNU/Helixco data
             \begin{itemize}
@@ -151,7 +150,6 @@
     \end{frame}
 
     \section{Methods}
-    \subsection{Qiime 2 Workflow}
     \begin{frame}
         \frametitle{Qiime 2 Workflow}
 
@@ -161,11 +159,13 @@
         \end{figure}
     \end{frame}
 
+    \section{Results}
+    \subsection{Data Processing with Qiime}
     \begin{frame}
-        \frametitle{Filitering with Quality Score}
+        \frametitle{Filtering with Quality Score}
 
         Drawback between:
-        \begin{itemize}
+         \begin{itemize}
             \item Longer sequence read
             \item Higher quality value
         \end{itemize}
@@ -179,126 +179,6 @@
         \end{equation}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Denoising Techniques}
-
-        \begin{itemize}
-            \item DADA2: Amplicon Sequence Variants (ASVs) \cite{DADA2}
-            \item Deblur: Operational Taxonomic Units (OTUs) \cite{Deblur1}
-        \end{itemize}
-
-        \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/tikz/denoising.pdf}
-            \caption{Denoising Algorithms}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Taxonomy Classification}
-
-        \begin{itemize}
-            \item Greengenes (GG) \cite{greengenes1}
-            \item SILVA \cite{silva1, silva2}
-        \end{itemize}
-
-        \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/tikz/taxonomy.pdf}
-            \caption{Taxonomy Classifications}
-        \end{figure}
-
-        “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
-        but performance appears to \textbf{drop} at \textit{species level}” \cite{performance1}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Merging Denoising/Taxonomy}
-
-        Merging multiple IDs (ASVs or OTUs) into one, which have
-        \begin{itemize}
-            \item Different IDs
-            \item Identified as same taxonomy
-        \end{itemize}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/tikz/merging.pdf}
-            \caption{Example Diagram for Merging Denoising/Taxonomy}
-        \end{figure}
-    \end{frame}
-
-    \subsection{Abundance Test}
-    \begin{frame}
-        \frametitle{ANCOM}
-
-        \begin{itemize}
-            \item Analysis of composition of microbiome \cite{ANCOM1}
-            \item ANCOM detects significantly abundant taxa, while maintain high statistical power
-            \item Find taxa that can divide each classes
-        \end{itemize}
-    \end{frame}
-
-    \subsection{Diversity Indices}
-    \begin{frame}
-        \frametitle{Diversity Indices}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/phylogenic.jpg}
-            \caption{Three dimensions of phylogenic information \protect\cite{phylogenetic1}}
-        \end{figure}
-
-        \begin{itemize}
-            \item A quantitative measure that shows richness, divergence, and regularity \cite{phylogenetic1}
-            \item Alpha diversity indices: the richness of taxa \textbf{at a single community}
-            \item Beta diversity indices: the taxonomic differentiation \textbf{between communities}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Alpha  Diversity Indices}
-
-        \begin{itemize}
-            \item Evenness index
-            \item Faith's Phylogenetic Diversity (Faith PD) index
-            \item Oberseved Features index
-            \item Shannon's Diversity index
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Beta Diversity Indices}
-
-        \begin{itemize}
-            \item Bray-Curtis distance index
-            \item Jaccard distnace index
-            \item Unweighted UniFrac distance index
-            \item Weighted UniFrac distance index
-        \end{itemize}
-    \end{frame}
-
-    \subsection{Miscellaneous}
-    \begin{frame}
-        \frametitle{t-distributed Stochastic Neighbor Embedding (t-SNE)}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/tsne.png}
-            \caption{t-SNE with handwritten data \protect\cite{tsne1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Python Packages}
-
-        \begin{itemize}
-            \item Pandas \cite{pandas1}
-            \item Scikit-Learn \cite{sklearn1}
-            \item SciPy \cite{scipy1}
-            \item Matplotlib \cite{matplotlib1}
-            \item Seaborn \cite{seaborn1}
-            \item Statannot
-        \end{itemize}
-    \end{frame}
-
-    \section{Results}
-    \subsection{Filtering Results}
     \begin{frame}
         \frametitle{Quality Score from JBNU/Helixco Data}
 
@@ -319,452 +199,95 @@
         \end{itemize}
     \end{frame}
 
-    \subsection{t-SNE with Clinical Information}
     \begin{frame}
-        \frametitle{Workflow for t-SNE with Site/Premature Information}
+        \frametitle{Denoising Techinques}
+
+        \begin{itemize}
+            \item DADA2: Amplicon Sequence Variants (ASVs) \cite{DADA2}
+            \item Deblur: Operational Taxonomic Units (OTUs) \cite{Deblur1}
+        \end{itemize}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/tikz/site.pdf}
-            \caption{Workflow of t-SNE for Site/Premature Information}
+            \includegraphics[width=0.4 \linewidth]{figures/tikz/denoising.pdf}
+            \caption{Denoising Algorithms}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Used Clinical Information}
+        \frametitle{Taxonomy Classification}
 
         \begin{itemize}
-            \item Diseases
-            \begin{enumerate}
-                \item Gestational Diabetes
-                \item Maternal Overweight/Obesity
-                \item Maternal Weight Gain
-                \item Hypertension
-                \item PROM
-                \item Antibiotic
-                \item Steroid
-            \end{enumerate}
+            \item Greengenes (GG) \cite{greengenes1}
+            \item SILVA \cite{silva1, silva2}
+            \item Human Oral Microbiome Database (HOMD)
+        \end{itemize}
 
-        \item Probing sites
-        \begin{enumerate}
-            \item Maternal Mouth
-        \end{enumerate}
+        “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
+        but performance appears to \textbf{drop} at \textit{species level}” \cite{performance1}
+    \end{frame}
+
+    \subsection{Abundance Test with ANCOM}
+    \begin{frame}
+        \frametitle{ANCOM}
+
+        \begin{itemize}
+            \item Analysis with composition of microbiome \cite{ANCOM1}
+            \item ANCOM detects significantly abundant taxa, while maintain high statistical power
+            \item Find taxa that can divide each classes
         \end{itemize}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
-        \frametitle{Selected t-SNE Plots}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Gestational_Diabetes.pdf}
-            \caption{t-SNE about Gestational Diabetes}
-        \end{figure}
+    \begin{frame}
+        \frametitle{ANCOM with PTB}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Overweight_or_Obesity.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-1day.pseudocount.Detail_PTB.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Weight_gain.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-3day.pseudocount.Detail_PTB.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Too_much_weight_gain.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-5day.pseudocount.Detail_PTB.pdf}
                 \\
-                \mbox{(a) Overweight} & \mbox{(b) Weight gain} & \mbox{(c) Too much gain} \\
+                \mbox{(a) 1-day} & \mbox{(b) 3-day } & \mbox{(c) 5-day} \\
             \end{array}$
-            \caption{t-SNE about Maternal Weight}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Hypertension.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+PROM.pdf}
-                \\
-                \mbox{(a) Hypertension} & \mbox{(b) PROM} \\
-            \end{array}$
-            \caption{t-SNE about Disease}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Mother_Antibiotics.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Neonate_Antibiotics.pdf}
-                \\
-                \mbox{(a) Mother} & \mbox{(b) Neonate} \\
-            \end{array}$
-            \caption{t-SNE about Antibiotics Usage}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/tSNE/everything.DADA2.gg/Mouth+Mother_Steroid.pdf}
-            \caption{t-SNE about Steroid Usage}
+            \caption{ANCOM for Detail PTB from Neonatal Mouth with DADA2+HOMD}
         \end{figure}
     \end{frame}
 
-    \subsection{Bacterial Abundance Test with ANCOM}
+    \subsection{Abundance Test with LefSe}
     \begin{frame}
-        \frametitle{ANCOM?}
-
-        \begin{itemize}
-            \item Analysis of composition of microbiomes
-            \item ANCOM can be used for analyzing the composition of microbiomes in multiple populations \cite{ANCOM1}
-            \item Differential abundance testing
-        \end{itemize}
-
-        \begin{enumerate}
-            \item clr: Centered $\log (Ratio)$
-            \item W: a count of the number of sub-hypothesis which have passed for given species
-        \end{enumerate}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with ...}
-
-        Site selection:
-        \begin{enumerate}
-            \item Neonatal mouth: 1-day, 3-day, and 5-day
-            \item Cervix
-            \item Maternal mouth
-            \item Vagina
-        \end{enumerate}
-
-        PTB:
-        \begin{enumerate}
-            \item Premature
-            \item Detail premature
-        \end{enumerate}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Neonatal Mouth}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.pdf}
-                \\
-                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
-            \end{array}$
-            \caption{ANCOM with Neonatal Mouth}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Maternal Mouth}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.pdf}
-                \\
-                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
-            \end{array}$
-            \caption{ANCOM with Maternal Mouth}
-        \end{figure}
-
-        \begin{itemize}
-            \item \textit{Bacteria Proteobacteria Alphaproteobacteria Rickettsiales mitochondria} family
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Cervix}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.pdf}
-                \\
-                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
-            \end{array}$
-            \caption{ANCOM with Cervix}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{ANCOM with Vagina}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.pdf}
-                \\
-                \mbox{(a) PTB} & \mbox{(b) Detailed PTB} \\
-            \end{array}$
-            \caption{ANCOM with Vagina}
-        \end{figure}
-
-        \begin{itemize}
-            \item \textit{Bacteria  Proteobacteria Epsilonproteobacteria Campylobacterales Campylobacteraceae Campylobacter} genus
-        \end{itemize}
+        \frametitle{LefSe}
     \end{frame}
 
     \subsection{Diversity Index}
     \begin{frame}
-        \frametitle{Rarefaction}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.DADA2.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Rarefaction/everything.Deblur.pdf}
-                \\
-                \mbox{(a) DADA2} & \mbox{(b) Deblur} \\
-            \end{array}$
-            \caption{Rarefaction from the Data}
-        \end{figure}
-
-        \begin{itemize}
-            \item $min(\ell_{DADA2})$: 1046
-            \item $min(\ell_{Deblur})$: 4864
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
         \frametitle{Diversity Indices}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/phylogenic.jpg}
-            \caption{Dimensions of phylogenetic information \protect\cite{phylogenetic1}}
+            \includegraphics[width=0.6 \linewidth]{figures/phylogenic.jpg}
+            \caption{Three dimensions of phylogenic information \protect\cite{phylogenetic1}}
         \end{figure}
 
         \begin{itemize}
-            \item Alpha-diversity: the species diversity \textit{in} a local scale
-            \item Beta-diversity: the species diversity \textit{between} local scales
+            \item A quantitative measure that shows richness, divergence, and regularity \cite{phylogenetic1}
+            \item Alpha diversity indices: the richness of taxa \textbf{at a single community}
+            \item Beta diversity indices: the taxonomic differentiation \textbf{between communities}
         \end{itemize}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Alpha-diversity}
-
-        \begin{itemize}
-            \item Alpha diversity indices
-            \begin{enumerate}
-                \item Fisher alpha
-                \item Observed OTUs
-                \item Pielou eveness
-                \item Shannon Entropy
-                \item Total: 22 diversity indicies
-            \end{enumerate}
-
-            \item Diseases/Conditions
-            \begin{enumerate}
-                \item Gestational Diabetes
-                \item Too much Weight Gain
-                \item Overweight/Obesity
-                \item Hypertension
-                \item PROM
-                \item Antibiotics
-                \item Steroid
-            \end{enumerate}
-
-            \item Site Selection
-            \begin{enumerate}
-                \item Maternal Mouth
-                \item Neonatal Mouth - 3 day
-            \end{enumerate}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Alpha-diversity Violin Plots with Overweight/Obesity}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Mouth+Obesity+fisher_alpha.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Mouth+Obesity+observed_otus.pdf}
-                \\
-                \mbox{(a) Fisher alpha} & \mbox{(b) Observed OTUs} \\
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Mouth+Obesity+pielou_e.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Mouth+Obesity+shannon.pdf}
-                \\
-                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
-            \end{array}$
-            \caption{Alpha-diversities by Overweight/Obesity in Maternal Mouth}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Neonate-3day+Obesity+fisher_alpha.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Neonate-3day+Obesity+observed_otus.pdf}
-                \\
-                \mbox{(a) Fisher alpha} & \mbox{(b) Observed OTUs} \\
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Neonate-3day+Obesity+pielou_e.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/Macrogen/Neonate-3day+Obesity+shannon.pdf}
-                \\
-                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
-            \end{array}$
-            \caption{Alpha-diversities by Overweight/Obesity in Neonatal-3day}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Alpha-diversity Violin Plot with Data Batch}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Mouth+Obesity+fisher_alpha.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Mouth+Obesity+observed_otus.pdf}
-                \\
-                \mbox{(a) Fisher alpha} & \mbox{(b) Observed OTUs} \\
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Mouth+Obesity+pielou_e.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Mouth+Obesity+shannon.pdf}
-                \\
-                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
-            \end{array}$
-            \caption{Alpha-diversities by First Batch \& Overweight/Obesity in Maternal Mouth}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Neonate-3day+Obesity+fisher_alpha.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Neonate-3day+Obesity+observed_otus.pdf}
-                \\
-                \mbox{(a) Fisher alpha} & \mbox{(b) Observed OTUs} \\
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Neonate-3day+Obesity+pielou_e.pdf}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/AlphaDiversity/First.Macrogen/Neonate-3day+Obesity+shannon.pdf}
-                \\
-                \mbox{(c) Pielou evenness} & \mbox{(d) Shannon} \\
-            \end{array}$
-            \caption{Alpha-diversities by First Batch \& Overweight/Obesity in Neonatal-3day}
-        \end{figure}
+        \frametitle{Cluster map with Correlations within Bacteria abundance}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Beta-diversity}
-
-        \begin{itemize}
-            \item Beta diversity indices
-            \begin{enumerate}
-                \item Unweighted UniFrac distance
-                \item Weighted UniFrac distance
-            \end{enumerate}
-
-            \item Diseases/Conditions
-            \begin{enumerate}
-                \item Gestational Diabetes
-                \item Too much Weight Gain
-                \item Overweight/Obesity
-                \item Hypertension
-                \item PROM
-                \item Antibiotics
-                \item Steroid
-            \end{enumerate}
-
-            \item Site Selection
-            \begin{enumerate}
-                \item Maternal Mouth
-                \item Neonatal Mouth - 3 day
-            \end{enumerate}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Beta-diversity Scatter Plots with Overweight/Obesity}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.unweighted_unifrac/Mouth+Obesity.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.weighted_unifrac/Mouth+Obesity.pdf}
-                \\
-                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
-            \end{array}$
-            \caption{Beta-diversities by Overweight/Obesity in Maternal Mouth}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.unweighted_unifrac/Neonate-3day+Obesity.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.weighted_unifrac/Neonate-3day+Obesity.pdf}
-                \\
-                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
-            \end{array}$
-            \caption{Beta-diversities by Overweight/Obesity in Neonate 3-day}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Beta-diversity Scatter plot with Data Batch}
-
-         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.unweighted_unifrac/Mouth+Data.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.weighted_unifrac/Mouth+Data.pdf}
-                \\
-                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
-            \end{array}$
-            \caption{Beta-diversities by First Batch in Maternal mouth}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.unweighted_unifrac/Neonate-3day+Data.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/Macrogen/everything.weighted_unifrac/Neonate-3day+Data.pdf}
-                \\
-                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
-            \end{array}$
-            \caption{Beta-diversities by First Batch in Neonate 3-day}
-        \end{figure}
-    \end{frame}
-
-    \subsection{Metagenomic Biomarker Discovery}
-    \begin{frame}
-        \frametitle{LEfSe?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/LEfSe.jpg}
-            \caption{LEfSe workflow \protect\cite{lefse1}}
-        \end{figure}
+        \frametitle{Cluster map with Bacteria abundance}
     \end{frame}
 
     \begin{frame}
-        \frametitle{LEfSe Settings}
-
-        \begin{itemize}
-            \item Analysis Pipeline
-            \begin{itemize}
-                \item Algorithm: DADA2 and Deblur
-                \item Databases: GG, Silva, and HOMD
-            \end{itemize}
-            \item Subject Groups
-            \begin{itemize}
-                \item PTB
-                \item Normal
-            \end{itemize}
-            \item Sites
-            \begin{itemize}
-                \item Cervix
-                \item Mouth
-                \item Neonatal Mouth
-                \item Vagina
-            \end{itemize}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LEfSe Results with Obesity}
-
+        \frametitle{Cluster map with Beta diversity}
     \end{frame}
 
     \section{Discussion}
-    \begin{frame}
-        \frametitle{To-do List}
-    \end{frame}
 
    	\begin{frame}[allowframebreaks]
         \frametitle{References}
