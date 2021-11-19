@@ -2,9 +2,11 @@
 step35.py: Draw cluster map plot within bacteria
 """
 import argparse
+import itertools
 import multiprocessing
 import typing
 import matplotlib
+import matplotlib.colors
 import matplotlib.pyplot
 import numpy
 import pandas
@@ -45,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input tar.gz file", type=str)
     parser.add_argument("output", help="Output PNG file", type=str)
     parser.add_argument("--cpus", help="Number of cpus", type=int, default=1)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--pearson", help="Pearson r", action="store_true", default=False)
@@ -73,6 +75,15 @@ if __name__ == "__main__":
     input_data = input_data.groupby(input_data.index).sum().T
     print(input_data)
 
+    filtered_taxa = list(filter(lambda x: len(x.split(";")) == 7, list(input_data.columns)))
+    input_data = input_data.loc[:, filtered_taxa]
+    print(input_data)
+
+    genera = sorted(set(map(lambda x: x.split(";")[4], list(input_data.columns))))
+    color_dict = dict(zip(genera, itertools.cycle(matplotlib.colors.CSS4_COLORS)))
+    colorings = list(map(lambda x: color_dict[x.split(";")[4]], list(input_data.columns)))
+    print(color_dict)
+
     output_data = pandas.DataFrame(data=numpy.zeros((len(input_data.columns), len(input_data.columns))), index=list(input_data.columns), columns=list(input_data.columns), dtype=float)
 
     with multiprocessing.Pool(args.cpus) as pool:
@@ -88,8 +99,8 @@ if __name__ == "__main__":
     output_data.fillna(0, inplace=True)
     print(output_data)
 
-    g = seaborn.clustermap(data=output_data, figsize=(64, 64), row_cluster=True, col_cluster=True, cbar=True, xticklabels=False, yticklabels=False, square=True, cmap="coolwarm", vmin=-1, center=0, vmax=1)
-    g.ax_heatmap.set_xlabel("")
-    g.ax_heatmap.set_ylabel("")
+    g = seaborn.clustermap(data=output_data, figsize=(32, 32), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, cmap="coolwarm", vmin=-1, center=0, vmax=1, row_colors=colorings, col_colors=colorings)
+    g.ax_heatmap.set_xlabel("{0} taxa".format(len(filtered_taxa)))
+    g.ax_heatmap.set_ylabel("{0} taxa".format(len(filtered_taxa)))
 
     g.savefig(args.output)
