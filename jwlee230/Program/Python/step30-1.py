@@ -121,5 +121,5 @@ if __name__ == "__main__":
         files += pool.starmap(draw_all, itertools.product(alphas, diseases))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in tqdm.tqdm(sorted(files)):
+        for f in tqdm.tqdm(files):
             tar.add(f, arcname=f)
