@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot
 import pandas
 import seaborn
-import statannot
+import statannotations.Annotator
 import tqdm
 import step00
 
@@ -24,18 +24,13 @@ def draw(alpha: str, disease: str, site: str) -> str:
     print(alpha, disease, site)
 
     drawing_data = data.loc[(data["Site"] == site)]
-
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+    order = sorted(set(drawing_data[disease]))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    try:
-        statannot.add_stat_annotation(ax, data=drawing_data, x=disease, y=alpha, order=sorted(set(data[disease])), test="Mann-Whitney", box_pairs=itertools.combinations(sorted(set(data[disease])), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
-    except ValueError:
-        pass
+    seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", ax=ax)
+    if len(order) > 1:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
@@ -49,17 +44,13 @@ def draw(alpha: str, disease: str, site: str) -> str:
 def draw_all(alpha: str, disease: str) -> str:
     print(alpha, disease)
 
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+    order = sorted(set(data[disease]))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    seaborn.violinplot(data=data, x=disease, y=alpha, order=sorted(set(data[disease])), inner="box", ax=ax)
 
-    try:
-        statannot.add_stat_annotation(ax, data=data, x=disease, y=alpha, order=sorted(set(data[disease])), test="Mann-Whitney", box_pairs=itertools.combinations(sorted(set(data[disease])), 2), text_format="simple", loc="outside", verbose=0, fontsize=step00.matplotlib_parameters["font.size"])
-    except ValueError:
-        pass
+    seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", ax=ax)
+    if len(order) > 1:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.tight_layout()
@@ -92,6 +83,10 @@ if __name__ == "__main__":
         raise ValueError("Output file must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUS must be greater than zero!!")
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     raw_data = pandas.concat(objs=list(map(read, args.input)), axis="columns", verify_integrity=True)
     alphas = set(raw_data.columns)
