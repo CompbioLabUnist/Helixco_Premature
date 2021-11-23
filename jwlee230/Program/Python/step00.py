@@ -19,6 +19,7 @@ taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "S
 
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain", "Cholesterol", "TG", "HDL", "LDL", "Glucose", "WBC", "Hb", "Hct", "ESR", "hsCRP", "AST", "ALT", "SBP", "DBP"}
 detailed_PTB = ("Early PTB", "Late PTB", "Normal")
+PTB_colors = {"Early PTB": "tab:red", "Late PTB": "tab:pink", "Normal": "w"}
 
 
 def file_list(path: str) -> typing.List[str]:
