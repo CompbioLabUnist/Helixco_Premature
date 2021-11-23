@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 50
 MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
@@ -49,7 +49,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step28 step29 step31 step33 step34 step35 step36 step37 step38 step39
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step28 step29 step31 step32 step33 step34 step35 step36 step37 step38 step39
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -494,7 +494,7 @@ Output/Step32/Deblur/%.tsv: Output/Step29/Deblur/%_distance_matrix.qza | Output/
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $@.stdout 2> $@.stderr
 	$(DOCKER) mv -f $(addprefix /,$(@D))/distance-matrix.tsv $(addprefix /,$@)
 
-Output/Step32/DADA2/%.tar: Python/step32.py Output/Step32/DADA2/%.tsv Output/Metadata/%.tsv | build.log
+Output/Step32/DADA2/everything.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/DADA2/First.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
@@ -503,7 +503,7 @@ Output/Step32/DADA2/First.%.tar: Python/step32.py Output/Step32/DADA2/everything
 Output/Step32/DADA2/Second_Third.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
-Output/Step32/Deblur/%.tar: Python/step32.py Output/Step32/Deblur/%.tsv Output/Metadata/everything.tsv | build.log
+Output/Step32/Deblur/everything.%.tar: Python/step32.py Output/Step32/Deblur/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Deblur/First.%.tar: Python/step32.py Output/Step32/Deblur/everything.%.tsv Output/Metadata/everything.tsv | build.log
@@ -720,31 +720,31 @@ step38: step38-everything step38-Stool step38-Macrogen
 Output/Step39:
 	mkdir -p $@
 
-Output/Step39/%.DADA2.bray_curtis.pdf: Python/step39.py Output/Step32/DADA2/%.bray_curtis.tsv | build.log Output/Step39
+Output/Step39/%.DADA2.bray_curtis.pdf: Python/step39.py Output/Step32/DADA2/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.DADA2.jaccard.pdf: Python/step39.py Output/Step32/DADA2/%.jaccard.tsv | build.log Output/Step39
+Output/Step39/%.DADA2.jaccard.pdf: Python/step39.py Output/Step32/DADA2/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.DADA2.unweighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.unweighted_unifrac.tsv | build.log Output/Step39
+Output/Step39/%.DADA2.unweighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.DADA2.weighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.weighted_unifrac.tsv | build.log Output/Step39
+Output/Step39/%.DADA2.weighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.Deblur.bray_curtis.pdf: Python/step39.py Output/Step32/Deblur/%.bray_curtis.tsv | build.log Output/Step39
+Output/Step39/%.Deblur.bray_curtis.pdf: Python/step39.py Output/Step32/Deblur/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.Deblur.jaccard.pdf: Python/step39.py Output/Step32/Deblur/%.jaccard.tsv | build.log Output/Step39
+Output/Step39/%.Deblur.jaccard.pdf: Python/step39.py Output/Step32/Deblur/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.Deblur.unweighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.unweighted_unifrac.tsv | build.log Output/Step39
+Output/Step39/%.Deblur.unweighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/%.Deblur.weighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.weighted_unifrac.tsv | build.log Output/Step39
+Output/Step39/%.Deblur.weighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step39/Macrogen.%.pdf: Python/step39-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step39
+Output/Step39/Macrogen.%.pdf: Python/step39-1.py Output/TSV/Macrogen.tar.gz Output/Metadata/everything.tsv | build.log Output/Step39
 	$(DOCKER) python3 $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
 
 step39-DADA2: Output/Step39/everything.DADA2.bray_curtis.pdf Output/Step39/everything.DADA2.jaccard.pdf Output/Step39/everything.DADA2.unweighted_unifrac.pdf Output/Step39/everything.DADA2.weighted_unifrac.pdf Output/Step39/Stool.DADA2.bray_curtis.pdf Output/Step39/Stool.DADA2.jaccard.pdf Output/Step39/Stool.DADA2.unweighted_unifrac.pdf Output/Step39/Stool.DADA2.weighted_unifrac.pdf
@@ -767,3 +767,7 @@ step40-everything: Output/Step40/everything.DADA2.gg.pdf Output/Step40/everythin
 step40-Macrogen: Output/Step40/Macrogen.pdf
 step40: step40-everything step40-Macrogen
 .PHONY: step40-everything step40-Macrogen step40
+
+# Step 41 (Heatmap Plot for correlation between Bacteria & Clinical data)
+Output/Step41:
+	mkdir -p $@
