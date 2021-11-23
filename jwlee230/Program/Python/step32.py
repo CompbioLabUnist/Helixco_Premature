@@ -22,10 +22,6 @@ data = pandas.DataFrame()
 def draw(disease: str, site: str) -> str:
     print(disease, site)
 
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tmp_data = data.loc[(data["Site"] == site)]
     seaborn.scatterplot(data=tmp_data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(tmp_data[disease])), s=40 ** 2)
@@ -45,10 +41,6 @@ def draw(disease: str, site: str) -> str:
 
 def draw_all(disease: str) -> str:
     print(disease)
-
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=disease, hue_order=sorted(set(data[disease])), s=40 ** 2)
@@ -78,6 +70,19 @@ if __name__ == "__main__":
     data_group.add_argument("--second", help="Select Second+Third data", action="store_true", default=False)
 
     args = parser.parse_args()
+
+    if not args.input.endswith(".tsv"):
+        raise ValueError("Input file must end with .TSV!!")
+    elif not args.metadata.endswith(".tsv"):
+        raise ValueError("Metadata file must end with .TSV!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output file must end with .TAR!!")
+    elif args.cpus < 1:
+        raise ValueError("CPUS must be greater than zero!!")
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     distance_data = pandas.read_csv(args.input, sep="\t", index_col=0)
 
@@ -112,5 +117,5 @@ if __name__ == "__main__":
         files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:
-        for f in tqdm.tqdm(sorted(files)):
+        for f in tqdm.tqdm(files):
             tar.add(f, arcname=f)

@@ -93,6 +93,8 @@ if __name__ == "__main__":
     elif args.second:
         input_data = input_data.loc[list(filter(lambda x: x.startswith("Second") or x.startswith("Third"), list(input_data.index))), :]
 
+    input_data = input_data.iloc[1:, 1:].T
+    input_data.columns = list(map(step00.simplified_taxonomy, list(input_data.columns)))
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
@@ -103,11 +105,11 @@ if __name__ == "__main__":
     print(sorted(diseases))
     print(sorted(sites))
 
-    tree = skbio.tree.TreeNode.from_taxonomy([(x, step00.simplified_taxonomy(x).split(";")) for x in list(input_data.columns)])
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    tree = skbio.tree.TreeNode.from_taxonomy([(x, x.split(";")) for x in list(input_data.columns)])
 
     for e in tqdm.tqdm(tree.traverse()):
         if e.is_root():
@@ -115,6 +117,7 @@ if __name__ == "__main__":
         e.length = len(e.name.split(";"))
 
     distance_data = skbio.diversity.beta_diversity(args.beta, input_data.to_numpy(), list(input_data.index), otu_ids=list(input_data.columns), tree=tree).to_data_frame()
+
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=10 ** 5, verbose=1).fit_transform(distance_data), columns=["tSNE1", "tSNE2"])
 
     for column in list(tsne_data.columns):
@@ -131,5 +134,5 @@ if __name__ == "__main__":
         files += pool.map(draw_all, diseases)
 
     with tarfile.open(args.output, "w") as tar:
-        for f in tqdm.tqdm(sorted(files)):
+        for f in tqdm.tqdm(files):
             tar.add(f, arcname=f)
