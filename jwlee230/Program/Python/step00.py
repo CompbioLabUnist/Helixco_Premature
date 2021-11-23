@@ -17,7 +17,7 @@ markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
 derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
 taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 
-numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain"}
+numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain", "Cholesterol", "TG", "HDL", "LDL", "Glucose", "WBC", "Hb", "Hct", "ESR", "hsCRP", "AST", "ALT", "SBP", "DBP"}
 detailed_PTB = ("Early PTB", "Late PTB", "Normal")
 
 
