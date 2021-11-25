@@ -75,7 +75,7 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(30, 24))
 
     seaborn.violinplot(data=output_data, x="BabyType", y="Shared", order=["B1", "B3", "B5"], hue="MotherType", hue_order=["C", "M", "V"], inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, [((b, m1), (b, m2)) for m1, m2 in list(itertools.combinations(["C", "M", "V"], 2)) for b in ["B1", "B3", "B5"]], data=output_data, x="BabyType", y="Shared", order=["B1", "B3", "B5"], hue="MotherType", hue_order=["C", "M", "V"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, [((b1, m), (b2, m)) for m in ["C", "M", "V"] for b1, b2 in list(itertools.combinations(["B1", "B3", "B5"], 2))], data=output_data, x="BabyType", y="Shared", order=["B1", "B3", "B5"], hue="MotherType", hue_order=["C", "M", "V"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.xlabel("Sample Type")
     matplotlib.pyplot.ylabel("Shared Taxonomy Proportion")

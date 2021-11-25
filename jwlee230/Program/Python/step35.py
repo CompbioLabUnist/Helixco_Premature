@@ -82,7 +82,7 @@ if __name__ == "__main__":
     colorings = pandas.DataFrame(index=input_data.columns)
     for i, class_name in enumerate(["Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"]):
         taxa = sorted(set(map(lambda x: x.split(";")[i], list(input_data.columns))))
-        color_dict = dict(zip(taxa, itertools.cycle(matplotlib.colors.CSS4_COLORS)))
+        color_dict = dict(zip(taxa, itertools.cycle(matplotlib.colors.XKCD_COLORS)))
         colorings[class_name] = list(map(lambda x: color_dict[x.split(";")[i]], list(input_data.columns)))
     print(colorings)
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     output_data.fillna(0, inplace=True)
     print(output_data)
 
-    g = seaborn.clustermap(data=output_data, figsize=(64, 64), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, cmap="coolwarm", vmin=-1, center=0, vmax=1, row_colors=colorings, col_colors=colorings)
+    g = seaborn.clustermap(data=output_data, figsize=(32, 32), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, cmap="coolwarm", vmin=-1, center=0, vmax=1, row_colors=colorings, col_colors=colorings)
     g.ax_heatmap.set_xlabel("{0} taxa".format(len(filtered_taxa)))
     g.ax_heatmap.set_ylabel("{0} taxa".format(len(filtered_taxa)))
 
