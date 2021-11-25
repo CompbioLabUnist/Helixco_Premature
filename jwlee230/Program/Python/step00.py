@@ -21,6 +21,9 @@ numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day
 detailed_PTB = ("Early PTB", "Late PTB", "Normal")
 PTB_colors = {"Early PTB": "tab:red", "Late PTB": "tab:pink", "Normal": "w"}
 
+selected_sites = ("M", "C", "V", "B1", "B3", "B5")
+selected_long_sites = ("Mouth", "Cervix", "Vagina", "Neonate-1day", "Neonate-3day", "Neonate-5day")
+
 
 def file_list(path: str) -> typing.List[str]:
     """
