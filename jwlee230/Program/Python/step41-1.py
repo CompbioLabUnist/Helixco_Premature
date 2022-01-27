@@ -92,6 +92,7 @@ if __name__ == "__main__":
     seaborn.heatmap(data=output_data, vmin=-1, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, ax=ax)
 
     matplotlib.pyplot.xlabel("Pathogens")
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

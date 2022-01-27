@@ -95,5 +95,6 @@ if __name__ == "__main__":
         axs[i // 3][i % 3].set_title(site)
 
     matplotlib.pyplot.tight_layout()
+
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
