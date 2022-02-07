@@ -101,14 +101,14 @@ def remove_preceding_underscores(x: str) -> str:
         return x
 
 
-def consistency_taxonomy(taxonomy: str) -> str:
+def consistency_taxonomy(taxonomy: str, number: int = 3) -> str:
     """
     consistency_taxonomy: make taxonomy information with consistency
     """
     if taxonomy == "Unassigned":
         return taxonomy
     else:
-        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: remove_preceding_underscores(x).replace("[", "").replace("]", ""), taxonomy.split(";")))))[-3:])
+        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: remove_preceding_underscores(x).replace("[", "").replace("]", ""), taxonomy.split(";")))))[-number:])
 
 
 def simplified_taxonomy(taxonomy: str) -> str:

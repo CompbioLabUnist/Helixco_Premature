@@ -845,3 +845,15 @@ step41-Stool-Deblur: Output/Step41/Stool.Deblur.gg.pearson.pdf Output/Step41/Sto
 step41-Macrogen: Output/Step41/Macrogen.pearson.pdf Output/Step41/Macrogen.spearman.pdf Output/Step41/Macrogen.kendall.pdf Output/Step41/Macrogen.pearson.Sites.pdf Output/Step41/Macrogen.spearman.Sites.pdf Output/Step41/Macrogen.kendall.Sites.pdf
 step41: step41-everything-DADA2 step41-everything-Deblur step41-Stool-DADA2 step41-Stool-Deblur
 .PHONY: step41-everything-DADA2 step41-everything-Deblur step41-Stool-DADA2 step41-Stool-Deblur step41
+
+# Step 42 (Violin plot for taxonomy with clinical data)
+Output/Step42:
+	mkdir -p $@
+
+Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step42 build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar
+step42-Deblur: Output/Step42/everything.Deblur.gg.tar Output/Step42/everything.Deblur.silva.tar Output/Step42/everything.Deblur.homd.tar
+step42: step42-DADA2 step42-Deblur
+.PHONY: step42-DADA2 step42-Deblur step42
