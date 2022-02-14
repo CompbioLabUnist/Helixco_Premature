@@ -50,7 +50,7 @@ if __name__ == "__main__":
         raise ValueError("Metadata must end with .tsv!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output file must end with .PDF!!")
-    elif args.cpus < 0:
+    elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
     input_data = step00.read_pickle(args.input)
