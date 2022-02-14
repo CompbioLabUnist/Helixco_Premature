@@ -857,3 +857,23 @@ step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DAD
 step42-Deblur: Output/Step42/everything.Deblur.gg.tar Output/Step42/everything.Deblur.silva.tar Output/Step42/everything.Deblur.homd.tar
 step42: step42-DADA2 step42-Deblur
 .PHONY: step42-DADA2 step42-Deblur step42
+
+# Step 43 (Volcano plot with Corrleation)
+Output/Step43:
+	mkdir -p $@
+
+Output/Step43/everything.%.pearson.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step43/everything.%.spearman.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step43/everything.%.kendall.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+step43-everything-DADA2: Output/Step43/everything.DADA2.gg.pearson.tar Output/Step43/everything.DADA2.silva.pearson.tar Output/Step43/everything.DADA2.homd.pearson.tar Output/Step43/everything.DADA2.gg.spearman.tar Output/Step43/everything.DADA2.silva.spearman.tar Output/Step43/everything.DADA2.homd.spearman.tar Output/Step43/everything.DADA2.gg.kendall.tar Output/Step43/everything.DADA2.silva.kendall.tar Output/Step43/everything.DADA2.homd.kendall.tar
+step43-everything-Deblur: Output/Step43/everything.Deblur.gg.pearson.tar Output/Step43/everything.Deblur.silva.pearson.tar Output/Step43/everything.Deblur.homd.pearson.tar Output/Step43/everything.Deblur.gg.spearman.tar Output/Step43/everything.Deblur.silva.spearman.tar Output/Step43/everything.Deblur.homd.spearman.tar Output/Step43/everything.Deblur.gg.kendall.tar Output/Step43/everything.Deblur.silva.kendall.tar Output/Step43/everything.Deblur.homd.kendall.tar
+step43: step43-everything-DADA2 step43-everything-Deblur
+.PHONY: step43-everything-DADA2 step43-everything-Deblur step43
+
+# Step 44 (Machine Learning)
