@@ -13,8 +13,9 @@ import sklearn.ensemble
 import sklearn.manifold
 import sklearn.model_selection
 import sklearn.tree
-import statannot
+import statannotations.Annotator
 import pandas
+import tqdm
 import step00
 
 if __name__ == "__main__":
@@ -51,8 +52,7 @@ if __name__ == "__main__":
     print(metadata)
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
-    # sites = set(input_data["Site"])
-    sites = {"Mouth", "Neonate-3day"}
+    sites = set(input_data["Site"])
     print(input_data)
 
     target = "Detail Premature"
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
 
-    for site in sites:
+    for site in tqdm.tqdm(sites):
         tmp_data = input_data.loc[(input_data["Site"] == site)]
 
         if len(tmp_data) < args.split:
@@ -73,10 +73,6 @@ if __name__ == "__main__":
         best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, taxa), reverse=True)))
 
         # Draw Feature Importances
-        matplotlib.use("Agg")
-        matplotlib.rcParams.update(step00.matplotlib_parameters)
-        seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
         seaborn.distplot(list(filter(lambda x: x > 0, feature_importances)), hist=True, kde=False, rug=True, ax=ax)
 
@@ -84,6 +80,8 @@ if __name__ == "__main__":
         matplotlib.pyplot.xlabel("Feature Importances")
         matplotlib.pyplot.ylabel("Number of Features")
         matplotlib.pyplot.grid(True)
+        matplotlib.pyplot.tight_layout()
+
         tar_files.append("{0}+importances.pdf".format(site))
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
@@ -106,36 +104,40 @@ if __name__ == "__main__":
                 classifier.fit(x_train, y_train)
 
                 for metric in step00.derivations:
-                    test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                    try:
+                        test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                    except AssertionError:
+                        continue
 
             if list(filter(lambda x: x == 0, feature_importances)):
                 flag = True
 
         # Draw K-fold
         score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])
-        matplotlib.use("Agg")
-        matplotlib.rcParams.update(step00.matplotlib_parameters)
-        seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+
         seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
+        matplotlib.pyplot.title(site)
         ax.invert_xaxis()
+        matplotlib.pyplot.tight_layout()
+
         tar_files.append("{0}+metrics.pdf".format(site))
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-        for i, feature in enumerate(taxa[:10]):
-            print(i, feature)
-            matplotlib.use("Agg")
-            matplotlib.rcParams.update(step00.matplotlib_parameters)
-            seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
+        for i, feature in enumerate(taxa[:5]):
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
             seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box")
-            statannot.add_stat_annotation(ax, data=tmp_data, x=target, y=feature, order=orders, box_pairs=itertools.combinations(orders, 2), text_format="simple", loc="inside", verbose=2, test="t-test_ind")
+            try:
+                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+            except ValueError:
+                pass
 
-            matplotlib.pyplot.ylabel(step00.simplified_taxonomy(feature))
+            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
+            matplotlib.pyplot.title(site)
+            matplotlib.pyplot.tight_layout()
 
             tar_files.append("{0}+Violin_{1}.pdf".format(site, i))
             fig.savefig(tar_files[-1])
@@ -143,6 +145,5 @@ if __name__ == "__main__":
 
     # Save data
     with tarfile.open(args.output, "w") as tar:
-        for file_name in tar_files:
-            print(file_name)
+        for file_name in tqdm.tqdm(tar_files):
             tar.add(file_name, arcname=file_name)
