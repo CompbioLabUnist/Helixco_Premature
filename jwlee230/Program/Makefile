@@ -49,7 +49,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -875,5 +875,3 @@ step43-everything-DADA2: Output/Step43/everything.DADA2.gg.pearson.tar Output/St
 step43-everything-Deblur: Output/Step43/everything.Deblur.gg.pearson.tar Output/Step43/everything.Deblur.silva.pearson.tar Output/Step43/everything.Deblur.homd.pearson.tar Output/Step43/everything.Deblur.gg.spearman.tar Output/Step43/everything.Deblur.silva.spearman.tar Output/Step43/everything.Deblur.homd.spearman.tar Output/Step43/everything.Deblur.gg.kendall.tar Output/Step43/everything.Deblur.silva.kendall.tar Output/Step43/everything.Deblur.homd.kendall.tar
 step43: step43-everything-DADA2 step43-everything-Deblur
 .PHONY: step43-everything-DADA2 step43-everything-Deblur step43
-
-# Step 44 (Machine Learning)
