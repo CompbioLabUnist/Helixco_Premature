@@ -6,6 +6,7 @@ import multiprocessing
 import tarfile
 import typing
 import warnings
+import adjustText
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -15,7 +16,7 @@ import tqdm
 import step00
 
 input_data = pandas.DataFrame()
-correlation_threshold = 0.6
+correlation_threshold = 0.3
 p_threshold = 0.05
 
 
@@ -86,17 +87,19 @@ if __name__ == "__main__":
         for clinical in tqdm.tqdm(step00.numeric_columns):
             figures.append("{0}.pdf".format(clinical.replace(" ", "_")))
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+            texts = list()
 
             if args.pearson:
-                results = pool.starmap(pearson, [(clinical, taxo) for taxo in taxa])
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
             elif args.spearman:
-                results = pool.starmap(pearson, [(clinical, taxo) for taxo in taxa])
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
             elif args.kendall:
-                results = pool.starmap(pearson, [(clinical, taxo) for taxo in taxa])
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
             else:
                 raise Exception("Something went wrong!!")
 
-            results = list(map(lambda x: (x[0], -1 * numpy.log10(x[1])), results))
+            results = list(map(lambda x: (x[0], -1 * numpy.log10(x[1]), x[2]), results))
+
             down_results = list(filter(lambda x: (x[0] < (-1 * correlation_threshold)) and (x[1] > -1 * numpy.log10(p_threshold)), results))
             up_results = list(filter(lambda x: (x[0] > correlation_threshold) and (x[1] > -1 * numpy.log10(p_threshold)), results))
             not_results = list(filter(lambda x: ((-1 * correlation_threshold) < x[0] < correlation_threshold) or (x[1] < -1 * numpy.log10(p_threshold)), results))
@@ -104,6 +107,9 @@ if __name__ == "__main__":
             matplotlib.pyplot.scatter(list(map(lambda x: x[0], not_results)), list(map(lambda x: x[1], not_results)), s=100, c="gray", marker="o", edgecolors=None, label="NS")
             matplotlib.pyplot.scatter(list(map(lambda x: x[0], down_results)), list(map(lambda x: x[1], down_results)), s=100, c="blue", marker="o", edgecolors=None, label="Negative")
             matplotlib.pyplot.scatter(list(map(lambda x: x[0], up_results)), list(map(lambda x: x[1], up_results)), s=100, c="red", marker="o", edgecolors=None, label="Positive")
+
+            for x, y, text in down_results + up_results:
+                texts.append(matplotlib.pyplot.text(x, y, step00.consistency_taxonomy(text, 1), color="black", fontsize="small"))
 
             matplotlib.pyplot.xlabel("Correlation")
             matplotlib.pyplot.ylabel("-log10(p)")
@@ -115,6 +121,8 @@ if __name__ == "__main__":
             matplotlib.pyplot.legend()
             matplotlib.pyplot.grid(True)
             matplotlib.pyplot.tight_layout()
+
+            adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.small, ax=ax)
 
             fig.savefig(figures[-1])
             matplotlib.pyplot.close(fig)
