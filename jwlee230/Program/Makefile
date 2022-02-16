@@ -875,3 +875,13 @@ step43-everything-DADA2: Output/Step43/everything.DADA2.gg.pearson.tar Output/St
 step43-everything-Deblur: Output/Step43/everything.Deblur.gg.pearson.tar Output/Step43/everything.Deblur.silva.pearson.tar Output/Step43/everything.Deblur.homd.pearson.tar Output/Step43/everything.Deblur.gg.spearman.tar Output/Step43/everything.Deblur.silva.spearman.tar Output/Step43/everything.Deblur.homd.spearman.tar Output/Step43/everything.Deblur.gg.kendall.tar Output/Step43/everything.Deblur.silva.kendall.tar Output/Step43/everything.Deblur.homd.kendall.tar
 step43: step43-everything-DADA2 step43-everything-Deblur
 .PHONY: step43-everything-DADA2 step43-everything-Deblur step43
+
+# Step 44 (Volcano plot with differetially expressed taxa)
+Output/Step44:
+	mkdir -p $@
+
+Output/Step44/everything.%.pdf: Python/step44.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step44
+	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step44: Output/Step44/everything.DADA2.gg.pdf Output/Step44/everything.DADA2.silva.pdf Output/Step44/everything.DADA2.homd.pdf Output/Step44/everything.Deblur.gg.pdf Output/Step44/everything.Deblur.silva.pdf Output/Step44/everything.Deblur.homd.pdf
+.PHONY: step44
