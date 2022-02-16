@@ -102,14 +102,14 @@ if __name__ == "__main__":
 
             down_results = list(filter(lambda x: (x[0] < (-1 * correlation_threshold)) and (x[1] > -1 * numpy.log10(p_threshold)), results))
             up_results = list(filter(lambda x: (x[0] > correlation_threshold) and (x[1] > -1 * numpy.log10(p_threshold)), results))
-            not_results = list(filter(lambda x: ((-1 * correlation_threshold) < x[0] < correlation_threshold) or (x[1] < -1 * numpy.log10(p_threshold)), results))
+            ns_results = list(filter(lambda x: ((-1 * correlation_threshold) < x[0] < correlation_threshold) or (x[1] < -1 * numpy.log10(p_threshold)), results))
 
-            matplotlib.pyplot.scatter(list(map(lambda x: x[0], not_results)), list(map(lambda x: x[1], not_results)), s=100, c="gray", marker="o", edgecolors=None, label="NS")
+            matplotlib.pyplot.scatter(list(map(lambda x: x[0], ns_results)), list(map(lambda x: x[1], ns_results)), s=100, c="gray", marker="o", edgecolors=None, label="NS")
             matplotlib.pyplot.scatter(list(map(lambda x: x[0], down_results)), list(map(lambda x: x[1], down_results)), s=100, c="blue", marker="o", edgecolors=None, label="Negative")
             matplotlib.pyplot.scatter(list(map(lambda x: x[0], up_results)), list(map(lambda x: x[1], up_results)), s=100, c="red", marker="o", edgecolors=None, label="Positive")
 
             for x, y, text in down_results + up_results:
-                texts.append(matplotlib.pyplot.text(x, y, step00.consistency_taxonomy(text, 1), color="black", fontsize="small"))
+                texts.append(matplotlib.pyplot.text(x, y, step00.consistency_taxonomy(text, 1), color="black", fontsize="xx-small"))
 
             matplotlib.pyplot.xlabel("Correlation")
             matplotlib.pyplot.ylabel("-log10(p)")
