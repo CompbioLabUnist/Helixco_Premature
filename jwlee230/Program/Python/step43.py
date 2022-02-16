@@ -2,6 +2,7 @@
 step43.py: Volcano plot with Corrleation
 """
 import argparse
+import itertools
 import multiprocessing
 import tarfile
 import typing
@@ -20,24 +21,21 @@ correlation_threshold = 0.3
 p_threshold = 0.05
 
 
-def pearson(clinical: str, taxonomy: str) -> typing.Tuple[float, float]:
-    drawing_data = input_data[[taxonomy, clinical]]
-    drawing_data = drawing_data.loc[(drawing_data[clinical] != -1)]
+def pearson(clinical: str, taxonomy: str, site: str) -> typing.Tuple[float, float]:
+    drawing_data = input_data.loc[((input_data[clinical] != -1) & (input_data["Site"] == site)), [taxonomy, clinical]]
     try:
         return scipy.stats.pearsonr(drawing_data[taxonomy], drawing_data[clinical])
     except scipy.stats.PearsonRConstantInputWarning:
         return (0, 1)
 
 
-def spearman(clinical: str, taxonomy: str) -> typing.Tuple[float, float]:
-    drawing_data = input_data[[taxonomy, clinical]]
-    drawing_data = drawing_data.loc[(drawing_data[clinical] != -1)]
+def spearman(clinical: str, taxonomy: str, site: str) -> typing.Tuple[float, float]:
+    drawing_data = input_data.loc[((input_data[clinical] != -1) & (input_data["Site"] == site)), [taxonomy, clinical]]
     return scipy.stats.spearmanr(drawing_data[taxonomy], drawing_data[clinical])
 
 
-def kendall(clinical: str, taxonomy: str) -> typing.Tuple[float, float]:
-    drawing_data = input_data[[taxonomy, clinical]]
-    drawing_data = drawing_data.loc[(drawing_data[clinical] != -1)]
+def kendall(clinical: str, taxonomy: str, site: str) -> typing.Tuple[float, float]:
+    drawing_data = input_data.loc[((input_data[clinical] != -1) & (input_data["Site"] == site)), [taxonomy, clinical]]
     return scipy.stats.kendalltau(drawing_data[taxonomy], drawing_data[clinical])
 
 
@@ -84,17 +82,17 @@ if __name__ == "__main__":
 
     figures = list()
     with multiprocessing.Pool(args.cpus) as pool:
-        for clinical in tqdm.tqdm(step00.numeric_columns):
-            figures.append("{0}.pdf".format(clinical.replace(" ", "_")))
+        for clinical, site in tqdm.tqdm(list(itertools.product(step00.numeric_columns, step00.selected_long_sites))):
+            figures.append("{1}_{0}.pdf".format(clinical.replace(" ", "_"), site))
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
             texts = list()
 
             if args.pearson:
-                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo, site) for taxo in taxa]), taxa)))
             elif args.spearman:
-                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo, site) for taxo in taxa]), taxa)))
             elif args.kendall:
-                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo) for taxo in taxa]), taxa)))
+                results = list(map(lambda x: (x[0][0], x[0][1], x[1]), zip(pool.starmap(pearson, [(clinical, taxo, site) for taxo in taxa]), taxa)))
             else:
                 raise Exception("Something went wrong!!")
 
@@ -113,7 +111,7 @@ if __name__ == "__main__":
 
             matplotlib.pyplot.xlabel("Correlation")
             matplotlib.pyplot.ylabel("-log10(p)")
-            matplotlib.pyplot.title(clinical)
+            matplotlib.pyplot.title("{0} in {1}".format(clinical, site))
             matplotlib.pyplot.xlim(-1, 1)
             matplotlib.pyplot.axvline(-1 * correlation_threshold, color="k", linestyle="--")
             matplotlib.pyplot.axvline(correlation_threshold, color="k", linestyle="--")

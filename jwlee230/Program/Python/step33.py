@@ -3,6 +3,7 @@ step33.py: Read & clearify raw TSV for LefSe
 """
 import argparse
 import pandas
+import tqdm
 import step00
 
 if __name__ == "__main__":
@@ -11,7 +12,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Detail Premature")
+    parser.add_argument("--c", help="Class used for LefSe", type=str, default="Simple Premature")
 
     args = parser.parse_args()
 
@@ -34,8 +35,7 @@ if __name__ == "__main__":
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
-    for site in ["Cervix", "Mouth", "Neonate-3day", "Neonate-5day", "Vagina"]:
+    for site in tqdm.tqdm(step00.selected_long_sites):
         selected_IDs = metadata.loc[(metadata["Site"] == site), "#SampleID"]
         tmp_data = raw_data.loc[:, selected_IDs]
-        print(tmp_data)
         tmp_data.to_csv(args.output + "." + site + ".tsv", sep="\t")

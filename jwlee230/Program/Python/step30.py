@@ -67,7 +67,7 @@ if __name__ == "__main__":
     parser.add_argument("input", type=str, help="Input TSV file", nargs="+")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output TAR file")
-    parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
+    parser.add_argument("--cpus", type=int, default=1, help="CPUs to use")
 
     data_group = parser.add_mutually_exclusive_group()
     data_group.add_argument("--first", help="Select First data", action="store_true", default=False)

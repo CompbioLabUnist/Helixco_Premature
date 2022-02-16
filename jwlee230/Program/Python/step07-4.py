@@ -58,10 +58,11 @@ if __name__ == "__main__":
     data["ID"] = list(map(change_index, data["#SampleID"]))
     for c in list(metadata.columns):
         data[c] = list(map(lambda x: metadata.loc[x, c], data["ID"]))
+    data["Simple Premature"] = list(map(lambda x: "Early PTB" if (x == "Early PTB") else "Late PTB+Normal", data["Detail Premature"]))
     data["Description"] = ""
     del data["ID"]
 
-    print("\t".join(data.columns))
+    print("\t".join(list(data.columns)))
     print("#q2:types", "\t".join(list(map(lambda x: "numeric" if x in step00.numeric_columns else "categorical", list(data.columns)[1:]))), sep="\t")
     for index, row in data.iterrows():
         print("\t".join(list(map(str, row))))
