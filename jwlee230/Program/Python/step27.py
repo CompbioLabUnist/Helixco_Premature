@@ -1,5 +1,5 @@
 """
-step26.py: Decision Tree Classifier
+step27.py: Decision Tree Classifier
 """
 import argparse
 import tarfile
@@ -12,43 +12,46 @@ import sklearn.manifold
 import sklearn.model_selection
 import sklearn.tree
 import pandas
+import tqdm
 import step00
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("train", type=str, nargs=1, help="Train TAR.gz file")
-    parser.add_argument("normal", type=str, nargs=1, help="Normal TAR.gz file")
-    parser.add_argument("premature", type=str, nargs=1, help="premature TAR.gz file")
-    parser.add_argument("meta", type=str, nargs=1, help="Metadata TSV file")
-    parser.add_argument("output", type=str, nargs=1, help="Output basename")
-    parser.add_argument("--cpu", type=int, default=1, help="CPU to use")
+    parser.add_argument("train", type=str, help="Train TAR.gz file")
+    parser.add_argument("normal", type=str, help="Normal TAR.gz file")
+    parser.add_argument("premature", type=str, help="premature TAR.gz file")
+    parser.add_argument("meta", type=str, help="Metadata TSV file")
+    parser.add_argument("output", type=str, help="Output basename")
+    parser.add_argument("--cpus", type=int, default=1, help="cpus to use")
 
     args = parser.parse_args()
 
-    if args.cpu < 1:
-        raise ValueError("CPU must be greater than zero!!")
-    elif not args.meta[0].endswith(".tsv"):
+    if args.cpus < 1:
+        raise ValueError("CPUS must be greater than zero!!")
+    elif not args.meta.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
-    elif not args.output[0].endswith(".tar"):
+    elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .tar!!")
 
     matplotlib.use("Agg")
-    matplotlib.rcParams.update({"font.size": 30})
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     tar_files: typing.List[str] = list()
 
-    train_data = step00.read_pickle(args.train[0])
-    normal_data = step00.read_pickle(args.normal[0])
-    premature_data = step00.read_pickle(args.premature[0])
-    metadata = pandas.read_csv(args.meta[0], sep="\t", skiprows=[1])
+    train_data = step00.read_pickle(args.train).T
+    normal_data = step00.read_pickle(args.normal).T
+    premature_data = step00.read_pickle(args.premature).T
+    metadata = pandas.read_csv(args.meta, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
+    print(metadata)
 
     intersect_columns = sorted(set(train_data.columns) & set(normal_data.columns) & set(premature_data.columns))
     train_data = train_data[intersect_columns]
     normal_data = normal_data[intersect_columns]
     premature_data = premature_data[intersect_columns]
 
-    train_data["Answer"] = list(metadata["premature"])
+    train_data["Answer"] = list(metadata["Premature"])
     normal_data["Answer"] = "Normal"
     premature_data["Answer"] = "Premature"
 
@@ -111,6 +114,6 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-    with tarfile.open(args.output[0], "w") as tar:
-        for file_name in tar_files:
+    with tarfile.open(args.output, "w") as tar:
+        for file_name in tqdm.tqdm(tar_files):
             tar.add(file_name, arcname=file_name)

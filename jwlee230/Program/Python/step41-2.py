@@ -2,6 +2,7 @@
 step41-2.py: Heatmap Plot for correlation between Bacteria & Clinical data with site separation
 """
 import argparse
+import tarfile
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
@@ -37,7 +38,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input tar.gz file", type=str)
     parser.add_argument("metadata", help="Metadata file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of cpus", type=int, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -49,16 +50,16 @@ if __name__ == "__main__":
 
     if not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata must end with .tsv!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output file must end with .PDF!!")
-    elif args.cpus < 0:
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output file must end with .TAR!!")
+    elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
     input_data.sort_index(inplace=True)
     input_data = input_data.groupby(input_data.index).sum().T
-    taxa = list(filter(lambda x: x.count(";") > 5, list(input_data.columns)))
+    taxa = list(input_data.columns)
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], index_col=0)
@@ -72,9 +73,9 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(figsize=(96, 36), nrows=2, ncols=3, sharex=True, sharey=True)
+    figures = list()
 
-    for i, site in tqdm.tqdm(enumerate(step00.selected_long_sites)):
+    for site in tqdm.tqdm(step00.selected_long_sites):
         output_data = pandas.DataFrame(index=sorted(step00.numeric_columns), columns=taxa)
         input_data = merged_data.loc[(metadata["Site"] == site)]
 
@@ -90,12 +91,13 @@ if __name__ == "__main__":
                     raise Exception("Something went wrong!!")
         output_data.fillna(0, inplace=True)
 
-        seaborn.heatmap(data=output_data, vmin=-1, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, ax=axs[i // 3][i % 3])
+        g = seaborn.clustermap(data=output_data, figsize=(48, 18), row_cluster=False, col_cluster=True, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", vmin=-1, vmax=1, cbar_pos=(-0.04, 0.2, 0.02, 0.6))
 
-        axs[i // 3][i % 3].set_xlabel("Pathogens")
-        axs[i // 3][i % 3].set_title(site)
+        g.ax_heatmap.set_xlabel("{0} Pathogens".format(len(taxa)))
 
-    matplotlib.pyplot.tight_layout()
+        figures.append("{0}.pdf".format(site))
+        g.savefig(figures[-1])
 
-    fig.savefig(args.output)
-    matplotlib.pyplot.close(fig)
+    with tarfile.open(args.output, "w") as tar:
+        for file in tqdm.tqdm(figures):
+            tar.add(file, arcname=file)

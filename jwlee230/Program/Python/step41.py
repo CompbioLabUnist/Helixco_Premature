@@ -57,7 +57,7 @@ if __name__ == "__main__":
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
     input_data.sort_index(inplace=True)
     input_data = input_data.groupby(input_data.index).sum().T
-    taxa = list(filter(lambda x: x.count(";") > 5, list(input_data.columns)))
+    taxa = list(input_data.columns)
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], index_col=0)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     seaborn.heatmap(data=output_data, vmin=-1, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, ax=ax)
 
-    matplotlib.pyplot.xlabel("Pathogens")
+    matplotlib.pyplot.xlabel("{0} Pathogens".format(len(taxa)))
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

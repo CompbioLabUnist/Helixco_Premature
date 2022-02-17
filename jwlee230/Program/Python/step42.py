@@ -127,12 +127,10 @@ if __name__ == "__main__":
     print(sorted(diseases))
 
     data = pandas.concat(objs=[input_data, metadata], axis="columns", join="inner", verify_integrity=True)
-    sites = set(data["Site"])
     print(data)
-    print(sorted(sites))
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        figures = list(filter(None, pool.starmap(draw, itertools.product(taxonomy_list, diseases, sites))))
+        figures = list(filter(None, pool.starmap(draw, itertools.product(taxonomy_list, diseases, step00.selected_long_sites))))
         figures += list(filter(None, pool.starmap(draw_all, itertools.product(taxonomy_list, diseases))))
 
     with tarfile.open(args.output, "w") as tar:

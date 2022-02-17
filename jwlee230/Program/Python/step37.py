@@ -53,7 +53,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = step00.read_pickle(args.input)
-    input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
+    input_data.index = list(map(lambda x: step00.consistency_taxonomy(x, 1), list(input_data.index)))
     input_data.sort_index(inplace=True)
     input_data = input_data.groupby(input_data.index).sum().T
     print(input_data)

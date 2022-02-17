@@ -28,6 +28,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
         statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
+    matplotlib.pyplot.title(site)
     matplotlib.pyplot.tight_layout()
 
     file_name = "{2}+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"), site)
@@ -46,6 +47,7 @@ def draw_all(alpha: str, disease: str) -> str:
         statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
+    matplotlib.pyplot.title("All")
     matplotlib.pyplot.tight_layout()
 
     file_name = "All+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"))
@@ -75,7 +77,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .TAR!!")
     elif args.cpus < 1:
-        raise ValueError("CPUS must be greater than zero!!")
+        raise ValueError("CPUS must be positive!!")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)

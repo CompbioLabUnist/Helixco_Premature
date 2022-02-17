@@ -38,4 +38,4 @@ if __name__ == "__main__":
     for site in tqdm.tqdm(step00.selected_long_sites):
         selected_IDs = metadata.loc[(metadata["Site"] == site), "#SampleID"]
         tmp_data = raw_data.loc[:, selected_IDs]
-        tmp_data.to_csv(args.output + "." + site + ".tsv", sep="\t")
+        tmp_data.to_csv("{0}.{1}.tsv".format(args.output, site), sep="\t")
