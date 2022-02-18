@@ -151,11 +151,24 @@ if __name__ == "__main__":
             if list(filter(lambda x: x == 0, feature_importances)):
                 flag = True
 
+        for i in range(1, len(best_features)):
+            for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features[:i]], tmp_data[target])):
+                x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
+                y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
+
+                classifier.fit(x_train, y_train)
+
+                for metric in step00.derivations:
+                    try:
+                        test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                    except AssertionError:
+                        continue
+
         # Draw K-fold
         score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
-        seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20, edgecolor=None)
+        seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.title(site)
