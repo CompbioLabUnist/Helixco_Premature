@@ -8,9 +8,12 @@ MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
+PYTHON = python3 -B
+BASH = /bin/bash
+R = Rscript --vanilla
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath Bash):/Bash:ro --tmpfs /tmpfs
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath Bash):/Bash:ro --volume $(abspath R):/R:ro --tmpfs /tmpfs
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 
 # General
@@ -31,7 +34,7 @@ build: build.log
 .PHONY: build
 
 interactive: build.log
-	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) /bin/bash || true
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) $(BASH) || true
 .PHONY: interactive
 
 delete: build.log
@@ -44,7 +47,7 @@ stop:
 
 # SGE
 run: | log Output
-	echo -e "#!/bin/bash\nmake -C $(PWD) latest" > tmp.sh
+	echo -e "#!$(BASH)\nmake -C $(PWD) latest" > tmp.sh
 	sbatch --chdir=$(abspath .) --cpus-per-task=$(CPUS) --error="$(abspath log)/%x.e%A" --job-name="Premature_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(MEMS) --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
@@ -57,22 +60,22 @@ Output/Manifest:
 	mkdir -p $@
 
 Output/Manifest/first.tsv: Python/step01.py $(wildcard Data/RawData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 Output/Manifest/second.tsv: Python/step01.py $(wildcard Data/HN00145920/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 Output/Manifest/EBI.tsv: Python/step01-2.py $(wildcard Data/EBIData/ena_files/*/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 Output/Manifest/HMP.tsv: Python/step01-3.py $(wildcard Data/HMPData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 Output/Manifest/Stool.tsv: Python/step01-4.py Data/Metadata/readable.xlsx $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/StoolData/*.fastq.gz),--stool $(addprefix /,$f)) > $@
 
 Output/Manifest/everything.tsv: Python/step01-5.py Data/Metadata/readable.xlsx $(wildcard Data/RawData/*.fastq.gz) $(wildcard Data/HN00145920/*.fastq.gz) $(wildcard Data/HN00148220/*.fastq.gz) $(wildcard Data/StoolData/*.fastq.gz) | Output/Manifest build.log
-	$(DOCKER) python3 $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.xlsx,$^)) $(foreach f,$(wildcard Data/RawData/*.fastq.gz),--first $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00145920/*.fastq.gz),--second $(addprefix /,$f)) $(foreach f,$(wildcard Data/HN00148220/*.fastq.gz),--third $(addprefix /,$f)) > $@
 
 step01: Output/Manifest/Stool.tsv Output/Manifest/everything.tsv
 .PHONY: step01
@@ -237,10 +240,10 @@ Output/Metadata:
 	mkdir -p $@
 
 Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stool.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
-	$(DOCKER) python3 $(addprefix /,$^) > $@
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
 step07: Output/Metadata/everything.tsv Output/Metadata/Stool.tsv
 .PHONY: step07
@@ -305,7 +308,7 @@ Output/ANCOM/%/ancom.tsv Output/ANCOM/%/data.tsv: Output/ANCOM/%.qzv | build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$(word 1,$^)) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/ANCOM/%.pdf: Python/step08.py Output/ANCOM/%/ancom.tsv Output/ANCOM/%/data.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step08-DADA2-gg: Output/ANCOM/everything.DADA2.gg.qza Output/ANCOM/everything.DADA2.gg.pseudocount.qza Output/ANCOM/everything.DADA2.gg.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Mouth.qza Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.qza Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-1day.qza Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-1day.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-3day.qza Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-3day.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-3day.qza Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.qza Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.gg.Neonate-5day.pseudocount.Simple_PTB.pdf
 step08-DADA2-silva: Output/ANCOM/everything.DADA2.silva.qza Output/ANCOM/everything.DADA2.silva.pseudocount.qza Output/ANCOM/everything.DADA2.silva.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Mouth.qza Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Mouth.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Cervix.qza Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Cervix.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Vagina.qza Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Vagina.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-1day.qza Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-1day.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-3day.qza Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-3day.pseudocount.Simple_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-3day.qza Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.qza Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Detail_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Detail_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Detail_PTB.pdf Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Simple_PTB.qzv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Simple_PTB/data.tsv Output/ANCOM/everything.DADA2.silva.Neonate-5day.pseudocount.Simple_PTB.pdf
@@ -321,39 +324,44 @@ step08: step08-DADA2-gg step08-DADA2-silva step08-DADA2-homd step08-Deblur-gg st
 Output/TSV:
 	mkdir -p $@
 
-Output/TSV/Stool.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/Stool.table.qza Output/Taxonomy/Stool.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/Stool.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/Stool.table.qza Output/Taxonomy/Stool.DADA2.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/Stool.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/Stool.table.qza Output/Taxonomy/Stool.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/Stool.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/Stool.table.qza Output/Taxonomy/Stool.Deblur.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/everything.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/everything.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/everything.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/everything.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/EBI.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/EBI.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/EBI.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/EBI.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/HMP.DADA2.%.tsv: Bash/export_TSV.bash Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/HMP.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/HMP.Deblur.%.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/HMP.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.%.qza | Output/TSV build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/Macrogen.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TSV/Macrogen.tmp.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
-.PHONY: step09
+Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.tmp.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Stool.DADA2.gg.tmp.tsv Output/TSV/Stool.DADA2.silva.tmp.tsv Output/TSV/Stool.DADA2.homd.tmp.tsv Output/TSV/Stool.Deblur.gg.tmp.tsv Output/TSV/Stool.Deblur.silva.tmp.tsv Output/TSV/Stool.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
+step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
+step09: step09-tmp step09-limma
+.PHONY: step09-tmp step09-limma
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.tar.gz: Python/step21.py Output/TSV/%.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz Output/TSV/Macrogen.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.DADA2.homd.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz Output/TSV/EBI.Deblur.homd.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.DADA2.homd.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz Output/TSV/HMP.Deblur.homd.tar.gz
 .PHONY: step21
@@ -363,16 +371,16 @@ Output/Step22:
 	mkdir -p $@
 
 Output/Step22/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/Stool.%.tar.gz: Python/step11.py Output/TSV/Stool.%.tsv Output/Metadata/Stool.tsv | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/Macrogen.tar.gz: Python/step11-2.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tar.gz Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tar.gz Output/Step22/everything.Deblur.homd.tar Output/Step22/Stool.DADA2.gg.tar.gz Output/Step22/Stool.DADA2.gg.tar Output/Step22/Stool.DADA2.silva.tar.gz Output/Step22/Stool.DADA2.silva.tar Output/Step22/Stool.Deblur.gg.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Stool.Deblur.silva.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Macrogen.tar.gz Output/Step22/Macrogen.tar
 .PHONY: step22
@@ -382,10 +390,10 @@ Output/Step26:
 	mkdir -p $@
 
 Output/Step26/RF.%.tar: Python/step26.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step26 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step26/RF-two.%.tar: Python/step26-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step26 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step26: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.DADA2.homd.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar Output/Step26/RF.Deblur.homd.tar Output/Step26/RF-two.DADA2.gg.tar Output/Step26/RF-two.DADA2.silva.tar Output/Step26/RF-two.DADA2.homd.tar Output/Step26/RF-two.Deblur.gg.tar Output/Step26/RF-two.Deblur.silva.tar Output/Step26/RF-two.Deblur.homd.tar
 .PHONY: step26
@@ -395,7 +403,7 @@ Output/Step27:
 	mkdir -p $@
 
 Output/Step27/DT.%.tar: Python/step27.py Output/TSV/everything.%.tar.gz Output/TSV/EBI.%.tar.gz Output/TSV/HMP.%.tar.gz Output/Metadata/everything.tsv | Output/Step27 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpu $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step27: Output/Step27/DT.DADA2.gg.tar Output/Step27/DT.DADA2.silva.tar Output/Step27/DT.Deblur.gg.tar Output/Step27/DT.Deblur.silva.tar
 .PHONY: step27
@@ -462,31 +470,31 @@ Output/Step30/Deblur/%.tsv: Output/Step29/Deblur/%_vector.qza | Output/Step30/De
 	$(DOCKER) mv -f $(addprefix /,$(@D))/alpha-diversity.tsv $(addprefix /,$@)
 
 Output/Step30/everything.DADA2.tar: Python/step30.py Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step30/First.DADA2.tar: Python/step30.py Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
 
 Output/Step30/Second_Third.DADA2.tar: Python/step30.py Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
 Output/Step30/everything.Deblur.tar: Python/step30.py Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step30/First.Deblur.tar: Python/step30.py Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
 
 Output/Step30/Second_Third.Deblur.tar: Python/step30.py Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
 Output/Step30/Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step30 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step30/First.Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step30 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
 
 Output/Step30/Second_Third.Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step30 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
 step30-DADA2: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/everything.DADA2.tar Output/Step30/First.DADA2.tar Output/Step30/Second_Third.DADA2.tar
 step30-Deblur: Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Step30/everything.Deblur.tar Output/Step30/First.Deblur.tar Output/Step30/Second_Third.Deblur.tar
@@ -496,7 +504,7 @@ step30: step30-DADA2 step30-Deblur step30-Macrogen
 
 # Step 31 (Violin plots from ANCOM)
 Output/ANCOM/everything.DADA2.gg.%.tar: Python/step31.py Output/ANCOM/everything.DADA2.gg.%/ancom.tsv Output/TSV/everything.DADA2.gg.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step31: Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.PTB.tar Output/ANCOM/everything.DADA2.gg.Mouth.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Cervix.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Vagina.pseudocount.Detail_PTB.tar Output/ANCOM/everything.DADA2.gg.Baby.pseudocount.Detail_PTB.tar
 .PHONY: step31
@@ -514,37 +522,37 @@ Output/Step32/Deblur/%.tsv: Output/Step29/Deblur/%_distance_matrix.qza | Output/
 	$(DOCKER) mv -f $(addprefix /,$(@D))/distance-matrix.tsv $(addprefix /,$@)
 
 Output/Step32/DADA2/everything.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/DADA2/Stool.%.tar: Python/step32.py Output/Step32/DADA2/Stool.%.tsv Output/Metadata/Stool.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/DADA2/First.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
 
 Output/Step32/DADA2/Second_Third.%.tar: Python/step32.py Output/Step32/DADA2/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Deblur/everything.%.tar: Python/step32.py Output/Step32/Deblur/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Deblur/Stool.%.tar: Python/step32.py Output/Step32/Deblur/Stool.%.tsv Output/Metadata/Stool.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Deblur/First.%.tar: Python/step32.py Output/Step32/Deblur/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --first 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Deblur/Second_Third.%.tar: Python/step32.py Output/Step32/Deblur/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --second 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Macrogen/everything.%.tar: Python/step32-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step32/Macrogen build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Macrogen/First.%.tar: Python/step32-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step32/Macrogen build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" --first 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" --first 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Macrogen/Second_Third.%.tar: Python/step32-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step32/Macrogen build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" --second 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" --second 1> $@.stdout 2> $@.stderr
 
 step32-DADA2: Output/Step32/DADA2/everything.bray_curtis.tsv Output/Step32/DADA2/everything.bray_curtis.tar Output/Step32/DADA2/First.bray_curtis.tar Output/Step32/DADA2/Second_Third.bray_curtis.tar Output/Step32/DADA2/everything.jaccard.tsv Output/Step32/DADA2/everything.jaccard.tar Output/Step32/DADA2/First.jaccard.tar Output/Step32/DADA2/Second_Third.jaccard.tar Output/Step32/DADA2/everything.unweighted_unifrac.tsv Output/Step32/DADA2/everything.unweighted_unifrac.tar Output/Step32/DADA2/First.unweighted_unifrac.tar Output/Step32/DADA2/Second_Third.unweighted_unifrac.tar Output/Step32/DADA2/everything.weighted_unifrac.tsv Output/Step32/DADA2/everything.weighted_unifrac.tar Output/Step32/DADA2/First.weighted_unifrac.tar Output/Step32/DADA2/Second_Third.weighted_unifrac.tar Output/Step32/DADA2/Stool.bray_curtis.tsv Output/Step32/DADA2/Stool.jaccard.tsv Output/Step32/DADA2/Stool.unweighted_unifrac.tsv Output/Step32/DADA2/Stool.weighted_unifrac.tsv Output/Step32/DADA2/Stool.bray_curtis.tar Output/Step32/DADA2/Stool.jaccard.tar Output/Step32/DADA2/Stool.unweighted_unifrac.tar Output/Step32/DADA2/Stool.weighted_unifrac.tar
 step32-Deblur: Output/Step32/Deblur/everything.bray_curtis.tsv Output/Step32/Deblur/everything.bray_curtis.tar Output/Step32/Deblur/First.bray_curtis.tar Output/Step32/Deblur/Second_Third.bray_curtis.tar Output/Step32/Deblur/everything.jaccard.tsv Output/Step32/Deblur/everything.jaccard.tar Output/Step32/Deblur/First.jaccard.tar Output/Step32/Deblur/Second_Third.jaccard.tar Output/Step32/Deblur/everything.unweighted_unifrac.tsv Output/Step32/Deblur/everything.unweighted_unifrac.tar Output/Step32/Deblur/First.unweighted_unifrac.tar Output/Step32/Deblur/Second_Third.unweighted_unifrac.tar Output/Step32/Deblur/everything.weighted_unifrac.tsv Output/Step32/Deblur/everything.weighted_unifrac.tar Output/Step32/Deblur/First.weighted_unifrac.tar Output/Step32/Deblur/Second_Third.weighted_unifrac.tar Output/Step32/Deblur/Stool.bray_curtis.tsv Output/Step32/Deblur/Stool.jaccard.tsv Output/Step32/Deblur/Stool.unweighted_unifrac.tsv Output/Step32/Deblur/Stool.weighted_unifrac.tsv Output/Step32/Deblur/Stool.bray_curtis.tar Output/Step32/Deblur/Stool.jaccard.tar Output/Step32/Deblur/Stool.unweighted_unifrac.tar Output/Step32/Deblur/Stool.weighted_unifrac.tar
@@ -558,25 +566,25 @@ Output/Step33 Output/Step33/Default Output/Step33/Cladogram:
 	chmod 777 $@
 
 Output/Step33/%.DADA2.gg.Cervix.tsv Output/Step33/%.DADA2.gg.Mouth.tsv Output/Step33/%.DADA2.gg.Neonate-3day.tsv Output/Step33/%.DADA2.gg.Neonate-5day.tsv Output/Step33/%.DADA2.gg.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.DADA2.silva.Cervix.tsv Output/Step33/%.DADA2.silva.Mouth.tsv Output/Step33/%.DADA2.silva.Neonate-3day.tsv Output/Step33/%.DADA2.silva.Neonate-5day.tsv Output/Step33/%.DADA2.silva.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.DADA2.homd.Cervix.tsv Output/Step33/%.DADA2.homd.Mouth.tsv Output/Step33/%.DADA2.homd.Neonate-3day.tsv Output/Step33/%.DADA2.homd.Neonate-5day.tsv Output/Step33/%.DADA2.homd.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.Deblur.gg.Cervix.tsv Output/Step33/%.Deblur.gg.Mouth.tsv Output/Step33/%.Deblur.gg.Neonate-3day.tsv Output/Step33/%.Deblur.gg.Neonate-5day.tsv Output/Step33/%.Deblur.gg.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.gg.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.Deblur.silva.Cervix.tsv Output/Step33/%.Deblur.silva.Mouth.tsv Output/Step33/%.Deblur.silva.Neonate-3day.tsv Output/Step33/%.Deblur.silva.Neonate-5day.tsv Output/Step33/%.Deblur.silva.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.silva.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.Deblur.homd.Cervix.tsv Output/Step33/%.Deblur.homd.Mouth.tsv Output/Step33/%.Deblur.homd.Neonate-3day.tsv Output/Step33/%.Deblur.homd.Neonate-5day.tsv Output/Step33/%.Deblur.homd.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.homd.tsv Output/Metadata/%.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/Macrogen.Cervix.tsv Output/Step33/Macrogen.Mouth.tsv Output/Step33/Macrogen.Neonate-3day.tsv Output/Step33/Macrogen.Neonate-5day.tsv Output/Step33/Macrogen.Vagina.tsv: Python/step33.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step33 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step33/%.in: Output/Step33/%.tsv | build.log
 	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1 1> $@.stdout 2> $@.stderr
@@ -607,25 +615,25 @@ Output/Step34 Output/Step34/Default Output/Step34/Cladogram:
 	chmod 777 $@
 
 Output/Step34/%.DADA2.gg.Cervix.tsv Output/Step34/%.DADA2.gg.Mouth.tsv Output/Step34/%.DADA2.gg.Neonate-3day.tsv Output/Step34/%.DADA2.gg.Neonate-5day.tsv Output/Step34/%.DADA2.gg.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.gg.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.DADA2.silva.Cervix.tsv Output/Step34/%.DADA2.silva.Mouth.tsv Output/Step34/%.DADA2.silva.Neonate-3day.tsv Output/Step34/%.DADA2.silva.Neonate-5day.tsv Output/Step34/%.DADA2.silva.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.silva.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.DADA2.homd.Cervix.tsv Output/Step34/%.DADA2.homd.Mouth.tsv Output/Step34/%.DADA2.homd.Neonate-3day.tsv Output/Step34/%.DADA2.homd.Neonate-5day.tsv Output/Step34/%.DADA2.homd.Vagina.tsv: Python/step33.py Output/TSV/%.DADA2.homd.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.Deblur.gg.Cervix.tsv Output/Step34/%.Deblur.gg.Mouth.tsv Output/Step34/%.Deblur.gg.Neonate-3day.tsv Output/Step34/%.Deblur.gg.Neonate-5day.tsv Output/Step34/%.Deblur.gg.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.gg.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.Deblur.silva.Cervix.tsv Output/Step34/%.Deblur.silva.Mouth.tsv Output/Step34/%.Deblur.silva.Neonate-3day.tsv Output/Step34/%.Deblur.silva.Neonate-5day.tsv Output/Step34/%.Deblur.silva.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.silva.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.Deblur.homd.Cervix.tsv Output/Step34/%.Deblur.homd.Mouth.tsv Output/Step34/%.Deblur.homd.Neonate-3day.tsv Output/Step34/%.Deblur.homd.Neonate-5day.tsv Output/Step34/%.Deblur.homd.Vagina.tsv: Python/step33.py Output/TSV/%.Deblur.homd.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.Macrogen.Cervix.tsv Output/Step34/%.Macrogen.Mouth.tsv Output/Step34/%.Macrogen.Neonate-3day.tsv Output/Step34/%.Macrogen.Neonate-5day.tsv Output/Step34/%.Macrogen.Vagina.tsv: Python/step33.py Output/TSV/Macrogen.tsv Output/Metadata/%.tsv | Output/Step34 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --c "Obesity" 1> $@.stdout 2> $@.stderr
 
 Output/Step34/%.in: Output/Step34/%.tsv | build.log
 	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) biobakery/lefse format_input.py $(addprefix /,$^ $@) -c 2 -u 1 1> $@.stdout 2> $@.stderr
@@ -655,16 +663,16 @@ Output/Step35:
 	mkdir -p $@
 
 Output/Step35/%.pearson.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step35/%.spearman.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step35/%.kendall.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step35/Macrogen.%.png: Python/step35-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step35
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
 
 step35-everything-DADA2: Output/Step35/everything.DADA2.gg.pearson.png Output/Step35/everything.DADA2.gg.spearman.png Output/Step35/everything.DADA2.gg.kendall.png Output/Step35/everything.DADA2.silva.pearson.png Output/Step35/everything.DADA2.silva.spearman.png Output/Step35/everything.DADA2.silva.kendall.png Output/Step35/everything.DADA2.homd.pearson.png Output/Step35/everything.DADA2.homd.spearman.png Output/Step35/everything.DADA2.homd.kendall.png
 step35-everything-Deblur: Output/Step35/everything.Deblur.gg.pearson.png Output/Step35/everything.Deblur.gg.spearman.png Output/Step35/everything.Deblur.gg.kendall.png Output/Step35/everything.Deblur.silva.pearson.png Output/Step35/everything.Deblur.silva.spearman.png Output/Step35/everything.Deblur.silva.kendall.png Output/Step35/everything.Deblur.homd.pearson.png Output/Step35/everything.Deblur.homd.spearman.png Output/Step35/everything.Deblur.homd.kendall.png
@@ -679,16 +687,16 @@ Output/Step36:
 	mkdir -p $@
 
 Output/Step36/%.pearson.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step36/%.spearman.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step36/%.kendall.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step36/Macrogen.%.png: Python/step36-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step36
-	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step36-everything-DADA2: Output/Step36/everything.DADA2.gg.pearson.png Output/Step36/everything.DADA2.gg.spearman.png Output/Step36/everything.DADA2.gg.kendall.png Output/Step36/everything.DADA2.silva.pearson.png Output/Step36/everything.DADA2.silva.spearman.png Output/Step36/everything.DADA2.silva.kendall.png Output/Step36/everything.DADA2.homd.pearson.png Output/Step36/everything.DADA2.homd.spearman.png Output/Step36/everything.DADA2.homd.kendall.png
 step36-everything-Deblur: Output/Step36/everything.Deblur.gg.pearson.png Output/Step36/everything.Deblur.gg.spearman.png Output/Step36/everything.Deblur.gg.kendall.png Output/Step36/everything.Deblur.silva.pearson.png Output/Step36/everything.Deblur.silva.spearman.png Output/Step36/everything.Deblur.silva.kendall.png Output/Step36/everything.Deblur.homd.pearson.png Output/Step36/everything.Deblur.homd.spearman.png Output/Step36/everything.Deblur.homd.kendall.png
@@ -703,16 +711,16 @@ Output/Step37:
 	mkdir -p $@
 
 Output/Step37/%.pearson.pdf: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step37/%.spearman.pdf: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step37/%.kendall.pdf: Python/step37.py Output/TSV/%.tar.gz | build.log Output/Step37
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step37/Macrogen.%.pdf: Python/step37-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step37
-	$(DOCKER) python3 $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step37-everything-DADA2: Output/Step37/everything.DADA2.gg.pearson.pdf Output/Step37/everything.DADA2.gg.spearman.pdf Output/Step37/everything.DADA2.gg.kendall.pdf Output/Step37/everything.DADA2.silva.pearson.pdf Output/Step37/everything.DADA2.silva.spearman.pdf Output/Step37/everything.DADA2.silva.kendall.pdf Output/Step37/everything.DADA2.homd.pearson.pdf Output/Step37/everything.DADA2.homd.spearman.pdf Output/Step37/everything.DADA2.homd.kendall.pdf
 step37-everything-Deblur: Output/Step37/everything.Deblur.gg.pearson.pdf Output/Step37/everything.Deblur.gg.spearman.pdf Output/Step37/everything.Deblur.gg.kendall.pdf Output/Step37/everything.Deblur.silva.pearson.pdf Output/Step37/everything.Deblur.silva.spearman.pdf Output/Step37/everything.Deblur.silva.kendall.pdf Output/Step37/everything.Deblur.homd.pearson.pdf Output/Step37/everything.Deblur.homd.spearman.pdf Output/Step37/everything.Deblur.homd.kendall.pdf
@@ -727,13 +735,13 @@ Output/Step38:
 	mkdir -p $@
 
 Output/Step38/everything.%.png: Python/step38.py Output/TSV/everything.%.tar.gz | build.log Output/Step38
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step38/Stool.%.png: Python/step38.py Output/TSV/Stool.%.tar.gz | build.log Output/Step38
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step38/Macrogen.png: Python/step38-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step38
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step38-everything: Output/Step38/everything.DADA2.gg.png Output/Step38/everything.DADA2.silva.png Output/Step38/everything.DADA2.homd.png Output/Step38/everything.Deblur.gg.png Output/Step38/everything.Deblur.silva.png Output/Step38/everything.Deblur.homd.png
 step38-Stool: Output/Step38/Stool.DADA2.gg.png Output/Step38/Stool.DADA2.silva.png Output/Step38/Stool.DADA2.homd.png Output/Step38/Stool.Deblur.gg.png Output/Step38/Stool.Deblur.silva.png Output/Step38/Stool.Deblur.homd.png
@@ -746,58 +754,58 @@ Output/Step39:
 	mkdir -p $@
 
 Output/Step39/%.DADA2.bray_curtis.pdf: Python/step39.py Output/Step32/DADA2/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.jaccard.pdf: Python/step39.py Output/Step32/DADA2/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.unweighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.weighted_unifrac.pdf: Python/step39.py Output/Step32/DADA2/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.bray_curtis.pdf: Python/step39.py Output/Step32/Deblur/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.jaccard.pdf: Python/step39.py Output/Step32/Deblur/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.unweighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.weighted_unifrac.pdf: Python/step39.py Output/Step32/Deblur/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/Macrogen.%.pdf: Python/step39-1.py Output/TSV/Macrogen.tar.gz Output/Metadata/everything.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.bray_curtis.Sites.tar: Python/step39-2.py Output/Step32/DADA2/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 22> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 22> $@.stderr
 
 Output/Step39/%.DADA2.jaccard.Sites.tar: Python/step39-2.py Output/Step32/DADA2/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.unweighted_unifrac.Sites.tar: Python/step39-2.py Output/Step32/DADA2/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.DADA2.weighted_unifrac.Sites.tar: Python/step39-2.py Output/Step32/DADA2/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.bray_curtis.Sites.tar: Python/step39-2.py Output/Step32/Deblur/%.bray_curtis.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 22> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 22> $@.stderr
 
 Output/Step39/%.Deblur.jaccard.Sites.tar: Python/step39-2.py Output/Step32/Deblur/%.jaccard.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.unweighted_unifrac.Sites.tar: Python/step39-2.py Output/Step32/Deblur/%.unweighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/%.Deblur.weighted_unifrac.Sites.tar: Python/step39-2.py Output/Step32/Deblur/%.weighted_unifrac.tsv Output/Metadata/%.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step39/Macrogen.%.Sites.tar: Python/step39-3.py Output/TSV/Macrogen.tar.gz Output/Metadata/everything.tsv | build.log Output/Step39
-	$(DOCKER) python3 $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
 
 step39-DADA2: Output/Step39/everything.DADA2.bray_curtis.pdf Output/Step39/everything.DADA2.jaccard.pdf Output/Step39/everything.DADA2.unweighted_unifrac.pdf Output/Step39/everything.DADA2.weighted_unifrac.pdf Output/Step39/Stool.DADA2.bray_curtis.pdf Output/Step39/Stool.DADA2.jaccard.pdf Output/Step39/Stool.DADA2.unweighted_unifrac.pdf Output/Step39/Stool.DADA2.weighted_unifrac.pdf Output/Step39/everything.DADA2.bray_curtis.Sites.tar Output/Step39/everything.DADA2.jaccard.Sites.tar Output/Step39/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step39/everything.DADA2.weighted_unifrac.Sites.tar Output/Step39/Stool.DADA2.bray_curtis.Sites.tar Output/Step39/Stool.DADA2.jaccard.Sites.tar Output/Step39/Stool.DADA2.unweighted_unifrac.Sites.tar Output/Step39/Stool.DADA2.weighted_unifrac.Sites.tar
 step39-Deblur: Output/Step39/everything.Deblur.bray_curtis.pdf Output/Step39/everything.Deblur.jaccard.pdf Output/Step39/everything.Deblur.unweighted_unifrac.pdf Output/Step39/everything.Deblur.weighted_unifrac.pdf Output/Step39/Stool.Deblur.bray_curtis.pdf Output/Step39/Stool.Deblur.jaccard.pdf Output/Step39/Stool.Deblur.unweighted_unifrac.pdf Output/Step39/Stool.Deblur.weighted_unifrac.pdf Output/Step39/everything.Deblur.bray_curtis.Sites.tar Output/Step39/everything.Deblur.jaccard.Sites.tar Output/Step39/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step39/everything.Deblur.weighted_unifrac.Sites.tar Output/Step39/Stool.Deblur.bray_curtis.Sites.tar Output/Step39/Stool.Deblur.jaccard.Sites.tar Output/Step39/Stool.Deblur.unweighted_unifrac.Sites.tar Output/Step39/Stool.Deblur.weighted_unifrac.Sites.tar
@@ -810,10 +818,10 @@ Output/Step40:
 	mkdir -p $@
 
 Output/Step40/everything.%.pdf: Python/step40.py Output/TSV/everything.%.tar.gz | build.log Output/Step40
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step40/Macrogen.pdf: Python/step40-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step40
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step40-everything: Output/Step40/everything.DADA2.gg.pdf Output/Step40/everything.DADA2.silva.pdf Output/Step40/everything.DADA2.homd.pdf Output/Step40/everything.Deblur.gg.pdf Output/Step40/everything.Deblur.silva.pdf Output/Step40/everything.Deblur.homd.pdf
 step40-Macrogen: Output/Step40/Macrogen.pdf
@@ -825,37 +833,37 @@ Output/Step41:
 	mkdir -p $@
 
 Output/Step41/everything.%.pearson.pdf: Python/step41.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step41/everything.%.spearman.pdf: Python/step41.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step41/everything.%.kendall.pdf: Python/step41.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step41/everything.%.pearson.Sites.tar: Python/step41-2.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step41/everything.%.spearman.Sites.tar: Python/step41-2.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step41/everything.%.kendall.Sites.tar: Python/step41-2.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step41/Stool.%.pearson.pdf: Python/step41.py Output/TSV/Stool.%.tar.gz Output/Metadata/Stool.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step41/Stool.%.spearman.pdf: Python/step41.py Output/TSV/Stool.%.tar.gz Output/Metadata/Stool.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step41/Stool.%.kendall.pdf: Python/step41.py Output/TSV/Stool.%.tar.gz Output/Metadata/Stool.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 Output/Step41/Macrogen.%.pdf: Python/step41-1.py Output/TSV/Macrogen.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
 
 Output/Step41/Macrogen.%.Sites.tar: Python/step41-3.py Output/TSV/Macrogen.tar.gz Output/Metadata/everything.tsv | build.log Output/Step41
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
 
 step41-everything-DADA2: Output/Step41/everything.DADA2.gg.pearson.pdf Output/Step41/everything.DADA2.gg.spearman.pdf Output/Step41/everything.DADA2.gg.kendall.pdf Output/Step41/everything.DADA2.silva.pearson.pdf Output/Step41/everything.DADA2.silva.spearman.pdf Output/Step41/everything.DADA2.silva.kendall.pdf Output/Step41/everything.DADA2.homd.pearson.pdf Output/Step41/everything.DADA2.homd.spearman.pdf Output/Step41/everything.DADA2.homd.kendall.pdf Output/Step41/everything.DADA2.gg.pearson.Sites.tar Output/Step41/everything.DADA2.gg.spearman.Sites.tar Output/Step41/everything.DADA2.gg.kendall.Sites.tar Output/Step41/everything.DADA2.silva.pearson.Sites.tar Output/Step41/everything.DADA2.silva.spearman.Sites.tar Output/Step41/everything.DADA2.silva.kendall.Sites.tar Output/Step41/everything.DADA2.homd.pearson.Sites.tar Output/Step41/everything.DADA2.homd.spearman.Sites.tar Output/Step41/everything.DADA2.homd.kendall.Sites.tar
 step41-everything-Deblur: Output/Step41/everything.Deblur.gg.pearson.pdf Output/Step41/everything.Deblur.gg.spearman.pdf Output/Step41/everything.Deblur.gg.kendall.pdf Output/Step41/everything.Deblur.silva.pearson.pdf Output/Step41/everything.Deblur.silva.spearman.pdf Output/Step41/everything.Deblur.silva.kendall.pdf Output/Step41/everything.Deblur.homd.pearson.pdf Output/Step41/everything.Deblur.homd.spearman.pdf Output/Step41/everything.Deblur.homd.kendall.pdf Output/Step41/everything.Deblur.gg.pearson.Sites.tar Output/Step41/everything.Deblur.gg.spearman.Sites.tar Output/Step41/everything.Deblur.gg.kendall.Sites.tar Output/Step41/everything.Deblur.silva.pearson.Sites.tar Output/Step41/everything.Deblur.silva.spearman.Sites.tar Output/Step41/everything.Deblur.silva.kendall.Sites.tar Output/Step41/everything.Deblur.homd.pearson.Sites.tar Output/Step41/everything.Deblur.homd.spearman.Sites.tar Output/Step41/everything.Deblur.homd.kendall.Sites.tar
@@ -870,7 +878,7 @@ Output/Step42:
 	mkdir -p $@
 
 Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step42 build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar
 step42-Deblur: Output/Step42/everything.Deblur.gg.tar Output/Step42/everything.Deblur.silva.tar Output/Step42/everything.Deblur.homd.tar
@@ -882,13 +890,13 @@ Output/Step43:
 	mkdir -p $@
 
 Output/Step43/everything.%.pearson.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
 
 Output/Step43/everything.%.spearman.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
 
 Output/Step43/everything.%.kendall.tar: Python/step43.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step43
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
 step43-everything-DADA2: Output/Step43/everything.DADA2.gg.pearson.tar Output/Step43/everything.DADA2.silva.pearson.tar Output/Step43/everything.DADA2.homd.pearson.tar Output/Step43/everything.DADA2.gg.spearman.tar Output/Step43/everything.DADA2.silva.spearman.tar Output/Step43/everything.DADA2.homd.spearman.tar Output/Step43/everything.DADA2.gg.kendall.tar Output/Step43/everything.DADA2.silva.kendall.tar Output/Step43/everything.DADA2.homd.kendall.tar
 step43-everything-Deblur: Output/Step43/everything.Deblur.gg.pearson.tar Output/Step43/everything.Deblur.silva.pearson.tar Output/Step43/everything.Deblur.homd.pearson.tar Output/Step43/everything.Deblur.gg.spearman.tar Output/Step43/everything.Deblur.silva.spearman.tar Output/Step43/everything.Deblur.homd.spearman.tar Output/Step43/everything.Deblur.gg.kendall.tar Output/Step43/everything.Deblur.silva.kendall.tar Output/Step43/everything.Deblur.homd.kendall.tar
@@ -900,7 +908,7 @@ Output/Step44:
 	mkdir -p $@
 
 Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step44
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step44: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
 .PHONY: step44
