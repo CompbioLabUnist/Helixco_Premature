@@ -21,7 +21,7 @@ main <- function(input, output)
     output_data <- removeBatchEffect(input_data, batch=batch)
     # output_data <- exp(output_data)
 
-    output_data <- cbind(output_data, OTU_ID, taxonomy_ID)
+    output_data <- cbind(OTU_ID, output_data, taxonomy_ID)
 
     write.table(output_data, file=output, quote=FALSE, sep="\t", row.names=FALSE)
 }
