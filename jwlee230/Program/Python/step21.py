@@ -17,7 +17,7 @@ if __name__ == "__main__":
     if not args.input.endswith(".tsv"):
         raise ValueError("Input file must end with .TSV!!")
 
-    raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
+    raw_data = pandas.read_csv(args.input, sep="\t")
     print(raw_data)
 
     output_data = raw_data.groupby(["taxonomy"]).sum()
