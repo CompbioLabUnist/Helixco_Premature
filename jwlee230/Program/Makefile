@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 40
 MEMS = 400G
 PWD := $(shell pwd)
 TOOLS =
@@ -354,8 +354,10 @@ Output/TSV/Macrogen.tmp.tsv: Python/step09.py Data/Macrogen/First/otu_table_shar
 Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.tmp.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Stool.DADA2.gg.tmp.tsv Output/TSV/Stool.DADA2.silva.tmp.tsv Output/TSV/Stool.DADA2.homd.tmp.tsv Output/TSV/Stool.Deblur.gg.tmp.tsv Output/TSV/Stool.Deblur.silva.tmp.tsv Output/TSV/Stool.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
-step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
+step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
+# Output/TSV/Stool.DADA2.gg.tmp.tsv Output/TSV/Stool.DADA2.silva.tmp.tsv Output/TSV/Stool.DADA2.homd.tmp.tsv Output/TSV/Stool.Deblur.gg.tmp.tsv Output/TSV/Stool.Deblur.silva.tmp.tsv Output/TSV/Stool.Deblur.homd.tmp.tsv
+step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
+# Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
 step09: step09-tmp step09-limma
 .PHONY: step09-tmp step09-limma
 

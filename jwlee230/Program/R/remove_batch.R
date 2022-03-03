@@ -17,6 +17,7 @@ main <- function(input, output)
 
     input_data <- input_data[2:(length(input_data)-1)]
     batch <- vapply(strsplit(colnames(input_data), "\\."), `[`, 1, FUN.VALUE=character(1))
+    print(head(input_data))
 
     output_data <- removeBatchEffect(input_data, batch=batch)
     # output_data <- exp(output_data)
