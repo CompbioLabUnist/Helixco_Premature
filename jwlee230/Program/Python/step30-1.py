@@ -83,8 +83,9 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
-    del input_data["#Hash"]
+    input_data = pandas.read_csv(args.input, sep="\t")
+    if "X.Hash" in list(input_data.columns):
+        del input_data["X.Hash"]
     input_data = input_data.groupby("taxonomy").sum().T
 
     if args.first:
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(input_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))

@@ -379,7 +379,7 @@ Output/Step22/everything.%.tar.gz: Python/step11.py Output/TSV/everything.%.tsv 
 Output/Step22/Stool.%.tar.gz: Python/step11.py Output/TSV/Stool.%.tsv Output/Metadata/Stool.tsv | Output/Step22 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step22/Macrogen.tar.gz: Python/step11-2.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
+Output/Step22/Macrogen.tar.gz: Python/step11.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step22 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log

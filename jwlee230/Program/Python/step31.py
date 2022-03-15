@@ -24,7 +24,7 @@ if __name__ == "__main__":
     ancom_data = pandas.read_csv(args.ancom, sep="\t", names=["id", "W", "Reject null hypothesis"], usecols=["id", "Reject null hypothesis"], header=0, index_col="id")
     print(ancom_data)
 
-    input_data = pandas.read_csv(args.data, sep="\t", low_memory=False, skiprows=1).groupby("taxonomy").sum().T
+    input_data = pandas.read_csv(args.data, sep="\t", low_memory=False).groupby("taxonomy").sum().T
     print(input_data)
 
     print(sorted(ancom_data.index)[:5])

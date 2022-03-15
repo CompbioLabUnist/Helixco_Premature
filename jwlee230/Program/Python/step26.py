@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
                 for metric in step00.derivations:
                     try:
-                        test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                        test_scores.append((i, metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
                     except AssertionError:
                         continue
 

@@ -17,10 +17,12 @@ if __name__ == "__main__":
     if not args.input.endswith(".tsv"):
         raise ValueError("Input file must end with .TSV!!")
 
-    raw_data = pandas.read_csv(args.input, sep="\t")
-    print(raw_data)
+    input_data = pandas.read_csv(args.input, sep="\t")
+    input_data["taxonomy"] = list(map(lambda x: x.replace(".", "-"), input_data["taxonomy"]))
+    print(input_data)
 
-    output_data = raw_data.groupby(["taxonomy"]).sum()
+    output_data = input_data.groupby(["taxonomy"]).sum()
+    output_data.columns = list(map(lambda x: x.replace(".", "-"), output_data.columns))
     print(output_data)
 
     step00.make_pickle(args.output, output_data)

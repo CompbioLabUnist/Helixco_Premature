@@ -80,7 +80,7 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUS must be greater than zero!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="taxonomy")
+    input_data = pandas.read_csv(args.input, sep="\t", index_col="taxonomy")
 
     if args.first:
         input_data = input_data.loc[list(filter(lambda x: x.startswith("First"), list(input_data.index))), :]
