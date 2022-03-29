@@ -9,7 +9,7 @@ opt = parse_args(opt_parser)
 main <- function(input, output)
 {
     library(limma)
-    input_data <- read.csv(input, stringsAsFactors=FALSE, sep="\t", skip=1)
+    input_data <- read.csv(input, stringsAsFactors=FALSE, sep="\t", skip=1, check.names=FALSE)
 
     OTU_ID = input_data[1]
     taxonomy_ID = input_data[length(input_data)]
@@ -20,11 +20,13 @@ main <- function(input, output)
     print(head(input_data))
 
     output_data <- removeBatchEffect(input_data, batch=batch)
+    output_data[output_data < 0] <- 0
     # output_data <- exp(output_data)
 
     output_data <- cbind(OTU_ID, output_data, taxonomy_ID)
 
-    write.table(output_data, file=output, quote=FALSE, sep="\t", row.names=FALSE)
+    cat("# Constructed from limma package\n", file=output)
+    write.table(output_data, file=output, quote=FALSE, sep="\t", row.names=FALSE, append=TRUE)
 }
 
 if (length(opt) == 3)
