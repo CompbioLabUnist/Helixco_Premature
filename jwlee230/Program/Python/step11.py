@@ -22,10 +22,9 @@ if __name__ == "__main__":
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
 
-    raw_data = pandas.read_csv(args.input, sep="\t")
-    raw_data.set_index(inplace=True, keys=["taxonomy", "X.OTU.ID"], verify_integrity=True)
+    raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
+    raw_data.set_index(inplace=True, keys=["taxonomy", "#OTU ID"], verify_integrity=True)
     raw_data = raw_data.T
-    raw_data.index = list(map(lambda x: x.replace(".", "-"), list(raw_data.index)))
     print(raw_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)

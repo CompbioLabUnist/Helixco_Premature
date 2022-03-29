@@ -35,14 +35,15 @@ if __name__ == "__main__":
     print(sorted(numeric_columns))
     print(sorted(categorical_columns))
 
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
     for site in set(input_data["Site"]):
         data = input_data.loc[(input_data["Site"] == site)]
 
         for c in numeric_columns:
             print("Numeric:", c)
-            matplotlib.use("Agg")
-            matplotlib.rcParams.update(step00.matplotlib_parameters)
-            seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
             seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", size=c, legend="brief", hue_order=step00.detailed_PTB)
@@ -53,9 +54,6 @@ if __name__ == "__main__":
 
         for c in categorical_columns:
             print("Categorical:", c)
-            matplotlib.use("Agg")
-            matplotlib.rcParams.update(step00.matplotlib_parameters)
-            seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
             seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=step00.detailed_PTB)
@@ -66,27 +64,21 @@ if __name__ == "__main__":
 
     for c in numeric_columns:
         print("Numeric:", c)
-        matplotlib.use("Agg")
-        matplotlib.rcParams.update(step00.matplotlib_parameters)
-        seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", size=c, legend="brief", hue_order=step00.detailed_PTB)
 
-        tar_files.append("{0}+{1}.pdf".format("Whole", c.replace(" ", "_")))
+        tar_files.append("{0}+{1}.pdf".format("All", c.replace(" ", "_")))
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
     for c in categorical_columns:
         print("Categorical:", c)
-        matplotlib.use("Agg")
-        matplotlib.rcParams.update(step00.matplotlib_parameters)
-        seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=step00.detailed_PTB)
 
-        tar_files.append("{0}+{1}.pdf".format("Whole", c.replace(" ", "_")))
+        tar_files.append("{0}+{1}.pdf".format("All", c.replace(" ", "_")))
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 

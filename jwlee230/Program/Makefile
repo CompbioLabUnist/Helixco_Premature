@@ -385,9 +385,11 @@ Output/Step22/Macrogen.tar.gz: Python/step11.py Output/TSV/Macrogen.tsv Output/M
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tar.gz | Output/Step22 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step22: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tar.gz Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tar.gz Output/Step22/everything.Deblur.homd.tar
+step22-uncorrected: Output/Step22/everything.DADA2.gg.tmp.tar.gz Output/Step22/everything.DADA2.gg.tmp.tar Output/Step22/everything.DADA2.silva.tmp.tar.gz Output/Step22/everything.DADA2.silva.tmp.tar Output/Step22/everything.DADA2.homd.tmp.tar.gz Output/Step22/everything.DADA2.homd.tmp.tar Output/Step22/everything.Deblur.gg.tmp.tar.gz Output/Step22/everything.Deblur.gg.tmp.tar Output/Step22/everything.Deblur.silva.tmp.tar.gz Output/Step22/everything.Deblur.silva.tmp.tar Output/Step22/everything.Deblur.homd.tmp.tar.gz Output/Step22/everything.Deblur.homd.tmp.tar
+step22-corrected: Output/Step22/everything.DADA2.gg.tar.gz Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tar.gz Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tar.gz Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tar.gz Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tar.gz Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tar.gz Output/Step22/everything.Deblur.homd.tar
+step22: step22-uncorrected step22-corrected
+.PHONY: step22-uncorrected step22-corrected step22
 # Output/Step22/Stool.DADA2.gg.tar.gz Output/Step22/Stool.DADA2.gg.tar Output/Step22/Stool.DADA2.silva.tar.gz Output/Step22/Stool.DADA2.silva.tar Output/Step22/Stool.Deblur.gg.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Stool.Deblur.silva.tar.gz Output/Step22/Stool.Deblur.gg.tar Output/Step22/Macrogen.tar.gz Output/Step22/Macrogen.tar
-.PHONY: step22
 
 # Step 26 (RandomForest Classifier)
 Output/Step26:
