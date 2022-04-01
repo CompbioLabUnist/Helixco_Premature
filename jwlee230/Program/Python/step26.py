@@ -136,6 +136,9 @@ if __name__ == "__main__":
             feature_importances = list(classifier.feature_importances_)
             best_features = list(map(lambda x: x[1], sorted(filter(lambda x: x[0] > 0, zip(feature_importances, best_features)), reverse=True)))
 
+            if not best_features:
+                break
+
             for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features], tmp_data[target])):
                 x_train, x_test = tmp_data.iloc[train_index][best_features], tmp_data.iloc[test_index][best_features]
                 y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
