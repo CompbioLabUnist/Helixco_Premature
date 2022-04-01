@@ -17,7 +17,7 @@ if __name__ == "__main__":
     if not args.input.endswith(".tsv"):
         raise ValueError("Input file must end with .TSV!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t")
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0)
     input_data["taxonomy"] = list(map(lambda x: x.replace(".", "-"), input_data["taxonomy"]))
     print(input_data)
 
