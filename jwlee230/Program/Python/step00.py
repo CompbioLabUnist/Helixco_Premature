@@ -16,7 +16,7 @@ big = 10 ** 6
 
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 500}
 markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
-derivations = ("Accuracy", "Balanced_Accuracy", "Sensitivity", "Specificity", "Precision")
+derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain", "Cholesterol", "TG", "HDL", "LDL", "Glucose", "WBC", "Hb", "Hct", "ESR", "hsCRP", "AST", "ALT", "SBP", "DBP"}
@@ -142,7 +142,7 @@ def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str 
         return TP / (TP + FP)
     elif derivation == "Accuracy":
         return (TP + TN) / (TP + TN + FP + FN)
-    elif derivation == "Balanced_Accuracy":
+    elif derivation == "Balanced Accuracy":
         return TP / (2 * (TP + FN)) + TN / (2 * (TN + FP))
     else:
         raise Exception("Something went wrong!!")

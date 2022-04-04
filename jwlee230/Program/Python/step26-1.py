@@ -89,29 +89,6 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-        heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
-
-        for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features], tmp_data[target])):
-            x_train, x_test = tmp_data.iloc[train_index][best_features], tmp_data.iloc[test_index][best_features]
-            y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
-
-            classifier.fit(x_train, y_train)
-
-            for real, prediction in zip(y_test, classifier.predict(x_test)):
-                heatmap_data.loc[real, prediction] += 1
-
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
-        seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
-
-        matplotlib.pyplot.xlabel("Prediction")
-        matplotlib.pyplot.ylabel("Real")
-        matplotlib.pyplot.title(site)
-        matplotlib.pyplot.tight_layout()
-        tar_files.append("{0}+heatmap.pdf".format(site))
-        fig.savefig(tar_files[-1])
-        matplotlib.pyplot.close(fig)
-
         # Select best features
         test_scores = list()
         flag = True
@@ -136,6 +113,9 @@ if __name__ == "__main__":
             feature_importances = list(classifier.feature_importances_)
             best_features = list(map(lambda x: x[1], sorted(filter(lambda x: x[0] > 0, zip(feature_importances, best_features)), reverse=True)))
 
+            if not best_features:
+                break
+
             for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features], tmp_data[target])):
                 x_train, x_test = tmp_data.iloc[train_index][best_features], tmp_data.iloc[test_index][best_features]
                 y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
@@ -151,6 +131,8 @@ if __name__ == "__main__":
             if list(filter(lambda x: x == 0, feature_importances)):
                 flag = True
 
+        best_BA, tmp_features = -1.0, best_features[:]
+
         for i in range(1, len(best_features)):
             for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features[:i]], tmp_data[target])):
                 x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
@@ -160,15 +142,38 @@ if __name__ == "__main__":
 
                 for metric in step00.derivations:
                     try:
-                        test_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
+                        test_scores.append((i, metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                        if metric == "Balanced Accuracy":
+                            BA = step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)
+                            if best_BA < BA:
+                                best_BA = BA
+                                tmp_features = best_features[:]
                     except AssertionError:
                         continue
+
+        heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
+
+        for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
+            x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
+            y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
+
+            classifier.fit(x_train, y_train)
+
+            for real, prediction in zip(y_test, classifier.predict(x_test)):
+                heatmap_data.loc[real, prediction] += 1
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+        seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
 
         # Draw K-fold
         score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
         seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
+        matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
+        matplotlib.pyplot.text(x=len(tmp_features), y=0.2, s=f"Best BA {best_BA} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="center", verticalalignment="bottom", rotation="vertical")
+
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.title(site)

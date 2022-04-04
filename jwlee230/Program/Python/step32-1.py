@@ -80,7 +80,7 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUS must be greater than zero!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col="taxonomy")
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="taxonomy")
 
     if args.first:
         input_data = input_data.loc[list(filter(lambda x: x.startswith("First"), list(input_data.index))), :]
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[sorted(set(distance_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))

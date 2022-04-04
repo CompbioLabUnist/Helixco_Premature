@@ -42,6 +42,7 @@ if __name__ == "__main__":
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], index_col=0)
+    metadata = metadata.loc[input_data.index, :]
     print(metadata)
     print(sorted(metadata.columns))
 

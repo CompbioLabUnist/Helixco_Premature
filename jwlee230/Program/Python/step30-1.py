@@ -25,7 +25,10 @@ def draw(alpha: str, disease: str, site: str) -> str:
 
     seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", ax=ax)
     if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        try:
+            statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        except ValueError:
+            pass
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.title(site)
@@ -44,7 +47,10 @@ def draw_all(alpha: str, disease: str) -> str:
 
     seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", ax=ax)
     if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        try:
+            statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        except ValueError:
+            pass
 
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
     matplotlib.pyplot.title("All")
@@ -83,9 +89,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    input_data = pandas.read_csv(args.input, sep="\t")
-    if "X.Hash" in list(input_data.columns):
-        del input_data["X.Hash"]
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0)
     input_data = input_data.groupby("taxonomy").sum().T
 
     if args.first:

@@ -27,6 +27,8 @@ def pearson(clinical: str, taxonomy: str, site: str) -> typing.Tuple[float, floa
         return scipy.stats.pearsonr(drawing_data[taxonomy], drawing_data[clinical])
     except scipy.stats.PearsonRConstantInputWarning:
         return (0, 1)
+    except scipy.stats.stats.PearsonRNearConstantInputWarning:
+        return (0, 1)
 
 
 def spearman(clinical: str, taxonomy: str, site: str) -> typing.Tuple[float, float]:

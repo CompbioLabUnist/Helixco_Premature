@@ -33,6 +33,8 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
+    input_data = input_data.loc[~input_data.index.duplicated()]
+    input_data = input_data.loc[list(input_data.columns), :]
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], index_col=0)
