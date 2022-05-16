@@ -8,7 +8,9 @@ import pandas
 import matplotlib
 import matplotlib.pyplot
 import seaborn
+import tqdm
 import step00
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -42,9 +44,7 @@ if __name__ == "__main__":
     for site in set(input_data["Site"]):
         data = input_data.loc[(input_data["Site"] == site)]
 
-        for c in numeric_columns:
-            print("Numeric:", c)
-
+        for c in tqdm.tqdm(numeric_columns):
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
             seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", size=c, legend="brief", hue_order=step00.detailed_PTB)
 
@@ -52,19 +52,15 @@ if __name__ == "__main__":
             fig.savefig(tar_files[-1])
             matplotlib.pyplot.close(fig)
 
-        for c in categorical_columns:
-            print("Categorical:", c)
-
+        for c in tqdm.tqdm(categorical_columns):
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=step00.detailed_PTB)
+            seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=sorted(set(input_data[c])))
 
             tar_files.append("{0}+{1}.pdf".format(site, c.replace(" ", "_")))
             fig.savefig(tar_files[-1])
             matplotlib.pyplot.close(fig)
 
-    for c in numeric_columns:
-        print("Numeric:", c)
-
+    for c in tqdm.tqdm(numeric_columns):
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", size=c, legend="brief", hue_order=step00.detailed_PTB)
 
@@ -72,11 +68,9 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-    for c in categorical_columns:
-        print("Categorical:", c)
-
+    for c in tqdm.tqdm(categorical_columns):
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-        seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=step00.detailed_PTB)
+        seaborn.scatterplot(data=input_data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(input_data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(input_data[c])), hue_order=sorted(set(input_data[c])))
 
         tar_files.append("{0}+{1}.pdf".format("All", c.replace(" ", "_")))
         fig.savefig(tar_files[-1])
