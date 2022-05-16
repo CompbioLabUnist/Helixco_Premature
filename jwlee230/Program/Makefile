@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 4
-MEMS = 100G
+CPUS = 20
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -359,7 +359,7 @@ step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.s
 step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
 # Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
 step09: step09-tmp step09-limma
-.PHONY: step09-tmp step09-limma
+.PHONY: step09-tmp step09-limma step09
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.tar.gz: Python/step21.py Output/TSV/%.tsv | build.log
@@ -924,3 +924,12 @@ Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tar.gz 
 
 step44: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
 .PHONY: step44
+
+# Step 45 (Alpha-diveristy)
+Output/Step45:
+	mkdir -p $@
+
+Output/Step45/%.tar: Python/step45.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step45 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step45: Output/Step45/everything.DADA2.homd.tar
