@@ -22,9 +22,8 @@ main <- function(input, output)
     print(first_batch)
     print(second_batch)
 
-    output_data <- removeBatchEffect(input_data, batch=first_batch, batch2=second_batch)
+    output_data <- removeBatchEffect(input_data, batch=first_batch)
     output_data[output_data < 0] <- 0
-    # output_data <- exp(output_data)
 
     output_data <- cbind(OTU_ID, output_data, taxonomy_ID)
 
