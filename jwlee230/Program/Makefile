@@ -938,5 +938,5 @@ Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.tmp.tsv Outp
 Output/Step45/%.tar: Python/step45.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step45: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar
+step45: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar Output/Step45/everything.Deblur.uncorrected.tar Output/Step45/everything.Deblur.tar
 .PHONY: step45
