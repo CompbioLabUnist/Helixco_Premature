@@ -19,6 +19,33 @@ import step00
 metadata = pandas.DataFrame()
 
 
+def draw_all(meta: str, alpha: str) -> str:
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+    order = sorted(set(metadata[meta]))
+
+    try:
+        seaborn.violinplot(data=metadata, x=meta, y=alpha, ax=ax, order=order, linewidth=10, cut=1)
+    except TypeError:
+        matplotlib.pyplot.close(fig)
+        return ""
+
+    try:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=metadata, x=meta, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    except ValueError:
+        pass
+
+    matplotlib.pyplot.title("All")
+    matplotlib.pyplot.ylabel(alpha.replace("_", " "))
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"All+{meta.replace(' ', '_')}+{alpha}.pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+
+    return fig_name
+
+
 def draw_alpha(site: str, meta: str, alpha: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
@@ -26,7 +53,7 @@ def draw_alpha(site: str, meta: str, alpha: str) -> str:
     order = sorted(set(output_data[meta]))
 
     try:
-        seaborn.violinplot(data=output_data, x=meta, y=alpha, ax=ax, order=order)
+        seaborn.violinplot(data=output_data, x=meta, y=alpha, ax=ax, order=order, linewidth=10, cut=1)
     except TypeError:
         matplotlib.pyplot.close(fig)
         return ""
@@ -38,6 +65,7 @@ def draw_alpha(site: str, meta: str, alpha: str) -> str:
 
     matplotlib.pyplot.title(site)
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
+    matplotlib.pyplot.tight_layout()
 
     fig_name = f"{site}+{meta.replace(' ', '_')}+{alpha}.pdf"
     fig.savefig(fig_name)
@@ -97,7 +125,9 @@ if __name__ == "__main__":
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = list(filter(None, pool.starmap(draw_alpha, itertools.product(step00.selected_long_sites, metadata_columns, alphas))))
+        figures = pool.starmap(draw_all, itertools.product(metadata_columns, alphas))
+        figures += pool.starmap(draw_alpha, itertools.product(step00.selected_long_sites, metadata_columns, alphas))
+        figures = list(filter(None, figures))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
