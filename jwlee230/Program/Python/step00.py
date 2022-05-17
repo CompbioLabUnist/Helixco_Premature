@@ -14,7 +14,7 @@ key = bytes("asdf", "UTF-8")
 small = 10 ** 3
 big = 10 ** 6
 
-matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Arial", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 500, "pdf.fonttype": 42, "ps.fonttype": 42}
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Sans", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 500, "pdf.fonttype": 42, "ps.fonttype": 42}
 markers = ["o", "v", "^", "<", ">", "8", "s", "p", "*", "h", "H", "D", "d"]
 derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
@@ -25,6 +25,7 @@ PTB_colors = {"Early PTB": "tab:red", "Late PTB": "tab:pink", "Normal": "w"}
 
 selected_sites = ("M", "C", "V", "B1", "B3", "B5")
 selected_long_sites = ("Mouth", "Cervix", "Vagina", "Neonate-1day", "Neonate-3day", "Neonate-5day")
+selected_sites_dict = dict(zip(selected_sites, selected_long_sites))
 
 
 def file_list(path: str) -> typing.List[str]:

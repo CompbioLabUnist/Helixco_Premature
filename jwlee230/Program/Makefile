@@ -929,7 +929,14 @@ step44: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.sil
 Output/Step45:
 	mkdir -p $@
 
-Output/Step45/%.tar: Python/step45.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step45 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/Step45/%/tree.nwk: Output/Step28/%.rooted-tree.qza | Output/Step45 build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$^) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
-step45: Output/Step45/everything.DADA2.homd.tar
+Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.tmp.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step45/%.tar: Python/step45.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step45: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar
+.PHONY: step45
