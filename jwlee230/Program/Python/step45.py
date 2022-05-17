@@ -39,7 +39,7 @@ def draw_alpha(site: str, meta: str, alpha: str) -> str:
     matplotlib.pyplot.title(site)
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
 
-    fig_name = f"{site}+{meta}-{alpha.replace(' ', '_')}.pdf"
+    fig_name = f"{site}+{meta.replace(' ', '_')}+{alpha}.pdf"
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
