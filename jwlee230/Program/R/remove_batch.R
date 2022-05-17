@@ -17,10 +17,8 @@ main <- function(input, output)
 
     input_data <- input_data[2:(length(input_data)-1)]
     first_batch <- vapply(strsplit(colnames(input_data), "-"), `[`, 1, FUN.VALUE=character(1))
-    second_batch <- vapply(strsplit(colnames(input_data), "-"), tail, 1, FUN.VALUE=character(1))
     print(head(input_data))
     print(first_batch)
-    print(second_batch)
 
     output_data <- removeBatchEffect(input_data, batch=first_batch)
     output_data[output_data < 0] <- 0
