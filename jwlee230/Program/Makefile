@@ -938,5 +938,25 @@ Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.tmp.tsv Outp
 Output/Step45/%.tar: Python/step45.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step45: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar Output/Step45/everything.Deblur.uncorrected.tar Output/Step45/everything.Deblur.tar
-.PHONY: step45
+step45-tree: Output/Step45/everything.DADA2/tree.nwk Output/Step45/everything.Deblur/tree.nwk
+step45-alpha: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar Output/Step45/everything.Deblur.uncorrected.tar Output/Step45/everything.Deblur.tar
+step45: step45-tree step45-alpha
+.PHONY: step45-tree step45-alpha step45
+
+# Step 46 (Beta-diversity)
+Output/Step46:
+	mkdir -p $@
+
+Output/Step46/%/tree.nwk: Output/Step28/%.rooted-tree.qza | Output/Step46 build.log
+	$(DOCKER) qiime tools export --input-path $(addprefix /,$^) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
+
+Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.tmp.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step46/%.tar: Python/step46.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step46-tree: Output/Step46/everything.DADA2/tree.nwk Output/Step46/everything.Deblur/tree.nwk
+step46-beta: Output/Step46/everything.DADA2.uncorrected.tar Output/Step46/everything.DADA2.tar Output/Step46/everything.Deblur.uncorrected.tar Output/Step46/everything.Deblur.tar
+step46: step46-tree step46-beta
+.PHONY: step46-tree step46-beta step46
