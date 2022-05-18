@@ -929,7 +929,7 @@ Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tar.gz 
 step44: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
 .PHONY: step44
 
-# Step 45 (Alpha-diveristy)
+# Step 45 (Alpha-diversity)
 Output/Step45:
 	mkdir -p $@
 
@@ -942,10 +942,17 @@ Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.uncorrected.
 Output/Step45/%.tar: Python/step45.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step45/%.uncorrected.tsv: Python/step45-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step45/%.tsv: Python/step45-1.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 step45-tree: Output/Step45/everything.DADA2/tree.nwk Output/Step45/everything.Deblur/tree.nwk
 step45-alpha: Output/Step45/everything.DADA2.uncorrected.tar Output/Step45/everything.DADA2.tar Output/Step45/everything.Deblur.uncorrected.tar Output/Step45/everything.Deblur.tar
-step45: step45-tree step45-alpha
-.PHONY: step45-tree step45-alpha step45
+step45-alpha-tsv: Output/Step45/everything.DADA2.uncorrected.tsv Output/Step45/everything.DADA2.tsv Output/Step45/everything.Deblur.uncorrected.tsv Output/Step45/everything.Deblur.tsv
+step45: step45-tree step45-alpha step45-alpha-tsv
+.PHONY: step45-tree step45-alpha step45-alpha-tsv step45
 
 # Step 46 (Beta-diversity)
 Output/Step46:
@@ -960,7 +967,14 @@ Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.uncorrected.
 Output/Step46/%.tar: Python/step46.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step46/%.uncorrected.unweighted_unifrac.tsv Output/Step46/%.uncorrected.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) 1> $@.stdout 2> $@.stderr
+
+Output/Step46/%.unweighted_unifrac.tsv Output/Step46/%.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) 1> $@.stdout 2> $@.stderr
+
 step46-tree: Output/Step46/everything.DADA2/tree.nwk Output/Step46/everything.Deblur/tree.nwk
 step46-beta: Output/Step46/everything.DADA2.uncorrected.tar Output/Step46/everything.DADA2.tar Output/Step46/everything.Deblur.uncorrected.tar Output/Step46/everything.Deblur.tar
-step46: step46-tree step46-beta
-.PHONY: step46-tree step46-beta step46
+step46-beta-tsv: Output/Step46/everything.DADA2.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
+step46: step46-tree step46-beta step46-beta-tsv
+.PHONY: step46-tree step46-beta step46-beta-tsv step46
