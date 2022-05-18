@@ -96,7 +96,8 @@ if __name__ == "__main__":
 
         seaborn.heatmap(data=output_data, vmin=-1, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, ax=ax)
 
-        matplotlib.pyplot.xlabel("{0} Pathogens".format(len(taxa)))
+        matplotlib.pyplot.xlabel(f"{len(taxa)} Pathogens")
+        matplotlib.pyplot.title(f"{site}")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"{site}.pdf")
