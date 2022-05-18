@@ -1,5 +1,5 @@
 """
-step46.py: alpha-diversity
+step46.py: beta-diversity
 """
 import argparse
 import io
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("tree", type=str, help="Tree NWk file")
-    parser.add_argument("output", type=str, help="Output TAR f ile")
+    parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
     args = parser.parse_args()
