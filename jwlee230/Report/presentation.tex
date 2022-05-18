@@ -8,6 +8,7 @@
 \usepackage[notocbib]{apacite}
 \usepackage[style=iso]{datetime2}
 \usepackage{enumerate}
+\providecommand\thispdfpagelabel[1]{}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
 
 \AtBeginSection[]
@@ -406,27 +407,19 @@
         \frametitle{Cluster map with Beta diversity}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step39/everything/everything.DADA2.bray_curtis.pdf}
-            \caption{Cluster map with Bray-Curtis distance index for DADA2}
+            \includegraphics[width=\linewidth]{figures/Step47/everything.DADA2.weighted_unifrac.pdf}
+            \caption{Cluster map with Weighted UniFrac distance index for DADA2}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Mouth.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Mouth.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Cervix.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Neonate-3day.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Vagina.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Neonate-3day.pdf}
                 \\
-                \mbox{(a) Mouth } & \mbox{(b) Cervix} & \mbox{(c) Vagina} \\
-
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Neonate-1day.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Neonate-3day.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step39-2/everything.DADA2.bray_curtis.Sites/Neonate-5day.pdf}
-                \\
-                \mbox{(d) Neonate 1-day} & \mbox{(e) Neonate 3-day} & \mbox{(f) Neonate 5-day} \\
+                \mbox{(a) Mouth } & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
             \end{array}$
             \caption{Clustermap with Site separation}
         \end{figure}
