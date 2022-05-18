@@ -351,22 +351,26 @@ Output/TSV/HMP.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qz
 Output/TSV/Macrogen.tmp.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/TSV/%.uncorrected.tsv: Python/step09-1.py Output/TSV/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 11> $@.stdout 2> $@.stdout
+
 Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.tmp.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
 # Output/TSV/Stool.DADA2.gg.tmp.tsv Output/TSV/Stool.DADA2.silva.tmp.tsv Output/TSV/Stool.DADA2.homd.tmp.tsv Output/TSV/Stool.Deblur.gg.tmp.tsv Output/TSV/Stool.Deblur.silva.tmp.tsv Output/TSV/Stool.Deblur.homd.tmp.tsv
+step09-uncorrected: Output/TSV/everything.DADA2.gg.uncorrected.tsv Output/TSV/everything.DADA2.silva.uncorrected.tsv Output/TSV/everything.DADA2.homd.uncorrected.tsv Output/TSV/everything.Deblur.gg.uncorrected.tsv Output/TSV/everything.Deblur.silva.uncorrected.tsv Output/TSV/everything.Deblur.homd.uncorrected.tsv Output/TSV/Macrogen.uncorrected.tsv Output/TSV/EBI.DADA2.gg.uncorrected.tsv Output/TSV/EBI.DADA2.silva.uncorrected.tsv Output/TSV/EBI.DADA2.homd.uncorrected.tsv Output/TSV/EBI.Deblur.gg.uncorrected.tsv Output/TSV/EBI.Deblur.silva.uncorrected.tsv Output/TSV/EBI.Deblur.homd.uncorrected.tsv Output/TSV/HMP.DADA2.gg.uncorrected.tsv Output/TSV/HMP.DADA2.silva.uncorrected.tsv Output/TSV/HMP.DADA2.homd.uncorrected.tsv Output/TSV/HMP.Deblur.gg.uncorrected.tsv Output/TSV/HMP.Deblur.silva.uncorrected.tsv Output/TSV/HMP.Deblur.homd.uncorrected.tsv
 step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
 # Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
-step09: step09-tmp step09-limma
-.PHONY: step09-tmp step09-limma step09
+step09: step09-tmp step09-uncorrected step09-limma
+.PHONY: step09-tmp step09-uncorrected step09-limma step09
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.tar.gz: Python/step21.py Output/TSV/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Macrogen.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.DADA2.homd.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz Output/TSV/EBI.Deblur.homd.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.DADA2.homd.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz Output/TSV/HMP.Deblur.homd.tar.gz
-# Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz 
+# Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -932,7 +936,7 @@ Output/Step45:
 Output/Step45/%/tree.nwk: Output/Step28/%.rooted-tree.qza | Output/Step45 build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$^) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.tmp.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
+Output/Step45/%.uncorrected.tar: Python/step45.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step45/%.tar: Python/step45.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step45/%/tree.nwk | build.log
@@ -950,7 +954,7 @@ Output/Step46:
 Output/Step46/%/tree.nwk: Output/Step28/%.rooted-tree.qza | Output/Step46 build.log
 	$(DOCKER) qiime tools export --input-path $(addprefix /,$^) --output-path $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.tmp.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step46/%.tar: Python/step46.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log

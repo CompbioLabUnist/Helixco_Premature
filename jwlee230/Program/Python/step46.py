@@ -32,6 +32,12 @@ if __name__ == "__main__":
         raise ValueError("CPUS must be greater than zero")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
+    elif not args.input.endswith(".tsv"):
+        raise ValueError("Input must end with .TSV!!")
+    elif not args.tree.endswith(".nwk"):
+        raise ValueError("Tree must end with .NWK!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output must end with .TAR!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="#OTU ID")
     del input_data["taxonomy"]
