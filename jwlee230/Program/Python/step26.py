@@ -93,18 +93,6 @@ if __name__ == "__main__":
         test_scores = list()
         flag = True
 
-        for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features], tmp_data[target])):
-            x_train, x_test = tmp_data.iloc[train_index][best_features], tmp_data.iloc[test_index][best_features]
-            y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
-
-            classifier.fit(x_train, y_train)
-
-            for metric in step00.derivations:
-                try:
-                    test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
-                except AssertionError:
-                    continue
-
         while flag:
             print(len(best_features), "features!!")
 
@@ -131,7 +119,7 @@ if __name__ == "__main__":
             if list(filter(lambda x: x == 0, feature_importances)):
                 flag = True
 
-        for i in range(1, len(best_features)):
+        for i in tqdm.trange(1, len(best_features)):
             for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features[:i]], tmp_data[target])):
                 x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
                 y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
@@ -180,11 +168,12 @@ if __name__ == "__main__":
 
         seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
         matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
-        matplotlib.pyplot.text(x=len(tmp_features), y=0.2, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
+        matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.title(site)
+        matplotlib.pyplot.ylable("Evaluations")
         ax.invert_xaxis()
         matplotlib.pyplot.tight_layout()
 
@@ -202,7 +191,7 @@ if __name__ == "__main__":
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature[0], 1))
+            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature[0], 1) + f"({feature[1]})")
             matplotlib.pyplot.title(site)
             matplotlib.pyplot.tight_layout()
 
