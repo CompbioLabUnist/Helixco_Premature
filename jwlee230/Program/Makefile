@@ -352,7 +352,7 @@ Output/TSV/Macrogen.tmp.tsv: Python/step09.py Data/Macrogen/First/otu_table_shar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/TSV/%.uncorrected.tsv: Python/step09-1.py Output/TSV/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 11> $@.stdout 2> $@.stdout
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stdout
 
 Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.tmp.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -1003,3 +1003,30 @@ Output/Step48/everything.%.pdf: Python/step48.py Output/TSV/everything.%.tsv | b
 
 step48: Output/Step48/everything.DADA2.gg.pdf Output/Step48/everything.DADA2.silva.pdf Output/Step48/everything.DADA2.homd.pdf Output/Step48/everything.Deblur.gg.pdf Output/Step48/everything.Deblur.silva.pdf Output/Step48/everything.Deblur.homd.pdf
 .PHONY: step48
+
+# Step 49 (Heatmap Plot for correlation between Bacteria & Clinical data)
+Output/Step49:
+	mkdir -p $@
+
+Output/Step49/everything.%.pearson.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step49/everything.%.spearman.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step49/everything.%.kendall.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+Output/Step49/everything.%.pearson.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step49/everything.%.spearman.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step49/everything.%.kendall.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+step49-everything-DADA2: Output/Step49/everything.DADA2.gg.pearson.pdf Output/Step49/everything.DADA2.gg.spearman.pdf Output/Step49/everything.DADA2.gg.kendall.pdf Output/Step49/everything.DADA2.silva.pearson.pdf Output/Step49/everything.DADA2.silva.spearman.pdf Output/Step49/everything.DADA2.silva.kendall.pdf Output/Step49/everything.DADA2.homd.pearson.pdf Output/Step49/everything.DADA2.homd.spearman.pdf Output/Step49/everything.DADA2.homd.kendall.pdf Output/Step49/everything.DADA2.gg.pearson.Sites.tar Output/Step49/everything.DADA2.gg.spearman.Sites.tar Output/Step49/everything.DADA2.gg.kendall.Sites.tar Output/Step49/everything.DADA2.silva.pearson.Sites.tar Output/Step49/everything.DADA2.silva.spearman.Sites.tar Output/Step49/everything.DADA2.silva.kendall.Sites.tar Output/Step49/everything.DADA2.homd.pearson.Sites.tar Output/Step49/everything.DADA2.homd.spearman.Sites.tar Output/Step49/everything.DADA2.homd.kendall.Sites.tar
+step49-everything-Deblur: Output/Step49/everything.Deblur.gg.pearson.pdf Output/Step49/everything.Deblur.gg.spearman.pdf Output/Step49/everything.Deblur.gg.kendall.pdf Output/Step49/everything.Deblur.silva.pearson.pdf Output/Step49/everything.Deblur.silva.spearman.pdf Output/Step49/everything.Deblur.silva.kendall.pdf Output/Step49/everything.Deblur.homd.pearson.pdf Output/Step49/everything.Deblur.homd.spearman.pdf Output/Step49/everything.Deblur.homd.kendall.pdf Output/Step49/everything.Deblur.gg.pearson.Sites.tar Output/Step49/everything.Deblur.gg.spearman.Sites.tar Output/Step49/everything.Deblur.gg.kendall.Sites.tar Output/Step49/everything.Deblur.silva.pearson.Sites.tar Output/Step49/everything.Deblur.silva.spearman.Sites.tar Output/Step49/everything.Deblur.silva.kendall.Sites.tar Output/Step49/everything.Deblur.homd.pearson.Sites.tar Output/Step49/everything.Deblur.homd.spearman.Sites.tar Output/Step49/everything.Deblur.homd.kendall.Sites.tar
+step49: step49-everything-DADA2 step49-everything-Deblur
+.PHONY: step49-everything-DADA2 step49-everything-Deblur step49
