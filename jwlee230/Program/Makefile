@@ -993,3 +993,13 @@ step47-All: Output/Step47/everything.DADA2.unweighted_unifrac.pdf Output/Step47/
 step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.Sites.tar
 step47: step47-All step47-Sites
 .PHONY: step47-All step47-Sites step47
+
+# Step 48 (Violin plot for Shared taxonomy proportion)
+Output/Step48:
+	mkdir -p $@
+
+Output/Step48/everything.%.pdf: Python/step48.py Output/TSV/everything.%.tsv | build.log Output/Step48
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step48: Output/Step48/everything.DADA2.gg.pdf Output/Step48/everything.DADA2.silva.pdf Output/Step48/everything.DADA2.homd.pdf Output/Step48/everything.Deblur.gg.pdf Output/Step48/everything.Deblur.silva.pdf Output/Step48/everything.Deblur.homd.pdf
+.PHONY: step48
