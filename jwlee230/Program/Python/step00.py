@@ -162,3 +162,8 @@ def star(p: float) -> str:
         return "ns"
     else:
         raise ValueError("Something went wrong: {0} !!".format(p))
+
+
+if __name__ == "__main__":
+    taxo = "k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Prevotellaceae; g__Prevotella; __"
+    print(consistency_taxonomy(taxo, 1))

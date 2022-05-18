@@ -193,14 +193,16 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         for i, feature in enumerate(taxa[:10]):
+            print(feature)
+
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box")
+            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1)
             try:
-                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
+            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature[0], 1))
             matplotlib.pyplot.title(site)
             matplotlib.pyplot.tight_layout()
 
