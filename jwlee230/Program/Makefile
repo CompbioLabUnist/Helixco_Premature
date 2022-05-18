@@ -978,3 +978,18 @@ step46-beta: Output/Step46/everything.DADA2.uncorrected.tar Output/Step46/everyt
 step46-beta-tsv: Output/Step46/everything.DADA2.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
 step46: step46-tree step46-beta step46-beta-tsv
 .PHONY: step46-tree step46-beta step46-beta-tsv step46
+
+# Step 47 (Beta-diversity heatmap plot)
+Output/Step47:
+	mkdir -p $@
+
+Output/Step47/%.pdf: Python/step47.py Output/Step46/%.tsv Output/Metadata/everything.tsv | Output/Step47 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step47/%.Sites.tar: Python/step47-2.py Output/Step46/%.tsv Output/Metadata/everything.tsv | Output/Step47 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step47-All: Output/Step47/everything.DADA2.unweighted_unifrac.pdf Output/Step47/everything.DADA2.weighted_unifrac.pdf Output/Step47/everything.Deblur.unweighted_unifrac.pdf Output/Step47/everything.Deblur.weighted_unifrac.pdf
+step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.Sites.tar
+step47: step47-All step47-Sites
+.PHONY: step47-All step47-Sites step47
