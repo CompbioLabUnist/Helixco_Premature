@@ -1,5 +1,5 @@
 """
-step40.py: Shared taxonomy proportion with neonates and mother for Macrogen
+step40.py: Shared taxonomy proportion with neonates and mother
 """
 import argparse
 import itertools
@@ -50,10 +50,6 @@ if __name__ == "__main__":
         raise ValueError("Output file must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("Number of CPUs must be positive!!")
-
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
