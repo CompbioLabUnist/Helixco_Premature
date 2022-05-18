@@ -46,7 +46,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.metadata.endswith(".tsv"):
+    if not args.input.endswith(".tar.gz"):
+        raise ValueError("Input file must end with .tar.gz!!")
+    elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata must end with .tsv!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output file must end with .PDF!!")
