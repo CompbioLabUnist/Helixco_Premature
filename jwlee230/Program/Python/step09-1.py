@@ -20,7 +20,11 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .TSV!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="#OTU ID")
-    input_data.iloc[:, :-1] = numpy.log(input_data.iloc[:, :-1] + 1)
+    taxa_column = list(input_data["taxonomy"])
+    del input_data["taxonomy"]
+    input_data[input_data < 1] = 0
+    input_data = numpy.log(input_data + 1)
+    input_data["taxonomy"] = taxa_column
     print(input_data)
 
     with open(args.output, "w") as f:
