@@ -71,8 +71,8 @@ if __name__ == "__main__":
 
     input_data = pandas.concat(objs=data_list, axis="columns").fillna(value=0)
     input_data["taxonomy"] = list(input_data.index)
-    input_data["#Hash"] = list(map(hash, list(input_data.index)))
-    input_data.set_index(keys="#Hash", inplace=True, verify_integrity=True)
+    input_data["#OTU ID"] = list(map(hash, list(input_data.index)))
+    input_data.set_index(keys="#OTU ID", inplace=True, verify_integrity=True)
     print(input_data)
 
     with open(args.output, "w") as f:
