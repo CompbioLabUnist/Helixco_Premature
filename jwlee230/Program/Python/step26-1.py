@@ -166,7 +166,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.title(site)
-        matplotlib.pyplot.ylable("Evaluations")
+        matplotlib.pyplot.ylabel("Evaluations")
         ax.invert_xaxis()
         matplotlib.pyplot.tight_layout()
 
