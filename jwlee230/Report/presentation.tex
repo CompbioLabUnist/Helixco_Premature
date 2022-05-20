@@ -439,13 +439,43 @@
         \frametitle{Correlation between Taxonomy \& Clinical data}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step41/everything/DADA2/homd/everything.DADA2.homd.pearson.pdf}
+            \includegraphics[width=\linewidth]{figures/Step49/DADA2/homd/everything.DADA2.homd.pearson.pdf}
             \caption{Pearson Correlation between taxonomy \& clinical Data on DADA2 + HOMD}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step41-1/everything.DADA2.homd.pearson.Sites.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Mouth.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-1day.pdf}
+                \\
+
+                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-3day.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-5day.pdf}
+                \\
+            \end{array}$
             \caption{Person Correlation with Site separation}
+        \end{figure}
+    \end{frame}
+
+    \subsection{Machine Learning}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Random Forest with Detailed PTB}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+metrics.pdf}
+            \caption{RF evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{RF confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{RF most important taxa}
         \end{figure}
     \end{frame}
 
