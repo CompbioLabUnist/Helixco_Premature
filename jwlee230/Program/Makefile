@@ -1030,3 +1030,15 @@ step49-everything-DADA2: Output/Step49/everything.DADA2.gg.pearson.pdf Output/St
 step49-everything-Deblur: Output/Step49/everything.Deblur.gg.pearson.pdf Output/Step49/everything.Deblur.gg.spearman.pdf Output/Step49/everything.Deblur.gg.kendall.pdf Output/Step49/everything.Deblur.silva.pearson.pdf Output/Step49/everything.Deblur.silva.spearman.pdf Output/Step49/everything.Deblur.silva.kendall.pdf Output/Step49/everything.Deblur.homd.pearson.pdf Output/Step49/everything.Deblur.homd.spearman.pdf Output/Step49/everything.Deblur.homd.kendall.pdf Output/Step49/everything.Deblur.gg.pearson.Sites.tar Output/Step49/everything.Deblur.gg.spearman.Sites.tar Output/Step49/everything.Deblur.gg.kendall.Sites.tar Output/Step49/everything.Deblur.silva.pearson.Sites.tar Output/Step49/everything.Deblur.silva.spearman.Sites.tar Output/Step49/everything.Deblur.silva.kendall.Sites.tar Output/Step49/everything.Deblur.homd.pearson.Sites.tar Output/Step49/everything.Deblur.homd.spearman.Sites.tar Output/Step49/everything.Deblur.homd.kendall.Sites.tar
 step49: step49-everything-DADA2 step49-everything-Deblur
 .PHONY: step49-everything-DADA2 step49-everything-Deblur step49
+
+# Step 50 (Volcano plot with differentially expressed taxa)
+Output/Step50:
+	mkdir -p $@
+
+Output/Step50/everything.%.tar: Python/step50.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step50
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step50-uncorrected: Output/Step50/everything.DADA2.homd.uncorrected.tar
+step50-corrected: Output/Step50/everything.DADA2.homd.tar
+step50: step50-uncorrected step50-corrected
+.PHONY: step50
