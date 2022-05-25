@@ -91,10 +91,10 @@ if __name__ == "__main__":
         matplotlib.pyplot.scatter(down_results["log2(EP/F)"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None, label="Down")
 
         for index, row in down_results.iterrows():
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 1), color="black", fontsize="xx-small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 2), color="black", fontsize="xx-small"))
 
         for index, row in up_results.iterrows():
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 1), color="black", fontsize="xx-small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 2), color="black", fontsize="xx-small"))
 
         matplotlib.pyplot.xlabel("log2(EP/F)")
         matplotlib.pyplot.ylabel("-log10(p)")
