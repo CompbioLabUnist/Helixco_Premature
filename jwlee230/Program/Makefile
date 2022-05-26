@@ -1038,7 +1038,7 @@ Output/Step50:
 Output/Step50/everything.%.tar: Python/step50.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step50
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step50-uncorrected: Output/Step50/everything.DADA2.homd.uncorrected.tar
-step50-corrected: Output/Step50/everything.DADA2.homd.tar
+step50-uncorrected: Output/Step50/everything.DADA2.gg.uncorrected.tar Output/Step50/everything.DADA2.silva.uncorrected.tar Output/Step50/everything.DADA2.homd.uncorrected.tar Output/Step50/everything.Deblur.gg.uncorrected.tar Output/Step50/everything.Deblur.silva.uncorrected.tar Output/Step50/everything.Deblur.homd.uncorrected.tar
+step50-corrected: Output/Step50/everything.DADA2.gg.tar Output/Step50/everything.DADA2.silva.tar Output/Step50/everything.DADA2.homd.tar Output/Step50/everything.Deblur.gg.tar Output/Step50/everything.Deblur.silva.tar Output/Step50/everything.Deblur.homd.tar
 step50: step50-uncorrected step50-corrected
 .PHONY: step50

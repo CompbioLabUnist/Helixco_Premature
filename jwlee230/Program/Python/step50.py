@@ -57,6 +57,8 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
 
     input_data = pandas.read_csv(args.input, skiprows=1, sep="\t", index_col=["taxonomy", "#OTU ID"]).T
+    for index in tqdm.tqdm(list(input_data.index)):
+        input_data.loc[index, :] = input_data.loc[index, :] / sum(input_data.loc[index, :])
     taxa = input_data.columns
     print(input_data)
 
