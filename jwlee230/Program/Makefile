@@ -1035,10 +1035,16 @@ step49: step49-everything-DADA2 step49-everything-Deblur
 Output/Step50:
 	mkdir -p $@
 
-Output/Step50/everything.%.tar: Python/step50.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step50
+Output/Step50/everything.%.Mouth.tsv Output/Step50/everything.%.Mouth.coldata Output/Step50/everything.%.Cervix.tsv Output/Step50/everything.%.Cervix.coldata Output/Step50/everything.%.Vagina.tsv Output/Step50/everything.%.Vagina.coldata Output/Step50/everything.%.Neonate-1day.tsv Output/Step50/everything.%.Neonate-1day.coldata Output/Step50/everything.%.Neonate-3day.tsv Output/Step50/everything.%.Neonate-3day.coldata Output/Step50/everything.%.Neonate-5day.tsv Output/Step50/everything.%.Neonate-5day.coldata: Python/step50-1.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step50
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ Output/Step50/everything.$*) 1> $@.stdout 2> $@.stdout
+
+Output/Step50/everything.%.DEG.tsv: R/run_DESeq.R Output/Step50/everything.%.tsv Output/Step50/everything.%.coldata | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step50/everything.%.pdf: Python/step50.py Output/Step50/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step50-uncorrected: Output/Step50/everything.DADA2.gg.uncorrected.tar Output/Step50/everything.DADA2.silva.uncorrected.tar Output/Step50/everything.DADA2.homd.uncorrected.tar Output/Step50/everything.Deblur.gg.uncorrected.tar Output/Step50/everything.Deblur.silva.uncorrected.tar Output/Step50/everything.Deblur.homd.uncorrected.tar
-step50-corrected: Output/Step50/everything.DADA2.gg.tar Output/Step50/everything.DADA2.silva.tar Output/Step50/everything.DADA2.homd.tar Output/Step50/everything.Deblur.gg.tar Output/Step50/everything.Deblur.silva.tar Output/Step50/everything.Deblur.homd.tar
+step50-uncorrected: Output/Step50/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step50/everything.DADA2.homd.uncorrected.Mouth.DEG.tsv Output/Step50/everything.DADA2.homd.uncorrected.Mouth.DEG.pdf Output/Step50/everything.DADA2.homd.uncorrected.Neonate-3day.tsv Output/Step50/everything.DADA2.homd.uncorrected.Neonate-3day.DEG.tsv Output/Step50/everything.DADA2.homd.uncorrected.Neonate-3day.DEG.pdf Output/Step50/everything.DADA2.homd.uncorrected.Neonate-5day.tsv Output/Step50/everything.DADA2.homd.uncorrected.Neonate-5day.DEG.tsv Output/Step50/everything.DADA2.homd.uncorrected.Neonate-5day.DEG.pdf
+step50-corrected: Output/Step50/everything.DADA2.homd.Mouth.tsv Output/Step50/everything.DADA2.homd.Mouth.DEG.tsv Output/Step50/everything.DADA2.homd.Mouth.DEG.pdf Output/Step50/everything.DADA2.homd.Neonate-3day.tsv Output/Step50/everything.DADA2.homd.Neonate-3day.DEG.tsv Output/Step50/everything.DADA2.homd.Neonate-3day.DEG.pdf Output/Step50/everything.DADA2.homd.Neonate-5day.tsv Output/Step50/everything.DADA2.homd.Neonate-5day.DEG.tsv Output/Step50/everything.DADA2.homd.Neonate-5day.DEG.pdf
 step50: step50-uncorrected step50-corrected
 .PHONY: step50
