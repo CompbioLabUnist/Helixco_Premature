@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     texts = list()
     for index, row in input_data.loc[(input_data["Reject null hypothesis"]), :].iterrows():
-        texts.append(matplotlib.pyplot.text(row["clr"], row["W"], step00.consistency_taxonomy(index, 1), color="black", fontsize="xx-small"))
+        texts.append(matplotlib.pyplot.text(row["clr"], row["W"], step00.consistency_taxonomy(index, 2), color="black", fontsize="xx-small"))
 
     matplotlib.pyplot.title("{0} taxa reject null hypothesis".format(input_data.loc[(input_data["Reject null hypothesis"])].shape[0]))
     matplotlib.pyplot.tight_layout()
