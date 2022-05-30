@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1074,22 +1074,22 @@ step51: step51-biom step51-frequency-qza step51-taxonomy-qza
 Output/Step52:
 	mkdir -p $@
 
-Output/Step52/%.DADA2.gg.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.gg.frequency.qza | build.log Output/Step52
+Output/Step52/%.DADA2.gg.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.gg.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step52/%.DADA2.silva.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.silva.frequency.qza | build.log Output/Step52
+Output/Step52/%.DADA2.silva.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.silva.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step52/%.DADA2.homd.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.homd.frequency.qza | build.log Output/Step52
+Output/Step52/%.DADA2.homd.qza: Output/DADA2/%.table.qza Output/Step51/%.DADA2.homd.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step52/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.gg.frequency.qza | build.log Output/Step52
+Output/Step52/%.Deblur.gg.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.gg.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step52/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.silva.frequency.qza | build.log Output/Step52
+Output/Step52/%.Deblur.silva.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.silva.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step52/%.Deblur.homd.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.homd.frequency.qza | build.log Output/Step52
+Output/Step52/%.Deblur.homd.qza: Output/Deblur/%.table.qza Output/Step51/%.Deblur.homd.taxonomy.qza | build.log Output/Step52
 	$(DOCKER) qiime taxa collapse --i-table $(addprefix /,$(word 1,$^)) --i-taxonomy $(addprefix /,$(word 2,$^)) --p-level 7 --o-collapsed-table $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Step52/everything.%.Mouth.qza: Output/Step52/everything.%.qza Output/Metadata/everything.tsv | build.log
@@ -1140,3 +1140,18 @@ step52-Deblur-silva: Output/Step52/everything.Deblur.silva.qza Output/Step52/eve
 step52-Deblur-homd: Output/Step52/everything.Deblur.homd.qza Output/Step52/everything.Deblur.homd.pseudocount.qza Output/Step52/everything.Deblur.homd.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Mouth.qza Output/Step52/everything.Deblur.homd.Mouth.pseudocount.qza Output/Step52/everything.Deblur.homd.Mouth.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Mouth.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Cervix.qza Output/Step52/everything.Deblur.homd.Cervix.pseudocount.qza Output/Step52/everything.Deblur.homd.Cervix.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Cervix.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Vagina.qza Output/Step52/everything.Deblur.homd.Vagina.pseudocount.qza Output/Step52/everything.Deblur.homd.Vagina.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Vagina.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-1day.qza Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.qza Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-1day.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-3day.qza Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.qza Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-3day.pseudocount.Simple_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-3day.qza Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.qza Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Detail_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Detail_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Detail_PTB.pdf Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Simple_PTB.qzv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Simple_PTB/data.tsv Output/Step52/everything.Deblur.homd.Neonate-5day.pseudocount.Simple_PTB.pdf
 step52: step52-DADA2-gg step52-DADA2-silva step52-DADA2-homd step52-Deblur-gg step52-Deblur-silva step52-Deblur-homd
 .PHONY: step52-DADA2-gg step52-DADA2-silva step52-DADA2-homd step52-Deblur-gg step52-Deblur-silva step52-Deblur-homd step52
+
+# Step 53 (Abundance Distribution)
+Output/Step53:
+	mkdir -p $@
+
+Output/Step53/%.uncorrected.pdf: Python/step53.py Output/TSV/%.uncorrected.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step53/%.corrected.pdf: Python/step53.py Output/TSV/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step53-uncorrected: Output/Step53/everything.DADA2.gg.uncorrected.pdf Output/Step53/everything.DADA2.silva.uncorrected.pdf Output/Step53/everything.DADA2.homd.uncorrected.pdf Output/Step53/everything.Deblur.gg.uncorrected.pdf Output/Step53/everything.Deblur.silva.uncorrected.pdf Output/Step53/everything.Deblur.homd.uncorrected.pdf
+step53-corrected: Output/Step53/everything.DADA2.gg.corrected.pdf Output/Step53/everything.DADA2.silva.corrected.pdf Output/Step53/everything.DADA2.homd.corrected.pdf Output/Step53/everything.Deblur.gg.corrected.pdf Output/Step53/everything.Deblur.silva.corrected.pdf Output/Step53/everything.Deblur.homd.corrected.pdf
+step53: step53-uncorrected step53-corrected
+.PHONY: step53-uncorrected step53-corrected step53
