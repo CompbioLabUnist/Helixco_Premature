@@ -2,11 +2,21 @@
 step53.py: Abundance Distribution
 """
 import argparse
+import itertools
+import multiprocessing
 import pandas
 import matplotlib
 import matplotlib.pyplot
 import seaborn
 import step00
+
+data = pandas.DataFrame()
+metadata = pandas.DataFrame()
+
+
+def run(index, column):
+    return (metadata.loc[index, "Site"], data.loc[index, column])
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -14,6 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output PDF file")
+    parser.add_argument("--cpus", type=int, default=1, help="Number of CPUs to use")
 
     args = parser.parse_args()
 
@@ -23,12 +34,18 @@ if __name__ == "__main__":
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output file must end with .PDF!!")
+    elif args.cpus < 1:
+        raise ValueError("Number of CPUs must be positive!!")
 
-    data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID", "taxonomy"]).T
+    data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"]).T.iloc[:-1, :]
     print(data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        output_data = pandas.DataFrame(pool.starmap(run, itertools.product(list(data.index), list(data.columns))), columns=["Site", "Abundance"])
+    print(output_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -36,7 +53,7 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
-    seaborn.histplot(data=data, stat="probability", kde=True, ax=ax)
+    seaborn.histplot(data=output_data, x="Abundance", hue="Site", stat="probability", kde=True, multiple="stack", ax=ax)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
