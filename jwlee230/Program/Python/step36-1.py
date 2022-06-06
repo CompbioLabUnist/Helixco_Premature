@@ -59,7 +59,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = step00.read_pickle(args.input).T
-    input_data.columns = list(map(step00.simplified_taxonomy, list(input_data.columns)))
+    input_data.columns = list(map(lambda x: step00.simplified_taxonomy(x[0]) + f"({x[1]})", list(input_data.columns)))
     input_data = input_data.iloc[1:, :]
     print(input_data)
 
