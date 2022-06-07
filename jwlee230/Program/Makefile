@@ -1241,3 +1241,16 @@ Output/Step56/KNN-two.%.tar: Python/step56-1.py Output/TSV/everything.%.tar.gz O
 
 step56: Output/Step56/KNN.DADA2.gg.tar Output/Step56/KNN.DADA2.silva.tar Output/Step56/KNN.DADA2.homd.tar Output/Step56/KNN.Deblur.gg.tar Output/Step56/KNN.Deblur.silva.tar Output/Step56/KNN.Deblur.homd.tar Output/Step56/KNN-two.DADA2.gg.tar Output/Step56/KNN-two.DADA2.silva.tar Output/Step56/KNN-two.DADA2.homd.tar Output/Step56/KNN-two.Deblur.gg.tar Output/Step56/KNN-two.Deblur.silva.tar Output/Step56/KNN-two.Deblur.homd.tar
 .PHONY: step56
+
+# Step 57 (Support Vector Machine Classifier)
+Output/Step57:
+	mkdir -p $@
+
+Output/Step57/SVM.%.tar: Python/step57.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step57 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step57/SVM-two.%.tar: Python/step57-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step57 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step57: Output/Step57/SVM.DADA2.gg.tar Output/Step57/SVM.DADA2.silva.tar Output/Step57/SVM.DADA2.homd.tar Output/Step57/SVM.Deblur.gg.tar Output/Step57/SVM.Deblur.silva.tar Output/Step57/SVM.Deblur.homd.tar Output/Step57/SVM-two.DADA2.gg.tar Output/Step57/SVM-two.DADA2.silva.tar Output/Step57/SVM-two.DADA2.homd.tar Output/Step57/SVM-two.Deblur.gg.tar Output/Step57/SVM-two.Deblur.silva.tar Output/Step57/SVM-two.Deblur.homd.tar
+.PHONY: step57
