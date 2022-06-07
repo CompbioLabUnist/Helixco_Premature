@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 10
-MEMS = 100G
+CPUS = 20
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1205,3 +1205,26 @@ step54-default: $(addprefix Output/Step54/Default/everything.DADA2.gg.,$(addsuff
 step54-cladogram: $(addprefix Output/Step54/Cladogram/everything.DADA2.gg.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.DADA2.silva.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.DADA2.homd.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.gg.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.silva.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.homd.,$(addsuffix .res,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.DADA2.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.gg.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.silva.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina)) $(addprefix Output/Step54/Cladogram/everything.Deblur.homd.,$(addsuffix .pdf,Cervix Mouth Neonate-3day Neonate-5day Vagina))
 step54: step54-tsv step54-in step54-res step54-default step54-cladogram
 .PHONY: step54-tsv step54-in step54-res step54-default step54-cladogram step54
+
+# Step 55 (Making & Draw t-SNE)
+Output/Step55:
+	mkdir -p $@
+
+Output/Step55/%.tmp.tar.gz: Python/step11.py Output/TSV/%.tmp.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step55/%.uncorrected.tar.gz: Python/step11.py Output/TSV/%.uncorrected.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step55/%.corrected.tar.gz: Python/step11.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step55/%.tar: Python/step22-3.py Output/Step55/%.tar.gz | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step55-tmp: Output/Step55/everything.DADA2.gg.tmp.tar.gz Output/Step55/everything.DADA2.silva.tmp.tar.gz Output/Step55/everything.DADA2.homd.tmp.tar.gz Output/Step55/everything.Deblur.gg.tmp.tar.gz Output/Step55/everything.Deblur.silva.tmp.tar.gz Output/Step55/everything.Deblur.homd.tmp.tar.gz
+step55-uncorrected: Output/Step55/everything.DADA2.gg.uncorrected.tar.gz Output/Step55/everything.DADA2.silva.uncorrected.tar.gz Output/Step55/everything.DADA2.homd.uncorrected.tar.gz Output/Step55/everything.Deblur.gg.uncorrected.tar.gz Output/Step55/everything.Deblur.silva.uncorrected.tar.gz Output/Step55/everything.Deblur.homd.uncorrected.tar.gz
+step55-corrected: Output/Step55/everything.DADA2.gg.corrected.tar.gz Output/Step55/everything.DADA2.silva.corrected.tar.gz Output/Step55/everything.DADA2.homd.corrected.tar.gz Output/Step55/everything.Deblur.gg.corrected.tar.gz Output/Step55/everything.Deblur.silva.corrected.tar.gz Output/Step55/everything.Deblur.homd.corrected.tar.gz
+step55-pdf: Output/Step55/everything.DADA2.gg.tmp.tar Output/Step55/everything.DADA2.silva.tmp.tar Output/Step55/everything.DADA2.homd.tmp.tar Output/Step55/everything.Deblur.gg.tmp.tar Output/Step55/everything.Deblur.silva.tmp.tar Output/Step55/everything.Deblur.homd.tmp.tar Output/Step55/everything.DADA2.gg.uncorrected.tar Output/Step55/everything.DADA2.silva.uncorrected.tar Output/Step55/everything.DADA2.homd.uncorrected.tar Output/Step55/everything.Deblur.gg.uncorrected.tar Output/Step55/everything.Deblur.silva.uncorrected.tar Output/Step55/everything.Deblur.homd.uncorrected.tar Output/Step55/everything.DADA2.gg.corrected.tar Output/Step55/everything.DADA2.silva.corrected.tar Output/Step55/everything.DADA2.homd.corrected.tar Output/Step55/everything.Deblur.gg.corrected.tar Output/Step55/everything.Deblur.silva.corrected.tar Output/Step55/everything.Deblur.homd.corrected.tar
+step55: step55-tmp step55-uncorrected step55-corrected step55-pdf
+.PHONY: step55-tmp step55-uncorrected step55-corrected step55-pdf step55
