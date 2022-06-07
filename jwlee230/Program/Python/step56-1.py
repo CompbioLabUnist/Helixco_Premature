@@ -10,9 +10,9 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import seaborn
-import sklearn.neighbors
 import sklearn.manifold
 import sklearn.model_selection
+import sklearn.neighbors
 import sklearn.tree
 import statannotations.Annotator
 import pandas

@@ -163,6 +163,14 @@ if __name__ == "__main__":
 
         seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
 
+        matplotlib.pyplot.xlabel("Prediction")
+        matplotlib.pyplot.ylabel("Real")
+        matplotlib.pyplot.title(site)
+        matplotlib.pyplot.tight_layout()
+        tar_files.append("{0}+heatmap.pdf".format(site))
+        fig.savefig(tar_files[-1])
+        matplotlib.pyplot.close(fig)
+
         # Draw K-fold
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
@@ -183,7 +191,7 @@ if __name__ == "__main__":
 
         for i, feature in enumerate(taxa[:10]):
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box")
+            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1)
             try:
                 statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:
