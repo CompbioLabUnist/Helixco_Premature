@@ -70,6 +70,13 @@ if __name__ == "__main__":
         elif len(set(tmp_data[target])) != len(orders):
             continue
 
+        flag = False
+        for order in orders:
+            if len(tmp_data.loc[(tmp_data[target] == order)]) < args.split:
+                flag = True
+        if flag:
+            continue
+
         # Get Feature Importances
         classifier.fit(tmp_data[taxa], tmp_data[target])
         feature_importances = list(classifier.feature_importances_)
@@ -113,7 +120,7 @@ if __name__ == "__main__":
                 for metric in step00.derivations:
                     try:
                         test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
-                    except AssertionError:
+                    except ZeroDivisionError:
                         continue
 
             if list(filter(lambda x: x == 0, feature_importances)):
@@ -129,7 +136,7 @@ if __name__ == "__main__":
                 for metric in step00.derivations:
                     try:
                         test_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
-                    except AssertionError:
+                    except ZeroDivisionError:
                         continue
 
         score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])

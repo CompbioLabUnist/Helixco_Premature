@@ -133,7 +133,6 @@ def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str 
     assert confusion_matrix.shape == (2, 2)
 
     TP, FP, FN, TN = confusion_matrix[0][0], confusion_matrix[0][1], confusion_matrix[1][0], confusion_matrix[1][1]
-    assert TP and FP and FN and TN
 
     if derivation == "Sensitivity":
         return TP / (TP + FN)
