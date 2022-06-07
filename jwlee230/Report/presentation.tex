@@ -454,6 +454,19 @@
     \subsection{Taxonomy Analyses}
     \begin{frame}
         \frametitle{Volcano plot}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Mouth.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Neonate-3day.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Neonate-5day.pdf}
+                \\
+                \mbox{(a) Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+            \end{array}$
+            \caption{Deferentially expressed taxa}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
@@ -474,28 +487,40 @@
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{cc}
+            $\begin{array}{c}
                 \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Mouth.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-1day.pdf}
                 \\
+                \mbox{(a) Mouth} \\
 
                 \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-3day.pdf}
-                &
+                \\
+                \mbox{(b) Neonate 3-day} \\
+
+
                 \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-5day.pdf}
                 \\
+                \mbox{(c) Neonate 5-day} \\
             \end{array}$
             \caption{Person Correlation with Site separation}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Correlation Plot}
-    \end{frame}
+%    \begin{frame}
+%        \frametitle{Correlation Plot}
+%    \end{frame}
 
     \subsection{Machine Learning}
+    \begin{frame}
+        \frametitle{ML algorithm comparison}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/ML.png}
+            \caption{Classification Comparison \protect\cite{sklearn1}}
+        \end{figure}
+    \end{frame}
+
     \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest with Detailed PTB}
+        \frametitle{Random Forest with (Early vs. Late vs. Full)}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+metrics.pdf}
@@ -510,6 +535,101 @@
         \begin{figure}
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+Violin_0.pdf}
             \caption{RF most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Random Forest with (Early vs. Late + Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+metrics.pdf}
+            \caption{RF evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{RF confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{RF most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{K-Nearest Neighbors with (Early vs. Late vs. Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+metrics.pdf}
+            \caption{KNN evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{KNN confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{KNN most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{K-Nearest Neighbors with (Early vs. Late + Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+metrics.pdf}
+            \caption{KNN evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{KNN confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{KNN most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Support Vector Machine with (Early vs. Late vs. Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+metrics.pdf}
+            \caption{SVM evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{SVM confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{SVM most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Support Vector Machine with (Early vs. Late + Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+metrics.pdf}
+            \caption{SVM evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+heatmap.pdf}
+            \caption{SVM confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+Violin_0.pdf}
+            \caption{SVM most important taxa}
         \end{figure}
     \end{frame}
 
