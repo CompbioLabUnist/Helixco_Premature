@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 20
-MEMS = 200G
+CPUS = 40
+MEMS = 400G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1228,3 +1228,16 @@ step55-corrected: Output/Step55/everything.DADA2.gg.corrected.tar.gz Output/Step
 step55-pdf: Output/Step55/everything.DADA2.gg.tmp.tar Output/Step55/everything.DADA2.silva.tmp.tar Output/Step55/everything.DADA2.homd.tmp.tar Output/Step55/everything.Deblur.gg.tmp.tar Output/Step55/everything.Deblur.silva.tmp.tar Output/Step55/everything.Deblur.homd.tmp.tar Output/Step55/everything.DADA2.gg.uncorrected.tar Output/Step55/everything.DADA2.silva.uncorrected.tar Output/Step55/everything.DADA2.homd.uncorrected.tar Output/Step55/everything.Deblur.gg.uncorrected.tar Output/Step55/everything.Deblur.silva.uncorrected.tar Output/Step55/everything.Deblur.homd.uncorrected.tar Output/Step55/everything.DADA2.gg.corrected.tar Output/Step55/everything.DADA2.silva.corrected.tar Output/Step55/everything.DADA2.homd.corrected.tar Output/Step55/everything.Deblur.gg.corrected.tar Output/Step55/everything.Deblur.silva.corrected.tar Output/Step55/everything.Deblur.homd.corrected.tar
 step55: step55-tmp step55-uncorrected step55-corrected step55-pdf
 .PHONY: step55-tmp step55-uncorrected step55-corrected step55-pdf step55
+
+# Step 56 (K-Nearest Neighbors Classifier)
+Output/Step56:
+	mkdir -p $@
+
+Output/Step56/KNN.%.tar: Python/step56.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step56 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step56/KNN-two.%.tar: Python/step56-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step56 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step56: Output/Step56/KNN.DADA2.gg.tar Output/Step56/KNN.DADA2.silva.tar Output/Step56/KNN.DADA2.homd.tar Output/Step56/KNN.Deblur.gg.tar Output/Step56/KNN.Deblur.silva.tar Output/Step56/KNN.Deblur.homd.tar Output/Step56/KNN-two.DADA2.gg.tar Output/Step56/KNN-two.DADA2.silva.tar Output/Step56/KNN-two.DADA2.homd.tar Output/Step56/KNN-two.Deblur.gg.tar Output/Step56/KNN-two.Deblur.silva.tar Output/Step56/KNN-two.Deblur.homd.tar
+.PHONY: step56
