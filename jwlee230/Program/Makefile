@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 40
-MEMS = 400G
+CPUS = 20
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1254,3 +1254,20 @@ Output/Step57/SVM-two.%.tar: Python/step57-1.py Output/TSV/everything.%.tar.gz O
 
 step57: Output/Step57/SVM.DADA2.gg.tar Output/Step57/SVM.DADA2.silva.tar Output/Step57/SVM.DADA2.homd.tar Output/Step57/SVM.Deblur.gg.tar Output/Step57/SVM.Deblur.silva.tar Output/Step57/SVM.Deblur.homd.tar Output/Step57/SVM-two.DADA2.gg.tar Output/Step57/SVM-two.DADA2.silva.tar Output/Step57/SVM-two.DADA2.homd.tar Output/Step57/SVM-two.Deblur.gg.tar Output/Step57/SVM-two.Deblur.silva.tar Output/Step57/SVM-two.Deblur.homd.tar
 .PHONY: step57
+
+# Step 58 (RandomForest Classifier with Bagging)
+Output/Step58:
+	mkdir -p $@
+
+Output/Step58/RF.%.tar: Python/step58.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step58 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+Output/Step58/RF-two.%.tar: Python/step58-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step58 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step58: Output/Step58/RF.DADA2.gg.tar Output/Step58/RF.DADA2.silva.tar Output/Step58/RF.DADA2.homd.tar Output/Step58/RF.Deblur.gg.tar Output/Step58/RF.Deblur.silva.tar Output/Step58/RF.Deblur.homd.tar Output/Step58/RF-two.DADA2.gg.tar Output/Step58/RF-two.DADA2.silva.tar Output/Step58/RF-two.DADA2.homd.tar Output/Step58/RF-two.Deblur.gg.tar Output/Step58/RF-two.Deblur.silva.tar Output/Step58/RF-two.Deblur.homd.tar
+.PHONY: step58
+
+# Step 59 (K-Nearest Neighbors Classifier with Bagging)
+Output/Step59:
+	mkdir -p $@
