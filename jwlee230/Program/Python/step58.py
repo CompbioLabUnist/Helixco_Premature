@@ -113,18 +113,6 @@ if __name__ == "__main__":
             if not best_features:
                 break
 
-            for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features], tmp_data[target])):
-                x_train, x_test = tmp_data.iloc[train_index][best_features], tmp_data.iloc[test_index][best_features]
-                y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
-
-                classifier.fit(x_train, y_train)
-
-                for metric in step00.derivations:
-                    try:
-                        test_scores.append((len(best_features), metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
-                    except ZeroDivisionError:
-                        continue
-
             if list(filter(lambda x: x == 0, feature_importances)):
                 flag = True
 
@@ -194,7 +182,7 @@ if __name__ == "__main__":
             print(feature)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1)
+            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
             try:
                 statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:

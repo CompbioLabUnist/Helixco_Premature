@@ -1260,10 +1260,10 @@ Output/Step58:
 	mkdir -p $@
 
 Output/Step58/RF.%.tar: Python/step58.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step58 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step58/RF-two.%.tar: Python/step58-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step58 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step58: Output/Step58/RF.DADA2.gg.tar Output/Step58/RF.DADA2.silva.tar Output/Step58/RF.DADA2.homd.tar Output/Step58/RF.Deblur.gg.tar Output/Step58/RF.Deblur.silva.tar Output/Step58/RF.Deblur.homd.tar Output/Step58/RF-two.DADA2.gg.tar Output/Step58/RF-two.DADA2.silva.tar Output/Step58/RF-two.DADA2.homd.tar Output/Step58/RF-two.Deblur.gg.tar Output/Step58/RF-two.Deblur.silva.tar Output/Step58/RF-two.Deblur.homd.tar
 .PHONY: step58

@@ -34,7 +34,7 @@ if __name__ == "__main__":
         raise ValueError("Output file must end with .TAR!!")
 
     input_data = step00.read_pickle(args.input)
-    input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
+    input_data.index = list(map(lambda x: step00.simplified_taxonomy(x[0]) + f"({x[1]})", list(input_data.index)))
     input_data = input_data.iloc[1:, 1:].T
     print(input_data)
 
