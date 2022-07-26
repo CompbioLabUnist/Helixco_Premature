@@ -92,8 +92,12 @@ if __name__ == "__main__":
                 else:
                     raise Exception("Something went wrong!!")
         output_data.fillna(0, inplace=True)
+        print(output_data)
 
-        g = seaborn.clustermap(data=output_data, figsize=(48, 18), row_cluster=False, col_cluster=True, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", vmin=-1, vmax=1, cbar_pos=(-0.04, 0.2, 0.02, 0.6))
+        try:
+            g = seaborn.clustermap(data=output_data, figsize=(48, 18), row_cluster=False, col_cluster=True, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", vmin=-1, vmax=1, cbar_pos=(-0.04, 0.2, 0.02, 0.6))
+        except RecursionError:
+            g = seaborn.clustermap(data=output_data, figsize=(48, 18), row_cluster=False, col_cluster=False, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", vmin=-1, vmax=1, cbar_pos=(-0.04, 0.2, 0.02, 0.6), dendrogram_ratio=(0.2, 0.0))
 
         g.ax_heatmap.set_xlabel("{0} Pathogens".format(len(taxa)))
 
