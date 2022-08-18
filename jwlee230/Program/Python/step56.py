@@ -6,6 +6,7 @@ import itertools
 import multiprocessing
 import tarfile
 import typing
+import imblearn.over_sampling
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -69,9 +70,14 @@ if __name__ == "__main__":
 
     classifier = sklearn.neighbors.KNeighborsClassifier(algorithm="brute", weights="distance", n_jobs=args.cpus)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
+    oversampler = imblearn.over_sampling.RandomOverSampler(random_state=0)
 
     for site in tqdm.tqdm(step00.selected_long_sites):
-        tmp_data = input_data.loc[(input_data["Site"] == site)]
+        selected_data = input_data.loc[(input_data["Site"] == site)]
+
+        X, y = oversampler.fit_resample(selected_data[taxa].to_numpy(), selected_data[target])
+        tmp_data = pandas.DataFrame(X, columns=taxa)
+        tmp_data[target] = y
 
         if len(tmp_data) < args.split:
             continue

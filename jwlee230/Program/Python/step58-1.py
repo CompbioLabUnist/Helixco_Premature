@@ -5,7 +5,7 @@ import argparse
 import itertools
 import tarfile
 import typing
-import imblearn.ensemble
+import imblearn.over_sampling
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -61,11 +61,15 @@ if __name__ == "__main__":
     print(input_data)
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
-    bagging_classifier = imblearn.ensemble.BalancedBaggingClassifier(base_estimator=classifier, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
+    oversampler = imblearn.over_sampling.RandomOverSampler(random_state=0)
 
     for site in tqdm.tqdm(step00.selected_long_sites):
-        tmp_data = input_data.loc[(input_data["Site"] == site)]
+        selected_data = input_data.loc[(input_data["Site"] == site)]
+
+        X, y = oversampler.fit_resample(selected_data[taxa].to_numpy(), selected_data[target])
+        tmp_data = pandas.DataFrame(X, columns=taxa)
+        tmp_data[target] = y
 
         if len(tmp_data) < args.split:
             continue
@@ -121,11 +125,11 @@ if __name__ == "__main__":
                 x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
                 y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
 
-                bagging_classifier.fit(x_train, y_train)
+                classifier.fit(x_train, y_train)
 
                 for metric in step00.derivations:
                     try:
-                        test_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, bagging_classifier.predict(x_test)), metric)))
+                        test_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
                     except ZeroDivisionError:
                         continue
 
@@ -144,9 +148,9 @@ if __name__ == "__main__":
             x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
             y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
 
-            bagging_classifier.fit(x_train, y_train)
+            classifier.fit(x_train, y_train)
 
-            for real, prediction in zip(y_test, bagging_classifier.predict(x_test)):
+            for real, prediction in zip(y_test, classifier.predict(x_test)):
                 heatmap_data.loc[real, prediction] += 1
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))

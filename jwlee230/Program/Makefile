@@ -1267,7 +1267,3 @@ Output/Step58/RF-two.%.tar: Python/step58-1.py Output/TSV/everything.%.tar.gz Ou
 
 step58: Output/Step58/RF.DADA2.gg.tar Output/Step58/RF.DADA2.silva.tar Output/Step58/RF.DADA2.homd.tar Output/Step58/RF.Deblur.gg.tar Output/Step58/RF.Deblur.silva.tar Output/Step58/RF.Deblur.homd.tar Output/Step58/RF-two.DADA2.gg.tar Output/Step58/RF-two.DADA2.silva.tar Output/Step58/RF-two.DADA2.homd.tar Output/Step58/RF-two.Deblur.gg.tar Output/Step58/RF-two.Deblur.silva.tar Output/Step58/RF-two.Deblur.homd.tar
 .PHONY: step58
-
-# Step 59 (K-Nearest Neighbors Classifier with Bagging)
-Output/Step59:
-	mkdir -p $@
