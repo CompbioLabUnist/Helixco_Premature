@@ -191,7 +191,7 @@ if __name__ == "__main__":
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature[0], 1) + f"({feature[1]})")
+            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
             matplotlib.pyplot.title(site)
             matplotlib.pyplot.tight_layout()
 

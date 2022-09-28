@@ -51,13 +51,13 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
-    input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
-    print(input_data)
-
     target = "Detail Premature"
     orders = step00.detailed_PTB
     # target = "Data"
     # orders = ["First", "Second", "Third"]
+
+    input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
+    print(input_data)
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
@@ -198,7 +198,7 @@ if __name__ == "__main__":
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature[0], 1) + f"({feature[1]})")
+            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
             matplotlib.pyplot.title(site)
             matplotlib.pyplot.tight_layout()
 

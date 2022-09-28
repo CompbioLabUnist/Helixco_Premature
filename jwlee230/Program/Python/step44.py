@@ -53,7 +53,6 @@ if __name__ == "__main__":
     input_data = step00.read_pickle(args.input)
     input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
     input_data.sort_index(inplace=True)
-    input_data = input_data.groupby(input_data.index).sum().T
     taxa = list(input_data.columns)
     print(input_data)
 

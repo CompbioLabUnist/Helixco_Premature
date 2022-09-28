@@ -115,8 +115,6 @@ if __name__ == "__main__":
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
-    del input_data["#OTU ID"]
-    input_data = input_data.groupby("taxonomy").sum().T
     taxonomy_list = list(input_data.columns)
     print(input_data)
 
