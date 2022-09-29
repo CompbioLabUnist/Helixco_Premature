@@ -2,7 +2,6 @@
 step36-1.py: Draw cluster map plot within bacteria for Macrogen data
 """
 import argparse
-import itertools
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
@@ -64,18 +63,19 @@ if __name__ == "__main__":
     print(input_data)
 
     pathogens = list(input_data.columns)
+    print("Pathgens:", len(pathogens))
 
     output_data = pandas.DataFrame()
     with multiprocessing.Pool(args.cpus) as pool:
         if args.pearson:
             output_data = input_data.corr(method="pearson").stack().reset_index(name="correlation")
-            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(pearson, itertools.product(pathogens, repeat=2)))
+            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(pearson, output_data[["level_0", "level_1"]].itertuples(index=False, name=None)))
         elif args.spearman:
             output_data = input_data.corr(method="spearman").stack().reset_index(name="correlation")
-            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(spearman, itertools.product(pathogens, repeat=2)))
+            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(spearman, output_data[["level_0", "level_1"]].itertuples(index=False, name=None)))
         elif args.kendall:
             output_data = input_data.corr(method="kendall").stack().reset_index(name="correlation")
-            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(kendall, itertools.product(pathogens, repeat=2)))
+            output_data["-log10(p)"] = -1 * numpy.log10(pool.starmap(kendall, output_data[["level_0", "level_1"]].itertuples(index=False, name=None)))
         else:
             raise Exception("Something went wrong!!")
     output_data = output_data.replace(numpy.inf, numpy.nan).dropna(subset=["-log10(p)"], axis="index")
