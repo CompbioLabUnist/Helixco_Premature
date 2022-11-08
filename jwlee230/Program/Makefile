@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 40
-MEMS = 400G
+CPUS = 10
+MEMS = 100G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -892,7 +892,7 @@ step41: step41-everything-DADA2 step41-everything-Deblur
 Output/Step42:
 	mkdir -p $@
 
-Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step42 build.log
+Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step42 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar

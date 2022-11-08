@@ -94,15 +94,15 @@ def draw_all(taxo: str, disease: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", type=str, help="Input TSV file")
+    parser.add_argument("input", type=str, help="Input TAR.gz file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--cpus", type=int, default=1, help="CPU to use")
 
     args = parser.parse_args()
 
-    if not args.input.endswith(".tsv"):
-        raise ValueError("Input file must end with .TSV!!")
+    if not args.input.endswith(".tar.gz"):
+        raise ValueError("Input file must end with .TAR.gz!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".tar"):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1)
+    input_data = step00.read_pickle(args.input).T
     taxonomy_list = list(input_data.columns)
     print(input_data)
 
