@@ -11,4 +11,3 @@ if (($# == 3)); then
 else
     echo "This script will work if and only if it has **three** arguments"
 fi
-

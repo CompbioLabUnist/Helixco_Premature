@@ -15,14 +15,16 @@ main <- function(input, output)
     taxonomy_ID = input_data[length(input_data)]
     print(head(taxonomy_ID))
 
-    input_data <- log(input_data[2:(length(input_data)-1)])
+    input_data <- log(input_data[2:(length(input_data)-1)] + 1)
     first_batch <- vapply(strsplit(colnames(input_data), "-"), `[`, 1, FUN.VALUE=character(1))
-    print(head(input_data))
+    second_batch <- vapply(strsplit(colnames(input_data), "-"), `[`, 4, FUN.VALUE=character(1))
     print(first_batch)
+    print(second_batch)
 
-    output_data <- removeBatchEffect(input_data, batch=first_batch)
-    output_data <- exp(output_data)
-    # output_data[output_data < 0] <- 0
+    output_data <- removeBatchEffect(input_data, batch=first_batch, batch2=second_batch)
+    output_data <- exp(output_data) - 1
+    output_data[output_data < exp(1)] <- 0
+    output_data[input_data == 0] <- 0
 
     output_data <- cbind(OTU_ID, output_data, taxonomy_ID)
 

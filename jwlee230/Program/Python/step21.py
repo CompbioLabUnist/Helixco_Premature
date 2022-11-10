@@ -17,7 +17,6 @@ if __name__ == "__main__":
     if not args.input.endswith(".tsv"):
         raise ValueError("Input file must end with .TSV!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"])
-    input_data = input_data.groupby(["taxonomy"]).sum()
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="#OTU ID").groupby(["taxonomy"]).sum()
     print(input_data)
     step00.make_pickle(args.output, input_data)

@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 10
-MEMS = 100G
+CPUS = 100
+MEMS = 1000G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -323,53 +323,29 @@ step08: step08-DADA2-gg step08-DADA2-silva step08-DADA2-homd step08-Deblur-gg st
 Output/TSV:
 	mkdir -p $@
 
-Output/TSV/Stool.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/Stool.table.qza Output/Taxonomy/Stool.DADA2.%.qza | Output/TSV build.log
+Output/TSV/everything.DADA2.%.uncorrected.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/Stool.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/Stool.table.qza Output/Taxonomy/Stool.Deblur.%.qza | Output/TSV build.log
+Output/TSV/everything.Deblur.%.uncorrected.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/everything.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/everything.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/EBI.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/EBI.table.qza Output/Taxonomy/EBI.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/EBI.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/EBI.table.qza Output/Taxonomy/EBI.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/HMP.DADA2.%.tmp.tsv: Bash/export_TSV.bash Output/DADA2/HMP.table.qza Output/Taxonomy/HMP.DADA2.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/HMP.Deblur.%.tmp.tsv: Bash/export_TSV.bash Output/Deblur/HMP.table.qza Output/Taxonomy/HMP.Deblur.%.qza | Output/TSV build.log
-	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/TSV/Macrogen.tmp.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
+Output/TSV/Macrogen.uncorrected.tsv: Python/step09.py Data/Macrogen/First/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Mouth/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Vagina/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-1day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-3day/otu_table_shared_with_tax_assignment.xlsx Data/Macrogen/Second+Third/Neonate-5day/otu_table_shared_with_tax_assignment.xlsx Data/Metadata/readable.xlsx | Output/TSV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/TSV/%.uncorrected.tsv: Python/step09-1.py Output/TSV/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stdout
-
-Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.tmp.tsv | build.log
+Output/TSV/%.tsv: R/remove_batch.R Output/TSV/%.uncorrected.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
-# Output/TSV/Stool.DADA2.gg.tmp.tsv Output/TSV/Stool.DADA2.silva.tmp.tsv Output/TSV/Stool.DADA2.homd.tmp.tsv Output/TSV/Stool.Deblur.gg.tmp.tsv Output/TSV/Stool.Deblur.silva.tmp.tsv Output/TSV/Stool.Deblur.homd.tmp.tsv
-step09-uncorrected: Output/TSV/everything.DADA2.gg.uncorrected.tsv Output/TSV/everything.DADA2.silva.uncorrected.tsv Output/TSV/everything.DADA2.homd.uncorrected.tsv Output/TSV/everything.Deblur.gg.uncorrected.tsv Output/TSV/everything.Deblur.silva.uncorrected.tsv Output/TSV/everything.Deblur.homd.uncorrected.tsv Output/TSV/Macrogen.uncorrected.tsv Output/TSV/EBI.DADA2.gg.uncorrected.tsv Output/TSV/EBI.DADA2.silva.uncorrected.tsv Output/TSV/EBI.DADA2.homd.uncorrected.tsv Output/TSV/EBI.Deblur.gg.uncorrected.tsv Output/TSV/EBI.Deblur.silva.uncorrected.tsv Output/TSV/EBI.Deblur.homd.uncorrected.tsv Output/TSV/HMP.DADA2.gg.uncorrected.tsv Output/TSV/HMP.DADA2.silva.uncorrected.tsv Output/TSV/HMP.DADA2.homd.uncorrected.tsv Output/TSV/HMP.Deblur.gg.uncorrected.tsv Output/TSV/HMP.Deblur.silva.uncorrected.tsv Output/TSV/HMP.Deblur.homd.uncorrected.tsv
-step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Macrogen.tsv Output/TSV/EBI.DADA2.gg.tsv Output/TSV/EBI.DADA2.silva.tsv Output/TSV/EBI.DADA2.homd.tsv Output/TSV/EBI.Deblur.gg.tsv Output/TSV/EBI.Deblur.silva.tsv Output/TSV/EBI.Deblur.homd.tsv Output/TSV/HMP.DADA2.gg.tsv Output/TSV/HMP.DADA2.silva.tsv Output/TSV/HMP.DADA2.homd.tsv Output/TSV/HMP.Deblur.gg.tsv Output/TSV/HMP.Deblur.silva.tsv Output/TSV/HMP.Deblur.homd.tsv
-# Output/TSV/Stool.DADA2.gg.tsv Output/TSV/Stool.DADA2.silva.tsv Output/TSV/Stool.DADA2.homd.tsv Output/TSV/Stool.Deblur.gg.tsv Output/TSV/Stool.Deblur.silva.tsv Output/TSV/Stool.Deblur.homd.tsv
-step09: step09-tmp step09-uncorrected step09-limma
-.PHONY: step09-tmp step09-uncorrected step09-limma step09
+# step09-tmp: Output/TSV/everything.DADA2.gg.tmp.tsv Output/TSV/everything.DADA2.silva.tmp.tsv Output/TSV/everything.DADA2.homd.tmp.tsv Output/TSV/everything.Deblur.gg.tmp.tsv Output/TSV/everything.Deblur.silva.tmp.tsv Output/TSV/everything.Deblur.homd.tmp.tsv Output/TSV/Macrogen.tmp.tsv Output/TSV/EBI.DADA2.gg.tmp.tsv Output/TSV/EBI.DADA2.silva.tmp.tsv Output/TSV/EBI.DADA2.homd.tmp.tsv Output/TSV/EBI.Deblur.gg.tmp.tsv Output/TSV/EBI.Deblur.silva.tmp.tsv Output/TSV/EBI.Deblur.homd.tmp.tsv Output/TSV/HMP.DADA2.gg.tmp.tsv Output/TSV/HMP.DADA2.silva.tmp.tsv Output/TSV/HMP.DADA2.homd.tmp.tsv Output/TSV/HMP.Deblur.gg.tmp.tsv Output/TSV/HMP.Deblur.silva.tmp.tsv Output/TSV/HMP.Deblur.homd.tmp.tsv
+step09-uncorrected: Output/TSV/everything.DADA2.gg.uncorrected.tsv Output/TSV/everything.DADA2.silva.uncorrected.tsv Output/TSV/everything.DADA2.homd.uncorrected.tsv Output/TSV/everything.Deblur.gg.uncorrected.tsv Output/TSV/everything.Deblur.silva.uncorrected.tsv Output/TSV/everything.Deblur.homd.uncorrected.tsv Output/TSV/Macrogen.uncorrected.tsv
+step09-limma: Output/TSV/everything.DADA2.gg.tsv Output/TSV/everything.DADA2.silva.tsv Output/TSV/everything.DADA2.homd.tsv Output/TSV/everything.Deblur.gg.tsv Output/TSV/everything.Deblur.silva.tsv Output/TSV/everything.Deblur.homd.tsv Output/TSV/Macrogen.tsv
+step09: step09-uncorrected step09-limma
+.PHONY: step09-uncorrected step09-limma step09
 
 # Step 21 (Read & clearify first TSV into pandas)
 Output/TSV/%.tar.gz: Python/step21.py Output/TSV/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Macrogen.tar.gz Output/TSV/EBI.DADA2.gg.tar.gz Output/TSV/EBI.DADA2.silva.tar.gz Output/TSV/EBI.DADA2.homd.tar.gz Output/TSV/EBI.Deblur.gg.tar.gz Output/TSV/EBI.Deblur.silva.tar.gz Output/TSV/EBI.Deblur.homd.tar.gz Output/TSV/HMP.DADA2.gg.tar.gz Output/TSV/HMP.DADA2.silva.tar.gz Output/TSV/HMP.DADA2.homd.tar.gz Output/TSV/HMP.Deblur.gg.tar.gz Output/TSV/HMP.Deblur.silva.tar.gz Output/TSV/HMP.Deblur.homd.tar.gz
-# Output/TSV/Stool.DADA2.gg.tar.gz Output/TSV/Stool.DADA2.silva.tar.gz Output/TSV/Stool.DADA2.homd.tar.gz Output/TSV/Stool.Deblur.gg.tar.gz Output/TSV/Stool.Deblur.silva.tar.gz Output/TSV/Stool.Deblur.homd.tar.gz
+step21: Output/TSV/everything.DADA2.gg.tar.gz Output/TSV/everything.DADA2.silva.tar.gz Output/TSV/everything.DADA2.homd.tar.gz Output/TSV/everything.Deblur.gg.tar.gz Output/TSV/everything.Deblur.silva.tar.gz Output/TSV/everything.Deblur.homd.tar.gz Output/TSV/Macrogen.tar.gz Output/TSV/everything.DADA2.gg.uncorrected.tar.gz Output/TSV/everything.DADA2.silva.uncorrected.tar.gz Output/TSV/everything.DADA2.homd.uncorrected.tar.gz Output/TSV/everything.Deblur.gg.uncorrected.tar.gz Output/TSV/everything.Deblur.silva.uncorrected.tar.gz Output/TSV/everything.Deblur.homd.uncorrected.tar.gz Output/TSV/Macrogen.uncorrected.tar.gz
 .PHONY: step21
 
 # Step 22 (Making & Draw t-SNE)
@@ -1210,9 +1186,6 @@ step54: step54-tsv step54-in step54-res step54-default step54-cladogram
 Output/Step55:
 	mkdir -p $@
 
-Output/Step55/%.tmp.tar.gz: Python/step11.py Output/TSV/%.tmp.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
 Output/Step55/%.uncorrected.tar.gz: Python/step11.py Output/TSV/%.uncorrected.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -1222,12 +1195,11 @@ Output/Step55/%.corrected.tar.gz: Python/step11.py Output/TSV/%.tsv Output/Metad
 Output/Step55/%.tar: Python/step22-3.py Output/Step55/%.tar.gz | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step55-tmp: Output/Step55/everything.DADA2.gg.tmp.tar.gz Output/Step55/everything.DADA2.silva.tmp.tar.gz Output/Step55/everything.DADA2.homd.tmp.tar.gz Output/Step55/everything.Deblur.gg.tmp.tar.gz Output/Step55/everything.Deblur.silva.tmp.tar.gz Output/Step55/everything.Deblur.homd.tmp.tar.gz
 step55-uncorrected: Output/Step55/everything.DADA2.gg.uncorrected.tar.gz Output/Step55/everything.DADA2.silva.uncorrected.tar.gz Output/Step55/everything.DADA2.homd.uncorrected.tar.gz Output/Step55/everything.Deblur.gg.uncorrected.tar.gz Output/Step55/everything.Deblur.silva.uncorrected.tar.gz Output/Step55/everything.Deblur.homd.uncorrected.tar.gz
 step55-corrected: Output/Step55/everything.DADA2.gg.corrected.tar.gz Output/Step55/everything.DADA2.silva.corrected.tar.gz Output/Step55/everything.DADA2.homd.corrected.tar.gz Output/Step55/everything.Deblur.gg.corrected.tar.gz Output/Step55/everything.Deblur.silva.corrected.tar.gz Output/Step55/everything.Deblur.homd.corrected.tar.gz
-step55-pdf: Output/Step55/everything.DADA2.gg.tmp.tar Output/Step55/everything.DADA2.silva.tmp.tar Output/Step55/everything.DADA2.homd.tmp.tar Output/Step55/everything.Deblur.gg.tmp.tar Output/Step55/everything.Deblur.silva.tmp.tar Output/Step55/everything.Deblur.homd.tmp.tar Output/Step55/everything.DADA2.gg.uncorrected.tar Output/Step55/everything.DADA2.silva.uncorrected.tar Output/Step55/everything.DADA2.homd.uncorrected.tar Output/Step55/everything.Deblur.gg.uncorrected.tar Output/Step55/everything.Deblur.silva.uncorrected.tar Output/Step55/everything.Deblur.homd.uncorrected.tar Output/Step55/everything.DADA2.gg.corrected.tar Output/Step55/everything.DADA2.silva.corrected.tar Output/Step55/everything.DADA2.homd.corrected.tar Output/Step55/everything.Deblur.gg.corrected.tar Output/Step55/everything.Deblur.silva.corrected.tar Output/Step55/everything.Deblur.homd.corrected.tar
-step55: step55-tmp step55-uncorrected step55-corrected step55-pdf
-.PHONY: step55-tmp step55-uncorrected step55-corrected step55-pdf step55
+step55-pdf: Output/Step55/everything.DADA2.gg.uncorrected.tar Output/Step55/everything.DADA2.silva.uncorrected.tar Output/Step55/everything.DADA2.homd.uncorrected.tar Output/Step55/everything.Deblur.gg.uncorrected.tar Output/Step55/everything.Deblur.silva.uncorrected.tar Output/Step55/everything.Deblur.homd.uncorrected.tar Output/Step55/everything.DADA2.gg.corrected.tar Output/Step55/everything.DADA2.silva.corrected.tar Output/Step55/everything.DADA2.homd.corrected.tar Output/Step55/everything.Deblur.gg.corrected.tar Output/Step55/everything.Deblur.silva.corrected.tar Output/Step55/everything.Deblur.homd.corrected.tar
+step55: step55-uncorrected step55-corrected step55-pdf
+.PHONY: step55-uncorrected step55-corrected step55-pdf step55
 
 # Step 56 (K-Nearest Neighbors Classifier)
 Output/Step56:
@@ -1267,3 +1239,12 @@ Output/Step58/RF-two.%.tar: Python/step58-1.py Output/TSV/everything.%.tar.gz Ou
 
 step58: Output/Step58/RF.DADA2.gg.tar Output/Step58/RF.DADA2.silva.tar Output/Step58/RF.DADA2.homd.tar Output/Step58/RF.Deblur.gg.tar Output/Step58/RF.Deblur.silva.tar Output/Step58/RF.Deblur.homd.tar Output/Step58/RF-two.DADA2.gg.tar Output/Step58/RF-two.DADA2.silva.tar Output/Step58/RF-two.DADA2.homd.tar Output/Step58/RF-two.Deblur.gg.tar Output/Step58/RF-two.Deblur.silva.tar Output/Step58/RF-two.Deblur.homd.tar
 .PHONY: step58
+
+# Step 59 (Violin Plots for Taxonomy Distribution)
+Output/Step59:
+	mkdir -p $@
+
+Output/Step59/%.tar: Python/step59.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step59 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step59: Output/Step59/everything.DADA2.homd.uncorrected.tar Output/Step59/everything.DADA2.homd.tar

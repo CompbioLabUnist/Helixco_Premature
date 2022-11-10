@@ -8,6 +8,8 @@ import pickle
 import tarfile
 import tempfile
 import typing
+import matplotlib.patches
+import matplotlib.transforms
 import numpy
 
 key = bytes("asdf", "UTF-8")
@@ -164,6 +166,27 @@ def star(p: float) -> str:
         return "ns"
     else:
         raise ValueError("Something went wrong: {0} !!".format(p))
+
+
+def confidence_ellipse(x, y, ax, n_std=2.0, facecolor="none", **kwargs):
+    if x.size != y.size:
+        raise ValueError("x and y must be the same size")
+
+    cov = numpy.cov(x, y)
+    pearson = cov[0, 1] / numpy.sqrt(cov[0, 0] * cov[1, 1])
+    ell_radius_x = numpy.sqrt(1 + pearson)
+    ell_radius_y = numpy.sqrt(1 - pearson)
+    ellipse = matplotlib.patches.Ellipse((0, 0), width=ell_radius_x * 2, height=ell_radius_y * 2, facecolor=facecolor, **kwargs)
+
+    scale_x = numpy.sqrt(cov[0, 0]) * n_std
+    mean_x = numpy.mean(x)
+
+    scale_y = numpy.sqrt(cov[1, 1]) * n_std
+    mean_y = numpy.mean(y)
+
+    transf = matplotlib.transforms.Affine2D().rotate_deg(45).scale(scale_x, scale_y).translate(mean_x, mean_y)
+    ellipse.set_transform(transf + ax.transData)
+    return ax.add_patch(ellipse)
 
 
 if __name__ == "__main__":

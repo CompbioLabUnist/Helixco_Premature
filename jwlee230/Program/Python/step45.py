@@ -25,7 +25,7 @@ def draw_all(meta: str, alpha: str) -> str:
     order = sorted(set(metadata[meta]))
 
     try:
-        seaborn.violinplot(data=metadata, x=meta, y=alpha, ax=ax, order=order, linewidth=10, cut=1)
+        seaborn.violinplot(data=metadata, x=meta, y=alpha, ax=ax, order=order, linewidth=5, cut=1)
     except TypeError:
         matplotlib.pyplot.close(fig)
         return ""
@@ -53,7 +53,7 @@ def draw_alpha(site: str, meta: str, alpha: str) -> str:
     order = sorted(set(output_data[meta]))
 
     try:
-        seaborn.violinplot(data=output_data, x=meta, y=alpha, ax=ax, order=order, linewidth=10, cut=1)
+        seaborn.violinplot(data=output_data, x=meta, y=alpha, ax=ax, order=order, linewidth=5, cut=1)
     except TypeError:
         matplotlib.pyplot.close(fig)
         return ""
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         figures = pool.starmap(draw_all, itertools.product(metadata_columns, alphas))
         figures += pool.starmap(draw_alpha, itertools.product(step00.selected_long_sites, metadata_columns, alphas))
-        figures = list(filter(None, figures))
+    figures = list(filter(None, figures))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
