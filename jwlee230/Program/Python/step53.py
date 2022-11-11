@@ -45,6 +45,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         output_data = pandas.DataFrame(pool.starmap(run, itertools.product(list(data.index), list(data.columns))), columns=["Site", "Abundance"])
+    output_data = output_data.loc[(output_data["Abundance"] > 0)]
     print(output_data)
 
     matplotlib.use("Agg")
@@ -55,5 +56,6 @@ if __name__ == "__main__":
 
     seaborn.histplot(data=output_data, x="Abundance", hue="Site", stat="probability", kde=True, multiple="stack", ax=ax)
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

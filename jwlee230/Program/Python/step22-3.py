@@ -16,17 +16,19 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", type=str, help="input TAR.gz file")
+    parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("output", type=str, help="Output TAR file")
 
     args = parser.parse_args()
 
-    if not args.output.endswith(".tar"):
+    if not args.input.endswith(".tsv"):
+        raise ValueError("Input file must end with .tsv!!")
+    elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .tar!!")
 
     tar_files = list()
 
-    input_data: pandas.DataFrame = step00.read_pickle(args.input)
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
     columns = set(input_data.columns)
