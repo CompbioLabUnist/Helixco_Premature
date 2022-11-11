@@ -282,34 +282,52 @@
         \end{figure}
     \end{frame}
 
-    \subsection{Batch effect removal}
-    \begin{frame}
-        \frametitle{t-SNE before \& after}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step55/everything.DADA2.homd.uncorrected/All+Data.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Step55/everything.DADA2.homd.corrected/All+Data.pdf}
-                \\
-                \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
-            \end{array}$
-            \caption{t-SNE plot before \& after batch correction}
-        \end{figure}
-    \end{frame}
-
+    \subsection{Taxonomy Overview}
     \begin{frame}
         \frametitle{Abundance Distribution}
 
         \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Step53/everything.DADA2.homd.pdf}
+            \caption{Abundance distribution}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{t-SNE with Abundance}
+
+        \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step53/everything.DADA2.homd.uncorrected.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/All+Data.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Step53/everything.DADA2.homd.corrected.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd/Mouth+Data.pdf}
                 \\
-                \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
-            \caption{Abundance distribution before \& after batch correction}
+            \caption{t-SNE plot with Taxonomy Abundance}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Proportion Distribution}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Step53_Proportion/everything.DADA2.homd.pdf}
+            \caption{Proportion distribution}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{t-SNE with Proportion}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/All+Data.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd/Mouth+Data.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
+            \end{array}$
+            \caption{t-SNE plot with Taxonomy Abundance}
         \end{figure}
     \end{frame}
 
@@ -334,99 +352,48 @@
 
         \begin{figure}
             $\begin{array}{cc}
-                 \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2.uncorrected/All+Data+faith_pd.pdf}
-                 &
-                 \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Data+faith_pd.pdf}
-                 \\
-                 \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
-            \end{array}$
-            \caption{Data \& Faith PD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2.uncorrected/All+Data+observed_otus.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+faith_pd.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Data+observed_otus.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+faith_pd.pdf}
                 \\
-                \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
-            \end{array}$
-            \caption{Data \& Observed OTUs}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2.uncorrected/All+Data+pielou_e.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Data+pielou_e.pdf}
-                \\
-                \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
-            \end{array}$
-            \caption{Data \& Pielou Evenness}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2.uncorrected/All+Data+shannon.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Data+shannon.pdf}
-                \\
-                \mbox{(a) Uncorrected} & \mbox{(b) Corrected} \\
-            \end{array}$
-            \caption{Data \& Shannon Entropy}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+faith_pd.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-3day+Detail_Premature+faith_pd.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-5day+Detail_Premature+faith_pd.pdf}
-                \\
-                \mbox{(a) Mother Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
             \caption{Detail premature \& Faith's PD}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+observed_otus.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+observed_otus.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-3day+Detail_Premature+observed_otus.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-5day+Detail_Premature+observed_otus.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+observed_otus.pdf}
                 \\
-                \mbox{(a) Mother Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
             \caption{Detail premature \& Observed OTUs}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+pielou_e.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+pielou_e.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-3day+Detail_Premature+pielou_e.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-5day+Detail_Premature+pielou_e.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+pielou_e.pdf}
                 \\
-                \mbox{(a) Mother Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouthy} \\
             \end{array}$
             \caption{Detail premature \& Pielou Evenness}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+shannon.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+shannon.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-3day+Detail_Premature+shannon.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-5day+Detail_Premature+shannon.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Neonate-3day+Detail_Premature+shannon.pdf}
                 \\
-                \mbox{(a) Mother Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
             \caption{Detail premature \& Shannon Entropy}
         \end{figure}
+
     \end{frame}
 
     \begin{frame}[allowframebreaks]
