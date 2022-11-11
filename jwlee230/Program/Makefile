@@ -1082,20 +1082,22 @@ step52-Deblur-homd: Output/Step52/everything.Deblur.homd.qza Output/Step52/every
 step52: step52-DADA2-gg step52-DADA2-silva step52-DADA2-homd step52-Deblur-gg step52-Deblur-silva step52-Deblur-homd
 .PHONY: step52-DADA2-gg step52-DADA2-silva step52-DADA2-homd step52-Deblur-gg step52-Deblur-silva step52-Deblur-homd step52
 
-# Step 53 (Abundance Distribution)
-Output/Step53:
+# Step 53 (Abundance/Proportion Distribution)
+Output/Step53 Output/Step53_Proportion:
 	mkdir -p $@
 
-Output/Step53/%.uncorrected.pdf: Python/step53.py Output/TSV/%.uncorrected.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+Output/Step53/%.pdf: Python/step53.py Output/TSV/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step53/%.corrected.pdf: Python/step53.py Output/TSV/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+Output/Step53_Proportion/%.pdf: Python/step53-2.py Output/TSV_Proportion/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step53-uncorrected: Output/Step53/everything.DADA2.gg.uncorrected.pdf Output/Step53/everything.DADA2.silva.uncorrected.pdf Output/Step53/everything.DADA2.homd.uncorrected.pdf Output/Step53/everything.Deblur.gg.uncorrected.pdf Output/Step53/everything.Deblur.silva.uncorrected.pdf Output/Step53/everything.Deblur.homd.uncorrected.pdf
-step53-corrected: Output/Step53/everything.DADA2.gg.corrected.pdf Output/Step53/everything.DADA2.silva.corrected.pdf Output/Step53/everything.DADA2.homd.corrected.pdf Output/Step53/everything.Deblur.gg.corrected.pdf Output/Step53/everything.Deblur.silva.corrected.pdf Output/Step53/everything.Deblur.homd.corrected.pdf
-step53: step53-uncorrected step53-corrected
-.PHONY: step53-uncorrected step53-corrected step53
+step53-corrected: Output/Step53/everything.DADA2.gg.pdf Output/Step53/everything.DADA2.silva.pdf Output/Step53/everything.DADA2.homd.pdf Output/Step53/everything.Deblur.gg.pdf Output/Step53/everything.Deblur.silva.pdf Output/Step53/everything.Deblur.homd.pdf
+step53-uncorrected-Proportion: Output/Step53_Proportion/everything.DADA2.gg.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.silva.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.homd.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.gg.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.silva.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.homd.uncorrected.pdf
+step53-corrected-Proportion: Output/Step53_Proportion/everything.DADA2.gg.pdf Output/Step53_Proportion/everything.DADA2.silva.pdf Output/Step53_Proportion/everything.DADA2.homd.pdf Output/Step53_Proportion/everything.Deblur.gg.pdf Output/Step53_Proportion/everything.Deblur.silva.pdf Output/Step53_Proportion/everything.Deblur.homd.pdf
+step53: step53-uncorrected step53-corrected step53-uncorrected-Proportion step53-corrected-Proportion
+.PHONY: step53-uncorrected step53-corrected step53-uncorrected-Proportion step53-corrected-Proportion step53
 
 # Step 54 (LEfSe analysis after batch correction)
 Output/Step54 Output/Step54/Default Output/Step54/Cladogram:
@@ -1143,24 +1145,7 @@ step54-cladogram: $(addprefix Output/Step54/Cladogram/everything.DADA2.gg.,$(add
 step54: step54-tsv step54-in step54-res step54-default step54-cladogram
 .PHONY: step54-tsv step54-in step54-res step54-default step54-cladogram step54
 
-# Step 55 (Making & Draw t-SNE)
-Output/Step55:
-	mkdir -p $@
-
-Output/Step55/%.uncorrected.tar.gz: Python/step11.py Output/TSV/%.uncorrected.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step55/%.corrected.tar.gz: Python/step11.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step55 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step55/%.tar: Python/step22-3.py Output/Step55/%.tar.gz | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-step55-uncorrected: Output/Step55/everything.DADA2.gg.uncorrected.tar.gz Output/Step55/everything.DADA2.silva.uncorrected.tar.gz Output/Step55/everything.DADA2.homd.uncorrected.tar.gz Output/Step55/everything.Deblur.gg.uncorrected.tar.gz Output/Step55/everything.Deblur.silva.uncorrected.tar.gz Output/Step55/everything.Deblur.homd.uncorrected.tar.gz
-step55-corrected: Output/Step55/everything.DADA2.gg.corrected.tar.gz Output/Step55/everything.DADA2.silva.corrected.tar.gz Output/Step55/everything.DADA2.homd.corrected.tar.gz Output/Step55/everything.Deblur.gg.corrected.tar.gz Output/Step55/everything.Deblur.silva.corrected.tar.gz Output/Step55/everything.Deblur.homd.corrected.tar.gz
-step55-pdf: Output/Step55/everything.DADA2.gg.uncorrected.tar Output/Step55/everything.DADA2.silva.uncorrected.tar Output/Step55/everything.DADA2.homd.uncorrected.tar Output/Step55/everything.Deblur.gg.uncorrected.tar Output/Step55/everything.Deblur.silva.uncorrected.tar Output/Step55/everything.Deblur.homd.uncorrected.tar Output/Step55/everything.DADA2.gg.corrected.tar Output/Step55/everything.DADA2.silva.corrected.tar Output/Step55/everything.DADA2.homd.corrected.tar Output/Step55/everything.Deblur.gg.corrected.tar Output/Step55/everything.Deblur.silva.corrected.tar Output/Step55/everything.Deblur.homd.corrected.tar
-step55: step55-uncorrected step55-corrected step55-pdf
-.PHONY: step55-uncorrected step55-corrected step55-pdf step55
+# Step 55 (Clustermap)
 
 # Step 56 (K-Nearest Neighbors Classifier)
 Output/Step56:
