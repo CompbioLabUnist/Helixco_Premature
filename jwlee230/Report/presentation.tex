@@ -286,48 +286,136 @@
     \begin{frame}
         \frametitle{Abundance Distribution}
 
+        \begin{columns}
+            \begin{column}{0.4 \linewidth}
+                \begin{block}{Abundance}
+                    \begin{itemize}
+                        \item Minimum: 0
+                        \item Mean: 1.8
+                        \item Median: 0.0
+                        \item Maximum: 8848.0
+                    \end{itemize}
+                \end{block}
+            \end{column}
+
+            \begin{column}{0.4 \linewidth}
+                \begin{block}{Abundance without Zero}
+                    \begin{itemize}
+                        \item Minimum: 1.0
+                        \item Mean: 189.6
+                        \item Median: 28.0
+                        \item Maximum: 8848.0
+                    \end{itemize}
+                \end{block}
+            \end{column}
+        \end{columns}
+
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Step53/everything.DADA2.homd.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/Step53/everything.DADA2.homd.uncorrected.pdf}
             \caption{Abundance distribution}
         \end{figure}
     \end{frame}
 
     \begin{frame}
+        \frametitle{Clustermap with Abundance}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Step55/everything.DADA2.homd.uncorrected.pdf}
+            \caption{Clutermap with Abundance}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
         \frametitle{t-SNE with Abundance}
 
         \begin{figure}
             $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/All+Data.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd/Mouth+Data.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/Mouth+Data.pdf}
                 \\
                 \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
-            \caption{t-SNE plot with Taxonomy Abundance}
+            \caption{t-SNE plot of Abundance with Data Batch}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/All+Detail_Premature.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
+            \end{array}$
+            \caption{t-SNE plot of Abundance with Premature}
         \end{figure}
     \end{frame}
 
     \begin{frame}
         \frametitle{Proportion Distribution}
 
+        \begin{columns}
+            \begin{column}{0.4 \linewidth}
+                \begin{block}{Proportion}
+                    \begin{itemize}
+                        \item Minimum: 0.0
+                        \item Mean: 0.00008
+                        \item Median: 0.0
+                        \item Maximum: 0.793
+                    \end{itemize}
+                \end{block}
+            \end{column}
+
+            \begin{column}{0.4 \linewidth}
+                \begin{block}{Proportion without Zero}
+                    \begin{itemize}
+                        \item Minimum: 0.00002
+                        \item Mean: 0.00008
+                        \item Median: 0.00153
+                        \item Maximum: 0.793
+                    \end{itemize}
+                \end{block}
+            \end{column}
+        \end{columns}
+
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Step53_Proportion/everything.DADA2.homd.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/Step53_Proportion/everything.DADA2.homd.uncorrected.pdf}
             \caption{Proportion distribution}
         \end{figure}
     \end{frame}
 
     \begin{frame}
+        \frametitle{Clustermap with Proportion}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Step55_Proportion/everything.DADA2.homd.uncorrected.pdf}
+            \caption{Clutermap with Proportion}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
         \frametitle{t-SNE with Proportion}
 
         \begin{figure}
             $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/All+Data.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd/Mouth+Data.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/Mouth+Data.pdf}
                 \\
                 \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
-            \caption{t-SNE plot with Taxonomy Abundance}
+            \caption{t-SNE plot of Proportion with Data Batch}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/All+Detail_Premature.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
+            \end{array}$
+            \caption{t-SNE plot of Proportion with Proportion}
         \end{figure}
     \end{frame}
 
@@ -337,13 +425,13 @@
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/phylogenic.jpg}
-            \caption{Three dimensions of phylogenic information \protect\cite{phylogenetic1}}
+            \caption{Three dimensions of phylogenetic information \protect\cite{phylogenetic1}}
         \end{figure}
 
         \begin{itemize}
             \item A quantitative measure that shows richness, divergence, and regularity \cite{phylogenetic1}
-            \item Alpha diversity indices: the richness of taxa \textbf{at a single community}
-            \item Beta diversity indices: the taxonomic differentiation \textbf{between communities}
+            \item Alpha diversity: the richness of taxa \textbf{at a single community}
+            \item Beta diversity: taxonomy differentiation \textbf{between communities}
         \end{itemize}
     \end{frame}
 
@@ -378,7 +466,7 @@
                 &
                 \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+pielou_e.pdf}
                 \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouthy} \\
+                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
             \caption{Detail premature \& Pielou Evenness}
         \end{figure}
@@ -405,16 +493,14 @@
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Mouth.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step47/everything.DADA2.unweighted_unifrac.Sites/Mouth.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Neonate-3day.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step47-2/everything.DADA2.weighted_unifrac.Sites/Neonate-3day.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Step47/everything.DADA2.weighted_unifrac.Sites/Mouth.pdf}
                 \\
-                \mbox{(a) Mouth } & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
             \end{array}$
-            \caption{Clustermap with Site separation}
+            \caption{Clustermap of Abundance in Maternal Mouth}
         \end{figure}
     \end{frame}
 
@@ -423,16 +509,14 @@
         \frametitle{Volcano plot}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Mouth.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step44/everything.DADA2.homd.uncorrected/Mouth.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Neonate-3day.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd/Neonate-5day.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Step44_Proportion/everything.DADA2.homd.uncorrected/Mouth.pdf}
                 \\
-                \mbox{(a) Mouth} & \mbox{(b) Neonate 3-day} & \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) Abundance} & \mbox{(b) Proportion} \\
             \end{array}$
-            \caption{Deferentially expressed taxa}
+            \caption{Deferentially abundant taxa in Maternal Mouth}
         \end{figure}
     \end{frame}
 
@@ -449,26 +533,47 @@
         \frametitle{Correlation between Taxonomy \& Clinical data}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step49/DADA2/homd/everything.DADA2.homd.pearson.pdf}
-            \caption{Pearson Correlation between taxonomy \& clinical Data}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.pearson.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.pearson.Sites/Mouth.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mouth} \\
+            \end{array}$
+            \caption{Pearson correlation on Taxonomy Abundance}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{c}
-                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Mouth.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.spearman.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.spearman.Sites/Mouth.pdf}
                 \\
-                \mbox{(a) Mouth} \\
-
-                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-3day.pdf}
-                \\
-                \mbox{(b) Neonate 3-day} \\
-
-
-                \includegraphics[width=0.4 \linewidth]{figures/Step49-2/everything.Deblur.homd.pearson.Sites/Neonate-5day.pdf}
-                \\
-                \mbox{(c) Neonate 5-day} \\
+                \mbox{(a) All} & \mbox{(b) Mouth} \\
             \end{array}$
-            \caption{Person Correlation with Site separation}
+            \caption{Spearman correlation on Taxonomy Abundance}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.pearson.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.pearson.Sites/Mouth.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mouth} \\
+            \end{array}$
+            \caption{Pearson correlation on Taxonomy Proportion}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.spearman.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.spearman.Sites/Mouth.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Mouth} \\
+            \end{array}$
+            \caption{Spearman correlation on Taxonomy Proportion}
         \end{figure}
     \end{frame}
 
@@ -490,17 +595,24 @@
         \frametitle{Random Forest with (Early vs. Late vs. Full)}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+metrics.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+metrics.pdf}
             \caption{RF evaluations with feature counts}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+heatmap.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd/Mouth+Violin_0.pdf}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
+                \\
+            \end{array}$
             \caption{RF most important taxa}
         \end{figure}
     \end{frame}
@@ -509,17 +621,17 @@
         \frametitle{Random Forest with (Early vs. Late + Full)}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+metrics.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+metrics.pdf}
             \caption{RF evaluations with feature counts}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+heatmap.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd/Mouth+Violin_0.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
             \caption{RF most important taxa}
         \end{figure}
     \end{frame}
