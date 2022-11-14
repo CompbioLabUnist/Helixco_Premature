@@ -88,11 +88,11 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(48, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.heatmap(data=output_data, vmin=-1, center=0, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, robust=True, ax=ax)
 
-    matplotlib.pyplot.xlabel(f"{len(taxa)} Pathogens")
+    matplotlib.pyplot.xlabel(f"{len(taxa)} bacteria")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

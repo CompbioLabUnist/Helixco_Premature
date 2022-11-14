@@ -91,11 +91,11 @@ if __name__ == "__main__":
                     raise Exception("Something went wrong!!")
         output_data.fillna(0, inplace=True)
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(48, 18))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         seaborn.heatmap(data=output_data, vmin=-1, center=0, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, robust=True, ax=ax)
 
-        matplotlib.pyplot.xlabel(f"{len(taxa)} Pathogens")
+        matplotlib.pyplot.xlabel(f"{len(taxa)} bacteria")
         matplotlib.pyplot.title(f"{site}")
         matplotlib.pyplot.tight_layout()
 
