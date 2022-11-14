@@ -21,7 +21,7 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", type=str, help="Train TAR.gz file")
+    parser.add_argument("input", type=str, help="Train TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output basename")
     parser.add_argument("--cpus", type=int, default=1, help="CPUs to use")
@@ -31,6 +31,8 @@ if __name__ == "__main__":
 
     if args.cpus < 1:
         raise ValueError("CPUS must be greater than zero!!")
+    elif not args.input.endswith(".tsv"):
+        raise ValueError("INPUT must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".tar"):
@@ -44,7 +46,8 @@ if __name__ == "__main__":
 
     tar_files: typing.List[str] = list()
 
-    input_data = step00.read_pickle(args.input).T
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"]).groupby("taxonomy").sum().T
+    input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
     taxa = list(input_data.columns)
     print(input_data)
 
@@ -192,14 +195,13 @@ if __name__ == "__main__":
             print(feature)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1)
+            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
             try:
                 statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
-            matplotlib.pyplot.title(site)
+            matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)} in {site}")
             matplotlib.pyplot.tight_layout()
 
             tar_files.append("{0}+Violin_{1}.pdf".format(site, i))

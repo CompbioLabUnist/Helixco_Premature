@@ -25,8 +25,8 @@ numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day
 detailed_PTB = ("Early PTB", "Late PTB", "Normal")
 PTB_colors = {"Early PTB": "tab:red", "Late PTB": "tab:pink", "Normal": "w"}
 
-selected_sites = ("M", "C", "V", "B1", "B3", "B5")
-selected_long_sites = ("Mouth", "Cervix", "Vagina", "Neonate-1day", "Neonate-3day", "Neonate-5day")
+selected_sites = ("M", "C", "V")
+selected_long_sites = ("Mouth", "Cervix", "Vagina")
 selected_sites_dict = dict(zip(selected_sites, selected_long_sites))
 
 pdist_list = ["braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine", "dice", "euclidean", "hamming", "jaccard", "jensenshannon", "kulczynski1", "mahalanobis", "matching", "minkowski", "rogerstanimoto", "russellrao", "seuclidean", "sokalmichener", "sokalsneath", "sqeuclidean", "yule"]
@@ -179,7 +179,7 @@ def confidence_ellipse(x, y, ax, n_std=2.0, facecolor="none", **kwargs):
 
 
 def filtering_taxonomy(taxonomy: str) -> bool:
-    taxonomy_list = taxonomy.split(";")
+    taxonomy_list = taxonomy.split("; ")
     if len(taxonomy_list) < 6:
         return False
     if taxonomy_list[5] in ("g__", "__"):
@@ -189,12 +189,12 @@ def filtering_taxonomy(taxonomy: str) -> bool:
 
 
 def select_taxonomy(taxonomy: str) -> str:
-    taxonomy_list = taxonomy.split(";")
+    taxonomy_list = taxonomy.split("; ")
     return remove_preceding_underscores(taxonomy_list[1]).replace("_", " ")
 
 
 def simplified_taxonomy(taxonomy: str) -> str:
-    taxonomy_list = taxonomy.split(";")
+    taxonomy_list = taxonomy.split("; ")
     if (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
         return remove_preceding_underscores(taxonomy_list[-2]).replace("_", " ") + " spp."
     else:
