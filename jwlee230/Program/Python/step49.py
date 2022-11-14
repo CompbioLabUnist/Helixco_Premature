@@ -55,9 +55,8 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).sort_values("taxonomy")
-    del input_data["taxonomy"]
-    input_data = input_data.T
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"]).groupby("taxonomy").sum().T
+    input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
     taxa = list(input_data.columns)
     print(input_data)
 
@@ -91,9 +90,9 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(48, 18))
 
-    seaborn.heatmap(data=output_data, vmin=-1, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, ax=ax)
+    seaborn.heatmap(data=output_data, vmin=-1, center=0, vmax=1, cmap="coolwarm", xticklabels=False, yticklabels=True, robust=True, ax=ax)
 
-    matplotlib.pyplot.xlabel("{0} Pathogens".format(len(taxa)))
+    matplotlib.pyplot.xlabel(f"{len(taxa)} Pathogens")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

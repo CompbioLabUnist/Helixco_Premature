@@ -933,7 +933,7 @@ Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.uncorrected.
 Output/Step46/%.tar: Python/step46.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step46/%.uncorrected.unweighted_unifrac.tsv Output/Step46/%.uncorrected.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+Output/Step46/%.unweighted_unifrac.uncorrected.tsv Output/Step46/%.weighted_unifrac.uncorrected.tsv: Python/step46-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
 Output/Step46/%.unweighted_unifrac.tsv Output/Step46/%.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
@@ -941,7 +941,7 @@ Output/Step46/%.unweighted_unifrac.tsv Output/Step46/%.weighted_unifrac.tsv: Pyt
 
 step46-tree: Output/Step46/everything.DADA2/tree.nwk Output/Step46/everything.Deblur/tree.nwk
 step46-beta: Output/Step46/everything.DADA2.uncorrected.tar Output/Step46/everything.DADA2.tar Output/Step46/everything.Deblur.uncorrected.tar Output/Step46/everything.Deblur.tar
-step46-beta-tsv: Output/Step46/everything.DADA2.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
+step46-beta-tsv: Output/Step46/everything.DADA2.unweighted_unifrac.uncorrected.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.uncorrected.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
 step46: step46-tree step46-beta step46-beta-tsv
 .PHONY: step46-tree step46-beta step46-beta-tsv step46
 
@@ -955,10 +955,12 @@ Output/Step47/%.pdf: Python/step47.py Output/Step46/%.tsv Output/Metadata/everyt
 Output/Step47/%.Sites.tar: Python/step47-2.py Output/Step46/%.tsv Output/Metadata/everything.tsv | Output/Step47 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+step47-All-uncorrected: Output/Step47/everything.DADA2.unweighted_unifrac.uncorrected.pdf Output/Step47/everything.DADA2.weighted_unifrac.uncorrected.pdf Output/Step47/everything.Deblur.unweighted_unifrac.uncorrected.pdf Output/Step47/everything.Deblur.weighted_unifrac.uncorrected.pdf
 step47-All: Output/Step47/everything.DADA2.unweighted_unifrac.pdf Output/Step47/everything.DADA2.weighted_unifrac.pdf Output/Step47/everything.Deblur.unweighted_unifrac.pdf Output/Step47/everything.Deblur.weighted_unifrac.pdf
+step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.uncorrected.Sites.tar
 step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.Sites.tar
-step47: step47-All step47-Sites
-.PHONY: step47-All step47-Sites step47
+step47: step47-All-uncorrected step47-All step47-Sites-uncorrected step47-Sites
+.PHONY: step47-All-uncorrected step47-All step47-Sites-uncorrected step47-Sites step47
 
 # Step 48 (Violin plot for Shared taxonomy proportion)
 Output/Step48:
@@ -971,7 +973,7 @@ step48: Output/Step48/everything.DADA2.gg.pdf Output/Step48/everything.DADA2.sil
 .PHONY: step48
 
 # Step 49 (Heatmap Plot for correlation between Bacteria & Clinical data)
-Output/Step49:
+Output/Step49 Output/Step49_Proportion:
 	mkdir -p $@
 
 Output/Step49/everything.%.pearson.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
@@ -992,10 +994,30 @@ Output/Step49/everything.%.spearman.Sites.tar: Python/step49-2.py Output/TSV/eve
 Output/Step49/everything.%.kendall.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
-step49-everything-DADA2: Output/Step49/everything.DADA2.gg.pearson.pdf Output/Step49/everything.DADA2.gg.spearman.pdf Output/Step49/everything.DADA2.gg.kendall.pdf Output/Step49/everything.DADA2.silva.pearson.pdf Output/Step49/everything.DADA2.silva.spearman.pdf Output/Step49/everything.DADA2.silva.kendall.pdf Output/Step49/everything.DADA2.homd.pearson.pdf Output/Step49/everything.DADA2.homd.spearman.pdf Output/Step49/everything.DADA2.homd.kendall.pdf Output/Step49/everything.DADA2.gg.pearson.Sites.tar Output/Step49/everything.DADA2.gg.spearman.Sites.tar Output/Step49/everything.DADA2.gg.kendall.Sites.tar Output/Step49/everything.DADA2.silva.pearson.Sites.tar Output/Step49/everything.DADA2.silva.spearman.Sites.tar Output/Step49/everything.DADA2.silva.kendall.Sites.tar Output/Step49/everything.DADA2.homd.pearson.Sites.tar Output/Step49/everything.DADA2.homd.spearman.Sites.tar Output/Step49/everything.DADA2.homd.kendall.Sites.tar
-step49-everything-Deblur: Output/Step49/everything.Deblur.gg.pearson.pdf Output/Step49/everything.Deblur.gg.spearman.pdf Output/Step49/everything.Deblur.gg.kendall.pdf Output/Step49/everything.Deblur.silva.pearson.pdf Output/Step49/everything.Deblur.silva.spearman.pdf Output/Step49/everything.Deblur.silva.kendall.pdf Output/Step49/everything.Deblur.homd.pearson.pdf Output/Step49/everything.Deblur.homd.spearman.pdf Output/Step49/everything.Deblur.homd.kendall.pdf Output/Step49/everything.Deblur.gg.pearson.Sites.tar Output/Step49/everything.Deblur.gg.spearman.Sites.tar Output/Step49/everything.Deblur.gg.kendall.Sites.tar Output/Step49/everything.Deblur.silva.pearson.Sites.tar Output/Step49/everything.Deblur.silva.spearman.Sites.tar Output/Step49/everything.Deblur.silva.kendall.Sites.tar Output/Step49/everything.Deblur.homd.pearson.Sites.tar Output/Step49/everything.Deblur.homd.spearman.Sites.tar Output/Step49/everything.Deblur.homd.kendall.Sites.tar
-step49: step49-everything-DADA2 step49-everything-Deblur
-.PHONY: step49-everything-DADA2 step49-everything-Deblur step49
+Output/Step49_Proportion/everything.%.pearson.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step49_Proportion/everything.%.spearman.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step49_Proportion/everything.%.kendall.pdf: Python/step49.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+Output/Step49_Proportion/everything.%.pearson.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --pearson 1> $@.stdout 2> $@.stderr
+
+Output/Step49_Proportion/everything.%.spearman.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --spearman 1> $@.stdout 2> $@.stderr
+
+Output/Step49_Proportion/everything.%.kendall.Sites.tar: Python/step49-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step49_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
+
+step49-DADA2: Output/Step49/everything.DADA2.gg.pearson.pdf Output/Step49/everything.DADA2.gg.spearman.pdf Output/Step49/everything.DADA2.gg.kendall.pdf Output/Step49/everything.DADA2.silva.pearson.pdf Output/Step49/everything.DADA2.silva.spearman.pdf Output/Step49/everything.DADA2.silva.kendall.pdf Output/Step49/everything.DADA2.homd.pearson.pdf Output/Step49/everything.DADA2.homd.spearman.pdf Output/Step49/everything.DADA2.homd.kendall.pdf Output/Step49/everything.DADA2.gg.pearson.Sites.tar Output/Step49/everything.DADA2.gg.spearman.Sites.tar Output/Step49/everything.DADA2.gg.kendall.Sites.tar Output/Step49/everything.DADA2.silva.pearson.Sites.tar Output/Step49/everything.DADA2.silva.spearman.Sites.tar Output/Step49/everything.DADA2.silva.kendall.Sites.tar Output/Step49/everything.DADA2.homd.pearson.Sites.tar Output/Step49/everything.DADA2.homd.spearman.Sites.tar Output/Step49/everything.DADA2.homd.kendall.Sites.tar
+step49-Deblur: Output/Step49/everything.Deblur.gg.pearson.pdf Output/Step49/everything.Deblur.gg.spearman.pdf Output/Step49/everything.Deblur.gg.kendall.pdf Output/Step49/everything.Deblur.silva.pearson.pdf Output/Step49/everything.Deblur.silva.spearman.pdf Output/Step49/everything.Deblur.silva.kendall.pdf Output/Step49/everything.Deblur.homd.pearson.pdf Output/Step49/everything.Deblur.homd.spearman.pdf Output/Step49/everything.Deblur.homd.kendall.pdf Output/Step49/everything.Deblur.gg.pearson.Sites.tar Output/Step49/everything.Deblur.gg.spearman.Sites.tar Output/Step49/everything.Deblur.gg.kendall.Sites.tar Output/Step49/everything.Deblur.silva.pearson.Sites.tar Output/Step49/everything.Deblur.silva.spearman.Sites.tar Output/Step49/everything.Deblur.silva.kendall.Sites.tar Output/Step49/everything.Deblur.homd.pearson.Sites.tar Output/Step49/everything.Deblur.homd.spearman.Sites.tar Output/Step49/everything.Deblur.homd.kendall.Sites.tar
+step49-DADA2-Proportion: Output/Step49_Proportion/everything.DADA2.gg.pearson.pdf Output/Step49_Proportion/everything.DADA2.gg.spearman.pdf Output/Step49_Proportion/everything.DADA2.gg.kendall.pdf Output/Step49_Proportion/everything.DADA2.silva.pearson.pdf Output/Step49_Proportion/everything.DADA2.silva.spearman.pdf Output/Step49_Proportion/everything.DADA2.silva.kendall.pdf Output/Step49_Proportion/everything.DADA2.homd.pearson.pdf Output/Step49_Proportion/everything.DADA2.homd.spearman.pdf Output/Step49_Proportion/everything.DADA2.homd.kendall.pdf Output/Step49_Proportion/everything.DADA2.gg.pearson.Sites.tar Output/Step49_Proportion/everything.DADA2.gg.spearman.Sites.tar Output/Step49_Proportion/everything.DADA2.gg.kendall.Sites.tar Output/Step49_Proportion/everything.DADA2.silva.pearson.Sites.tar Output/Step49_Proportion/everything.DADA2.silva.spearman.Sites.tar Output/Step49_Proportion/everything.DADA2.silva.kendall.Sites.tar Output/Step49_Proportion/everything.DADA2.homd.pearson.Sites.tar Output/Step49_Proportion/everything.DADA2.homd.spearman.Sites.tar Output/Step49_Proportion/everything.DADA2.homd.kendall.Sites.tar
+step49-Deblur-Proportion: Output/Step49_Proportion/everything.Deblur.gg.pearson.pdf Output/Step49_Proportion/everything.Deblur.gg.spearman.pdf Output/Step49_Proportion/everything.Deblur.gg.kendall.pdf Output/Step49_Proportion/everything.Deblur.silva.pearson.pdf Output/Step49_Proportion/everything.Deblur.silva.spearman.pdf Output/Step49_Proportion/everything.Deblur.silva.kendall.pdf Output/Step49_Proportion/everything.Deblur.homd.pearson.pdf Output/Step49_Proportion/everything.Deblur.homd.spearman.pdf Output/Step49_Proportion/everything.Deblur.homd.kendall.pdf Output/Step49_Proportion/everything.Deblur.gg.pearson.Sites.tar Output/Step49_Proportion/everything.Deblur.gg.spearman.Sites.tar Output/Step49_Proportion/everything.Deblur.gg.kendall.Sites.tar Output/Step49_Proportion/everything.Deblur.silva.pearson.Sites.tar Output/Step49_Proportion/everything.Deblur.silva.spearman.Sites.tar Output/Step49_Proportion/everything.Deblur.silva.kendall.Sites.tar Output/Step49_Proportion/everything.Deblur.homd.pearson.Sites.tar Output/Step49_Proportion/everything.Deblur.homd.spearman.Sites.tar Output/Step49_Proportion/everything.Deblur.homd.kendall.Sites.tar
+step49: step49-DADA2 step49-Deblur step49-DADA2-Proportion step49-Deblur-Proportion
+.PHONY: step49-DADA2 step49-Deblur step49-DADA2-Proportion step49-Deblur-Proportion step49
 
 # Step 50 (Volcano plot with differentially expressed taxa)
 Output/Step50:
