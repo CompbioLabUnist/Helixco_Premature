@@ -29,7 +29,7 @@ selected_sites = ("M", "C", "V", "B1", "B3", "B5")
 selected_long_sites = ("Mouth", "Cervix", "Vagina", "Neonate-1day", "Neonate-3day", "Neonate-5day")
 selected_sites_dict = dict(zip(selected_sites, selected_long_sites))
 
-pdist_list = ['braycurtis', 'canberra', 'chebyshev', 'cityblock', 'correlation', 'cosine', 'dice', 'euclidean', 'hamming', 'jaccard', 'jensenshannon', 'kulczynski1', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']
+pdist_list = ["braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine", "dice", "euclidean", "hamming", "jaccard", "jensenshannon", "kulczynski1", "mahalanobis", "matching", "minkowski", "rogerstanimoto", "russellrao", "seuclidean", "sokalmichener", "sokalsneath", "sqeuclidean", "yule"]
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -118,19 +118,6 @@ def consistency_taxonomy(taxonomy: str, number: int = 3) -> str:
         return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: remove_preceding_underscores(x), taxonomy.split(";")))))[-number:]).replace("_", " ")
 
 
-def simplified_taxonomy(taxonomy: str) -> str:
-    """
-    simplified_taxonomy: simplified taxonomy information for file name
-    """
-    if taxonomy == "Unassigned":
-        return taxonomy
-    else:
-        try:
-            return ";".join(list(list(map(lambda x: remove_preceding_underscores(x), taxonomy.split(";"))))).replace("_", " ")
-        except AttributeError:
-            return simplified_taxonomy(taxonomy[0]) + f"({taxonomy[1]})"
-
-
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:
     """
     aggregate_confusion_matrix: derivations from confusion matrix
@@ -189,6 +176,29 @@ def confidence_ellipse(x, y, ax, n_std=2.0, facecolor="none", **kwargs):
     transf = matplotlib.transforms.Affine2D().rotate_deg(45).scale(scale_x, scale_y).translate(mean_x, mean_y)
     ellipse.set_transform(transf + ax.transData)
     return ax.add_patch(ellipse)
+
+
+def filtering_taxonomy(taxonomy: str) -> bool:
+    taxonomy_list = taxonomy.split(";")
+    if len(taxonomy_list) < 6:
+        return False
+    if taxonomy_list[5] in ("g__", "__"):
+        return False
+    else:
+        return True
+
+
+def select_taxonomy(taxonomy: str) -> str:
+    taxonomy_list = taxonomy.split(";")
+    return remove_preceding_underscores(taxonomy_list[1]).replace("_", " ")
+
+
+def simplified_taxonomy(taxonomy: str) -> str:
+    taxonomy_list = taxonomy.split(";")
+    if (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
+        return remove_preceding_underscores(taxonomy_list[-2]).replace("_", " ") + " spp."
+    else:
+        return remove_preceding_underscores(taxonomy_list[-2])[0] + ". " + remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ")
 
 
 if __name__ == "__main__":

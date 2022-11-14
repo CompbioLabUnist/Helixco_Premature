@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 100
-MEMS = 1000G
+CPUS = 10
+MEMS = 100G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1146,6 +1146,21 @@ step54: step54-tsv step54-in step54-res step54-default step54-cladogram
 .PHONY: step54-tsv step54-in step54-res step54-default step54-cladogram step54
 
 # Step 55 (Clustermap)
+Output/Step55 Output/Step55_Proportion:
+	mkdir -p $@
+
+Output/Step55/%.pdf: Python/step55.py Output/TSV/%.tsv | build.log Output/Step55
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step55_Proportion/%.pdf: Python/step55-2.py Output/TSV_Proportion/%.tsv | build.log Output/Step55_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step55-uncorrected: Output/Step55/everything.DADA2.gg.uncorrected.pdf Output/Step55/everything.DADA2.silva.uncorrected.pdf Output/Step55/everything.DADA2.homd.uncorrected.pdf Output/Step55/everything.Deblur.gg.uncorrected.pdf Output/Step55/everything.Deblur.silva.uncorrected.pdf Output/Step55/everything.Deblur.homd.uncorrected.pdf
+step55-corrected: Output/Step55/everything.DADA2.gg.pdf Output/Step55/everything.DADA2.silva.pdf Output/Step55/everything.DADA2.homd.pdf Output/Step55/everything.Deblur.gg.pdf Output/Step55/everything.Deblur.silva.pdf Output/Step55/everything.Deblur.homd.pdf
+step55-uncorrected-Proportion: Output/Step55_Proportion/everything.DADA2.gg.uncorrected.pdf Output/Step55_Proportion/everything.DADA2.silva.uncorrected.pdf Output/Step55_Proportion/everything.DADA2.homd.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.gg.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.silva.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.homd.uncorrected.pdf
+step55-corrected-Proportion: Output/Step55_Proportion/everything.DADA2.gg.pdf Output/Step55_Proportion/everything.DADA2.silva.pdf Output/Step55_Proportion/everything.DADA2.homd.pdf Output/Step55_Proportion/everything.Deblur.gg.pdf Output/Step55_Proportion/everything.Deblur.silva.pdf Output/Step55_Proportion/everything.Deblur.homd.pdf
+step55: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55-corrected-Proportion
+.PHONY: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55-corrected-Proportion step55
 
 # Step 56 (K-Nearest Neighbors Classifier)
 Output/Step56:
