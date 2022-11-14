@@ -2,6 +2,7 @@
 step09-1.py: make proportion
 """
 import argparse
+import numpy
 import pandas
 
 
@@ -21,6 +22,9 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="#OTU ID")
     taxa_column = list(input_data["taxonomy"])
     del input_data["taxonomy"]
+
+    input_data = numpy.log(input_data)
+    input_data[input_data < 0] = 0
 
     input_data["taxonomy"] = taxa_column
     print(input_data)
