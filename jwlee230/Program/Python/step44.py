@@ -36,23 +36,24 @@ def pvalue(taxo: str, site: str) -> float:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Input tar.gz file", type=str)
+    parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of cpus", type=int, default=1)
 
     args = parser.parse_args()
 
-    if not args.metadata.endswith(".tsv"):
+    if not args.input.endswith(".tsv"):
+        raise ValueError("INPUT must end with .TSV!!")
+    elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata must end with .tsv!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    input_data = step00.read_pickle(args.input)
-    input_data.index = list(map(step00.simplified_taxonomy, list(input_data.index)))
-    input_data.sort_index(inplace=True)
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"]).groupby("taxonomy").sum().T
+    input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
     taxa = list(input_data.columns)
     print(input_data)
 
@@ -70,7 +71,6 @@ if __name__ == "__main__":
     figures = list()
 
     for site in tqdm.tqdm(step00.selected_long_sites):
-        figures.append("{0}.pdf".format(site))
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         texts = list()
 
@@ -85,15 +85,17 @@ if __name__ == "__main__":
         up_results = output_data.loc[((output_data["log2(EP/F)"] > numpy.log2(ratio_threshold)) & (output_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
         ns_results = output_data.loc[(((output_data["log2(EP/F)"] < numpy.log2(ratio_threshold)) & (output_data["log2(EP/F)"] > numpy.log2(1 / ratio_threshold))) | (output_data["-log10(p)"] < (-1 * numpy.log10(p_threshold)))), :]
 
-        matplotlib.pyplot.scatter(ns_results["log2(EP/F)"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None, label="NS")
-        matplotlib.pyplot.scatter(up_results["log2(EP/F)"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None, label="Up")
-        matplotlib.pyplot.scatter(down_results["log2(EP/F)"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None, label="Down")
+        matplotlib.pyplot.scatter(ns_results["log2(EP/F)"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
+        matplotlib.pyplot.scatter(up_results["log2(EP/F)"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
+        matplotlib.pyplot.scatter(down_results["log2(EP/F)"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
 
         for index, row in down_results.iterrows():
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 2), color="black", fontsize="xx-small"))
+            print(site, " / Down / ", index)
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="x-small"))
 
         for index, row in up_results.iterrows():
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.consistency_taxonomy(index, 2), color="black", fontsize="xx-small"))
+            print(site, " / Up / ", index)
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="x-small"))
 
         matplotlib.pyplot.xlabel("log2(EP/F)")
         matplotlib.pyplot.ylabel("-log10(p)")
@@ -107,6 +109,7 @@ if __name__ == "__main__":
 
         adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.small, ax=ax)
 
+        figures.append(f"{site}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
