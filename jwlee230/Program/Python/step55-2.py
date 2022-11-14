@@ -29,7 +29,10 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.clustermap(data=input_data, figsize=(32, 18), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", center=0, robust=True, z_score=1)
+    try:
+        g = seaborn.clustermap(data=input_data, figsize=(32, 18), row_cluster=True, col_cluster=True, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", center=0, robust=True, z_score=1)
+    except FloatingPointError:
+        g = seaborn.clustermap(data=input_data, figsize=(32, 18), row_cluster=False, col_cluster=False, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", center=0, robust=True, z_score=1)
 
     g.ax_heatmap.set_xlabel(f"{input_data.shape[1]} bacteria")
     g.ax_heatmap.set_ylabel(f"{input_data.shape[0]} samples")
