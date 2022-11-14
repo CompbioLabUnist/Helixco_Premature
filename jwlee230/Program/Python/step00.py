@@ -195,7 +195,9 @@ def select_taxonomy(taxonomy: str) -> str:
 
 def simplified_taxonomy(taxonomy: str) -> str:
     taxonomy_list = taxonomy.split("; ")
-    if (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
+    if (len(taxonomy_list) == 6):
+        return remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ") + " spp."
+    elif (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
         return remove_preceding_underscores(taxonomy_list[-2]).replace("_", " ") + " spp."
     else:
         return remove_preceding_underscores(taxonomy_list[-2])[0] + ". " + remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ")

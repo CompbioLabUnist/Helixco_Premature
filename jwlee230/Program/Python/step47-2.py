@@ -41,7 +41,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig_files = list()
-    for site in tqdm.tqdm(set(metadata["Site"])):
+    for site in tqdm.tqdm(step00.selected_long_sites):
         drawing_data = input_data.loc[(metadata["Site"] == site), (metadata["Site"] == site)]
 
         colors = pandas.DataFrame(index=drawing_data.index)

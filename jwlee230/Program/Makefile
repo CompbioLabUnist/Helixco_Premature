@@ -879,14 +879,21 @@ step43: step43-everything-DADA2 step43-everything-Deblur
 .PHONY: step43-everything-DADA2 step43-everything-Deblur step43
 
 # Step 44 (Volcano plot with differetially expressed taxa)
-Output/Step44:
+Output/Step44 Output/Step44_Proportion:
 	mkdir -p $@
 
-Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | build.log Output/Step44
+Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step44: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
-.PHONY: step44
+Output/Step44_Proportion/everything.%.tar: Python/step44.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step44-uncorrected: Output/Step44/everything.DADA2.gg.uncorrected.tar Output/Step44/everything.DADA2.silva.uncorrected.tar Output/Step44/everything.DADA2.homd.uncorrected.tar Output/Step44/everything.Deblur.gg.uncorrected.tar Output/Step44/everything.Deblur.silva.uncorrected.tar Output/Step44/everything.Deblur.homd.uncorrected.tar
+step44-corrected: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
+step44-uncorrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step44_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step44_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step44_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step44_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step44_Proportion/everything.Deblur.homd.uncorrected.tar
+step44-corrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.tar Output/Step44_Proportion/everything.DADA2.silva.tar Output/Step44_Proportion/everything.DADA2.homd.tar Output/Step44_Proportion/everything.Deblur.gg.tar Output/Step44_Proportion/everything.Deblur.silva.tar Output/Step44_Proportion/everything.Deblur.homd.tar
+step44: step44-uncorrected step44-corrected step44-uncorrected-Proportion step44-corrected-Proportion
+.PHONY: step44-uncorrected step44-corrected step44-uncorrected-Proportion step44-corrected-Proportion step44
 
 # Step 45 (Alpha-diversity)
 Output/Step45:

@@ -91,11 +91,11 @@ if __name__ == "__main__":
 
         for index, row in down_results.iterrows():
             print(site, " / Down / ", index)
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="x-small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
         for index, row in up_results.iterrows():
             print(site, " / Up / ", index)
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="x-small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
         matplotlib.pyplot.xlabel("log2(EP/F)")
         matplotlib.pyplot.ylabel("-log10(p)")
