@@ -7,6 +7,7 @@ import multiprocessing
 import pandas
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import seaborn
 import step00
 
@@ -45,8 +46,18 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         output_data = pandas.DataFrame(pool.starmap(run, itertools.product(list(data.index), list(data.columns))), columns=["Site", "Proportion"])
+
+    print(min(output_data["Proportion"]))
+    print(numpy.mean(output_data["Proportion"]))
+    print(numpy.median(output_data["Proportion"]))
+    print(max(output_data["Proportion"]))
+
     output_data = output_data.loc[(output_data["Proportion"] > 0)]
-    print(output_data)
+
+    print(min(output_data["Proportion"]))
+    print(numpy.mean(output_data["Proportion"]))
+    print(numpy.median(output_data["Proportion"]))
+    print(max(output_data["Proportion"]))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
