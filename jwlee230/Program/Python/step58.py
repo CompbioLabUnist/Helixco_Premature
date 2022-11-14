@@ -185,7 +185,7 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-        for i, feature in enumerate(taxa[:10]):
+        for i, feature in enumerate(best_features[:10]):
             print(feature)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))

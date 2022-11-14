@@ -30,7 +30,7 @@ def std(column: str) -> float:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", type=str, help="Train TAR.gz file")
+    parser.add_argument("input", type=str, help="Train TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output basename")
     parser.add_argument("--cpus", type=int, default=1, help="CPUs to use")
@@ -53,7 +53,8 @@ if __name__ == "__main__":
 
     tar_files: typing.List[str] = list()
 
-    input_data = step00.read_pickle(args.input).T
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=["#OTU ID"]).groupby("taxonomy").sum().T
+    input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
     taxa = list(input_data.columns)
     print(input_data)
 
@@ -174,7 +175,7 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
-        for i, feature in enumerate(taxa[:10]):
+        for i, feature in enumerate(best_features[:10]):
             print(feature)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
@@ -184,8 +185,7 @@ if __name__ == "__main__":
             except ValueError:
                 pass
 
-            matplotlib.pyplot.ylabel(step00.consistency_taxonomy(feature, 1))
-            matplotlib.pyplot.title(site)
+            matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)} in {site}")
             matplotlib.pyplot.tight_layout()
 
             tar_files.append("{0}+Violin_{1}.pdf".format(site, i))

@@ -644,16 +644,12 @@ Output/Step35/%.spearman.png: Python/step35.py Output/TSV/%.tar.gz | build.log O
 Output/Step35/%.kendall.png: Python/step35.py Output/TSV/%.tar.gz | build.log Output/Step35
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
-Output/Step35/Macrogen.%.png: Python/step35-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step35
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --$* 1> $@.stdout 2> $@.stderr
-
 step35-everything-DADA2: Output/Step35/everything.DADA2.gg.pearson.png Output/Step35/everything.DADA2.gg.spearman.png Output/Step35/everything.DADA2.gg.kendall.png Output/Step35/everything.DADA2.silva.pearson.png Output/Step35/everything.DADA2.silva.spearman.png Output/Step35/everything.DADA2.silva.kendall.png Output/Step35/everything.DADA2.homd.pearson.png Output/Step35/everything.DADA2.homd.spearman.png Output/Step35/everything.DADA2.homd.kendall.png
 step35-everything-Deblur: Output/Step35/everything.Deblur.gg.pearson.png Output/Step35/everything.Deblur.gg.spearman.png Output/Step35/everything.Deblur.gg.kendall.png Output/Step35/everything.Deblur.silva.pearson.png Output/Step35/everything.Deblur.silva.spearman.png Output/Step35/everything.Deblur.silva.kendall.png Output/Step35/everything.Deblur.homd.pearson.png Output/Step35/everything.Deblur.homd.spearman.png Output/Step35/everything.Deblur.homd.kendall.png
 step35-Stool-DADA2: Output/Step35/Stool.DADA2.gg.pearson.png Output/Step35/Stool.DADA2.gg.spearman.png Output/Step35/Stool.DADA2.gg.kendall.png Output/Step35/Stool.DADA2.silva.pearson.png Output/Step35/Stool.DADA2.silva.spearman.png Output/Step35/Stool.DADA2.silva.kendall.png Output/Step35/Stool.DADA2.homd.pearson.png Output/Step35/Stool.DADA2.homd.spearman.png Output/Step35/Stool.DADA2.homd.kendall.png
 step35-Stool-Deblur: Output/Step35/Stool.Deblur.gg.pearson.png Output/Step35/Stool.Deblur.gg.spearman.png Output/Step35/Stool.Deblur.gg.kendall.png Output/Step35/Stool.Deblur.silva.pearson.png Output/Step35/Stool.Deblur.silva.spearman.png Output/Step35/Stool.Deblur.silva.kendall.png Output/Step35/Stool.Deblur.homd.pearson.png Output/Step35/Stool.Deblur.homd.spearman.png Output/Step35/Stool.Deblur.homd.kendall.png
-step35-Macrogen: Output/Step35/Macrogen.pearson.png Output/Step35/Macrogen.spearman.png Output/Step35/Macrogen.kendall.png
-step35: step35-everything-DADA2 step35-everything-Deblur step35-Macrogen
-.PHONY: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35-Macrogen step35
+step35: step35-everything-DADA2 step35-everything-Deblur
+.PHONY: step35-everything-DADA2 step35-everything-Deblur step35-Stool-DADA2 step35-Stool-Deblur step35
 
 # Step 36 (Scatter plot heatmap within bacteria)
 Output/Step36:
@@ -668,16 +664,12 @@ Output/Step36/%.spearman.png: Python/step36.py Output/TSV/%.tar.gz | build.log O
 Output/Step36/%.kendall.png: Python/step36.py Output/TSV/%.tar.gz | build.log Output/Step36
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --kendall 1> $@.stdout 2> $@.stderr
 
-Output/Step36/Macrogen.%.png: Python/step36-1.py Output/TSV/Macrogen.tar.gz | build.log Output/Step36
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --$* --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
 step36-everything-DADA2: Output/Step36/everything.DADA2.gg.pearson.png Output/Step36/everything.DADA2.gg.spearman.png Output/Step36/everything.DADA2.gg.kendall.png Output/Step36/everything.DADA2.silva.pearson.png Output/Step36/everything.DADA2.silva.spearman.png Output/Step36/everything.DADA2.silva.kendall.png Output/Step36/everything.DADA2.homd.pearson.png Output/Step36/everything.DADA2.homd.spearman.png Output/Step36/everything.DADA2.homd.kendall.png
 step36-everything-Deblur: Output/Step36/everything.Deblur.gg.pearson.png Output/Step36/everything.Deblur.gg.spearman.png Output/Step36/everything.Deblur.gg.kendall.png Output/Step36/everything.Deblur.silva.pearson.png Output/Step36/everything.Deblur.silva.spearman.png Output/Step36/everything.Deblur.silva.kendall.png Output/Step36/everything.Deblur.homd.pearson.png Output/Step36/everything.Deblur.homd.spearman.png Output/Step36/everything.Deblur.homd.kendall.png
 step36-Stool-DADA2: Output/Step36/Stool.DADA2.gg.pearson.png Output/Step36/Stool.DADA2.gg.spearman.png Output/Step36/Stool.DADA2.gg.kendall.png Output/Step36/Stool.DADA2.silva.pearson.png Output/Step36/Stool.DADA2.silva.spearman.png Output/Step36/Stool.DADA2.silva.kendall.png Output/Step36/Stool.DADA2.homd.pearson.png Output/Step36/Stool.DADA2.homd.spearman.png Output/Step36/Stool.DADA2.homd.kendall.png
 step36-Stool-Deblur: Output/Step36/Stool.Deblur.gg.pearson.png Output/Step36/Stool.Deblur.gg.spearman.png Output/Step36/Stool.Deblur.gg.kendall.png Output/Step36/Stool.Deblur.silva.pearson.png Output/Step36/Stool.Deblur.silva.spearman.png Output/Step36/Stool.Deblur.silva.kendall.png Output/Step36/Stool.Deblur.homd.pearson.png Output/Step36/Stool.Deblur.homd.spearman.png Output/Step36/Stool.Deblur.homd.kendall.png
-step36-Macrogen: Output/Step36/Macrogen.pearson.png Output/Step36/Macrogen.spearman.png Output/Step36/Macrogen.kendall.png
-step36: step36-everything-DADA2 step36-everything-Deblur step36-Macrogen
-.PHONY: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36-Macrogen step36
+step36: step36-everything-DADA2 step36-everything-Deblur
+.PHONY: step36-everything-DADA2 step36-everything-Deblur step36-Stool-DADA2 step36-Stool-Deblur step36
 
 # Step37 (Correlation within sites)
 Output/Step37:
@@ -699,7 +691,6 @@ step37-everything-DADA2: Output/Step37/everything.DADA2.gg.pearson.pdf Output/St
 step37-everything-Deblur: Output/Step37/everything.Deblur.gg.pearson.pdf Output/Step37/everything.Deblur.gg.spearman.pdf Output/Step37/everything.Deblur.gg.kendall.pdf Output/Step37/everything.Deblur.silva.pearson.pdf Output/Step37/everything.Deblur.silva.spearman.pdf Output/Step37/everything.Deblur.silva.kendall.pdf Output/Step37/everything.Deblur.homd.pearson.pdf Output/Step37/everything.Deblur.homd.spearman.pdf Output/Step37/everything.Deblur.homd.kendall.pdf
 step37-Stool-DADA2: Output/Step37/Stool.DADA2.gg.pearson.pdf Output/Step37/Stool.DADA2.gg.spearman.pdf Output/Step37/Stool.DADA2.gg.kendall.pdf Output/Step37/Stool.DADA2.silva.pearson.pdf Output/Step37/Stool.DADA2.silva.spearman.pdf Output/Step37/Stool.DADA2.silva.kendall.pdf Output/Step37/Stool.DADA2.homd.pearson.pdf Output/Step37/Stool.DADA2.homd.spearman.pdf Output/Step37/Stool.DADA2.homd.kendall.pdf
 step37-Stool-Deblur: Output/Step37/Stool.Deblur.gg.pearson.pdf Output/Step37/Stool.Deblur.gg.spearman.pdf Output/Step37/Stool.Deblur.gg.kendall.pdf Output/Step37/Stool.Deblur.silva.pearson.pdf Output/Step37/Stool.Deblur.silva.spearman.pdf Output/Step37/Stool.Deblur.silva.kendall.pdf Output/Step37/Stool.Deblur.homd.pearson.pdf Output/Step37/Stool.Deblur.homd.spearman.pdf Output/Step37/Stool.Deblur.homd.kendall.pdf
-step37-Macrogen: Output/Step37/Macrogen.pearson.pdf Output/Step37/Macrogen.spearman.pdf Output/Step37/Macrogen.kendall.pdf
 step37: step37-everything-DADA2 step37-everything-Deblur
 .PHONY: step37-everything-DADA2 step37-everything-Deblur step37-Stool-DADA2 step37-Stool-Deblur step37
 
@@ -718,9 +709,8 @@ Output/Step38/Macrogen.png: Python/step38-1.py Output/TSV/Macrogen.tar.gz | buil
 
 step38-everything: Output/Step38/everything.DADA2.gg.png Output/Step38/everything.DADA2.silva.png Output/Step38/everything.DADA2.homd.png Output/Step38/everything.Deblur.gg.png Output/Step38/everything.Deblur.silva.png Output/Step38/everything.Deblur.homd.png
 step38-Stool: Output/Step38/Stool.DADA2.gg.png Output/Step38/Stool.DADA2.silva.png Output/Step38/Stool.DADA2.homd.png Output/Step38/Stool.Deblur.gg.png Output/Step38/Stool.Deblur.silva.png Output/Step38/Stool.Deblur.homd.png
-step38-Macrogen: Output/Step38/Macrogen.png
-step38: step38-everything step38-Macrogen
-.PHONY: step38-everything step38-Stool step38-Macrogen step38
+step38: step38-everything
+.PHONY: step38-everything step38-Stool step38
 
 # Step 39 (Beta-diversity heatmap plot)
 Output/Step39:
@@ -781,12 +771,9 @@ Output/Step39/Macrogen.%.Sites.tar: Python/step39-3.py Output/TSV/Macrogen.tar.g
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "$*" 1> $@.stdout 2> $@.stderr
 
 step39-DADA2: Output/Step39/everything.DADA2.bray_curtis.pdf Output/Step39/everything.DADA2.jaccard.pdf Output/Step39/everything.DADA2.unweighted_unifrac.pdf Output/Step39/everything.DADA2.weighted_unifrac.pdf Output/Step39/everything.DADA2.bray_curtis.Sites.tar Output/Step39/everything.DADA2.jaccard.Sites.tar Output/Step39/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step39/everything.DADA2.weighted_unifrac.Sites.tar
-# Output/Step39/Stool.DADA2.bray_curtis.pdf Output/Step39/Stool.DADA2.jaccard.pdf Output/Step39/Stool.DADA2.unweighted_unifrac.pdf Output/Step39/Stool.DADA2.weighted_unifrac.pdf Output/Step39/Stool.DADA2.bray_curtis.Sites.tar Output/Step39/Stool.DADA2.jaccard.Sites.tar Output/Step39/Stool.DADA2.unweighted_unifrac.Sites.tar Output/Step39/Stool.DADA2.weighted_unifrac.Sites.tar
 step39-Deblur: Output/Step39/everything.Deblur.bray_curtis.pdf Output/Step39/everything.Deblur.jaccard.pdf Output/Step39/everything.Deblur.unweighted_unifrac.pdf Output/Step39/everything.Deblur.weighted_unifrac.pdf Output/Step39/everything.Deblur.bray_curtis.Sites.tar Output/Step39/everything.Deblur.jaccard.Sites.tar Output/Step39/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step39/everything.Deblur.weighted_unifrac.Sites.tar
-# Output/Step39/Stool.Deblur.bray_curtis.pdf Output/Step39/Stool.Deblur.jaccard.pdf Output/Step39/Stool.Deblur.unweighted_unifrac.pdf Output/Step39/Stool.Deblur.weighted_unifrac.pdf Output/Step39/Stool.Deblur.bray_curtis.Sites.tar Output/Step39/Stool.Deblur.jaccard.Sites.tar Output/Step39/Stool.Deblur.unweighted_unifrac.Sites.tar Output/Step39/Stool.Deblur.weighted_unifrac.Sites.tar
-step39-Macrogen: Output/Step39/Macrogen.unweighted_unifrac.pdf Output/Step39/Macrogen.weighted_unifrac.pdf Output/Step39/Macrogen.unweighted_unifrac.Sites.tar Output/Step39/Macrogen.weighted_unifrac.Sites.tar
-step39: step39-DADA2 step39-Deblur step39-Macrogen
-.PHONY: step39-DADA2 step39-Deblur step39-Macrogen step39
+step39: step39-DADA2 step39-Deblur
+.PHONY: step39-DADA2 step39-Deblur step39
 
 # Step 40 (Violin Plot for shared taxonomy)
 Output/Step40:
@@ -799,9 +786,8 @@ Output/Step40/Macrogen.pdf: Python/step40-1.py Output/TSV/Macrogen.tar.gz | buil
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step40-everything: Output/Step40/everything.DADA2.gg.pdf Output/Step40/everything.DADA2.silva.pdf Output/Step40/everything.DADA2.homd.pdf Output/Step40/everything.Deblur.gg.pdf Output/Step40/everything.Deblur.silva.pdf Output/Step40/everything.Deblur.homd.pdf
-step40-Macrogen: Output/Step40/Macrogen.pdf
-step40: step40-everything step40-Macrogen
-.PHONY: step40-everything step40-Macrogen step40
+step40: step40-everything
+.PHONY: step40-everything step40
 
 # Step 41 (Heatmap Plot for correlation between Bacteria & Clinical data)
 Output/Step41:
@@ -842,11 +828,8 @@ Output/Step41/Macrogen.%.Sites.tar: Python/step41-3.py Output/TSV/Macrogen.tar.g
 
 step41-everything-DADA2: Output/Step41/everything.DADA2.gg.pearson.pdf Output/Step41/everything.DADA2.gg.spearman.pdf Output/Step41/everything.DADA2.gg.kendall.pdf Output/Step41/everything.DADA2.silva.pearson.pdf Output/Step41/everything.DADA2.silva.spearman.pdf Output/Step41/everything.DADA2.silva.kendall.pdf Output/Step41/everything.DADA2.homd.pearson.pdf Output/Step41/everything.DADA2.homd.spearman.pdf Output/Step41/everything.DADA2.homd.kendall.pdf Output/Step41/everything.DADA2.gg.pearson.Sites.tar Output/Step41/everything.DADA2.gg.spearman.Sites.tar Output/Step41/everything.DADA2.gg.kendall.Sites.tar Output/Step41/everything.DADA2.silva.pearson.Sites.tar Output/Step41/everything.DADA2.silva.spearman.Sites.tar Output/Step41/everything.DADA2.silva.kendall.Sites.tar Output/Step41/everything.DADA2.homd.pearson.Sites.tar Output/Step41/everything.DADA2.homd.spearman.Sites.tar Output/Step41/everything.DADA2.homd.kendall.Sites.tar
 step41-everything-Deblur: Output/Step41/everything.Deblur.gg.pearson.pdf Output/Step41/everything.Deblur.gg.spearman.pdf Output/Step41/everything.Deblur.gg.kendall.pdf Output/Step41/everything.Deblur.silva.pearson.pdf Output/Step41/everything.Deblur.silva.spearman.pdf Output/Step41/everything.Deblur.silva.kendall.pdf Output/Step41/everything.Deblur.homd.pearson.pdf Output/Step41/everything.Deblur.homd.spearman.pdf Output/Step41/everything.Deblur.homd.kendall.pdf Output/Step41/everything.Deblur.gg.pearson.Sites.tar Output/Step41/everything.Deblur.gg.spearman.Sites.tar Output/Step41/everything.Deblur.gg.kendall.Sites.tar Output/Step41/everything.Deblur.silva.pearson.Sites.tar Output/Step41/everything.Deblur.silva.spearman.Sites.tar Output/Step41/everything.Deblur.silva.kendall.Sites.tar Output/Step41/everything.Deblur.homd.pearson.Sites.tar Output/Step41/everything.Deblur.homd.spearman.Sites.tar Output/Step41/everything.Deblur.homd.kendall.Sites.tar
-step41-Stool-DADA2: Output/Step41/Stool.DADA2.gg.pearson.pdf Output/Step41/Stool.DADA2.gg.spearman.pdf Output/Step41/Stool.DADA2.gg.kendall.pdf Output/Step41/Stool.DADA2.silva.pearson.pdf Output/Step41/Stool.DADA2.silva.spearman.pdf Output/Step41/Stool.DADA2.silva.kendall.pdf Output/Step41/Stool.DADA2.homd.pearson.pdf Output/Step41/Stool.DADA2.homd.spearman.pdf Output/Step41/Stool.DADA2.homd.kendall.pdf
-step41-Stool-Deblur: Output/Step41/Stool.Deblur.gg.pearson.pdf Output/Step41/Stool.Deblur.gg.spearman.pdf Output/Step41/Stool.Deblur.gg.kendall.pdf Output/Step41/Stool.Deblur.silva.pearson.pdf Output/Step41/Stool.Deblur.silva.spearman.pdf Output/Step41/Stool.Deblur.silva.kendall.pdf Output/Step41/Stool.Deblur.homd.pearson.pdf Output/Step41/Stool.Deblur.homd.spearman.pdf Output/Step41/Stool.Deblur.homd.kendall.pdf
-step41-Macrogen: Output/Step41/Macrogen.pearson.pdf Output/Step41/Macrogen.spearman.pdf Output/Step41/Macrogen.kendall.pdf Output/Step41/Macrogen.pearson.Sites.tar Output/Step41/Macrogen.spearman.Sites.tar Output/Step41/Macrogen.kendall.Sites.tar
 step41: step41-everything-DADA2 step41-everything-Deblur
-.PHONY: step41-everything-DADA2 step41-everything-Deblur step41-Stool-DADA2 step41-Stool-Deblur step41
+.PHONY: step41-everything-DADA2 step41-everything-Deblur step41
 
 # Step 42 (Violin plot for taxonomy with clinical data)
 Output/Step42:
@@ -1211,30 +1194,50 @@ step55: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55
 .PHONY: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55-corrected-Proportion step55
 
 # Step 56 (K-Nearest Neighbors Classifier)
-Output/Step56:
+Output/Step56 Output/Step56_Proportion:
 	mkdir -p $@
 
-Output/Step56/KNN.%.tar: Python/step56.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step56 build.log
+Output/Step56/KNN.%.tar: Python/step56.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step56 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step56/KNN-two.%.tar: Python/step56-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step56 build.log
+Output/Step56/KNN-two.%.tar: Python/step56-1.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step56 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step56: Output/Step56/KNN.DADA2.gg.tar Output/Step56/KNN.DADA2.silva.tar Output/Step56/KNN.DADA2.homd.tar Output/Step56/KNN.Deblur.gg.tar Output/Step56/KNN.Deblur.silva.tar Output/Step56/KNN.Deblur.homd.tar Output/Step56/KNN-two.DADA2.gg.tar Output/Step56/KNN-two.DADA2.silva.tar Output/Step56/KNN-two.DADA2.homd.tar Output/Step56/KNN-two.Deblur.gg.tar Output/Step56/KNN-two.Deblur.silva.tar Output/Step56/KNN-two.Deblur.homd.tar
-.PHONY: step56
+Output/Step56_Proportion/KNN.%.tar: Python/step56.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step56_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-# Step 57 (Support Vector Machine Classifier)
-Output/Step57:
+Output/Step56_Proportion/KNN-two.%.tar: Python/step56-1.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step56_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step56-uncorrected: Output/Step56/KNN.DADA2.gg.uncorrected.tar Output/Step56/KNN.DADA2.silva.uncorrected.tar Output/Step56/KNN.DADA2.homd.uncorrected.tar Output/Step56/KNN.Deblur.gg.uncorrected.tar Output/Step56/KNN.Deblur.silva.uncorrected.tar Output/Step56/KNN.Deblur.homd.uncorrected.tar Output/Step56/KNN-two.DADA2.gg.uncorrected.tar Output/Step56/KNN-two.DADA2.silva.uncorrected.tar Output/Step56/KNN-two.DADA2.homd.uncorrected.tar Output/Step56/KNN-two.Deblur.gg.uncorrected.tar Output/Step56/KNN-two.Deblur.silva.uncorrected.tar Output/Step56/KNN-two.Deblur.homd.uncorrected.tar
+step56-corrected: Output/Step56/KNN.DADA2.gg.tar Output/Step56/KNN.DADA2.silva.tar Output/Step56/KNN.DADA2.homd.tar Output/Step56/KNN.Deblur.gg.tar Output/Step56/KNN.Deblur.silva.tar Output/Step56/KNN.Deblur.homd.tar Output/Step56/KNN-two.DADA2.gg.tar Output/Step56/KNN-two.DADA2.silva.tar Output/Step56/KNN-two.DADA2.homd.tar Output/Step56/KNN-two.Deblur.gg.tar Output/Step56/KNN-two.Deblur.silva.tar Output/Step56/KNN-two.Deblur.homd.tar
+step56-uncorrected-Proportion: Output/Step56_Proportion/KNN.DADA2.gg.uncorrected.tar Output/Step56_Proportion/KNN.DADA2.silva.uncorrected.tar Output/Step56_Proportion/KNN.DADA2.homd.uncorrected.tar Output/Step56_Proportion/KNN.Deblur.gg.uncorrected.tar Output/Step56_Proportion/KNN.Deblur.silva.uncorrected.tar Output/Step56_Proportion/KNN.Deblur.homd.uncorrected.tar Output/Step56_Proportion/KNN-two.DADA2.gg.uncorrected.tar Output/Step56_Proportion/KNN-two.DADA2.silva.uncorrected.tar Output/Step56_Proportion/KNN-two.DADA2.homd.uncorrected.tar Output/Step56_Proportion/KNN-two.Deblur.gg.uncorrected.tar Output/Step56_Proportion/KNN-two.Deblur.silva.uncorrected.tar Output/Step56_Proportion/KNN-two.Deblur.homd.uncorrected.tar
+step56-corrected-Proportion: Output/Step56_Proportion/KNN.DADA2.gg.tar Output/Step56_Proportion/KNN.DADA2.silva.tar Output/Step56_Proportion/KNN.DADA2.homd.tar Output/Step56_Proportion/KNN.Deblur.gg.tar Output/Step56_Proportion/KNN.Deblur.silva.tar Output/Step56_Proportion/KNN.Deblur.homd.tar Output/Step56_Proportion/KNN-two.DADA2.gg.tar Output/Step56_Proportion/KNN-two.DADA2.silva.tar Output/Step56_Proportion/KNN-two.DADA2.homd.tar Output/Step56_Proportion/KNN-two.Deblur.gg.tar Output/Step56_Proportion/KNN-two.Deblur.silva.tar Output/Step56_Proportion/KNN-two.Deblur.homd.tar
+step56: step56-uncorrected step56-corrected step56-uncorrected-Proportion step56-corrected-Proportion
+.PHONY: step56-uncorrected step56-corrected step56-uncorrected-Proportion step56-corrected-Proportion step56
+
+# Step 57 (Support Vector Machine Classifier with Bagging)
+Output/Step57 Output/Step57_Proportion:
 	mkdir -p $@
 
-Output/Step57/SVM.%.tar: Python/step57.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step57 build.log
+Output/Step57/SVM.%.tar: Python/step57.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step57 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step57/SVM-two.%.tar: Python/step57-1.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step57 build.log
+Output/Step57/SVM-two.%.tar: Python/step57-1.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step57 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step57: Output/Step57/SVM.DADA2.gg.tar Output/Step57/SVM.DADA2.silva.tar Output/Step57/SVM.DADA2.homd.tar Output/Step57/SVM.Deblur.gg.tar Output/Step57/SVM.Deblur.silva.tar Output/Step57/SVM.Deblur.homd.tar Output/Step57/SVM-two.DADA2.gg.tar Output/Step57/SVM-two.DADA2.silva.tar Output/Step57/SVM-two.DADA2.homd.tar Output/Step57/SVM-two.Deblur.gg.tar Output/Step57/SVM-two.Deblur.silva.tar Output/Step57/SVM-two.Deblur.homd.tar
-.PHONY: step57
+Output/Step57_Proportion/SVM.%.tar: Python/step57.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step57_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step57_Proportion/SVM-two.%.tar: Python/step57-1.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step57_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step57-uncorrected: Output/Step57/SVM.DADA2.gg.uncorrected.tar Output/Step57/SVM.DADA2.silva.uncorrected.tar Output/Step57/SVM.DADA2.homd.uncorrected.tar Output/Step57/SVM.Deblur.gg.uncorrected.tar Output/Step57/SVM.Deblur.silva.uncorrected.tar Output/Step57/SVM.Deblur.homd.uncorrected.tar Output/Step57/SVM-two.DADA2.gg.uncorrected.tar Output/Step57/SVM-two.DADA2.silva.uncorrected.tar Output/Step57/SVM-two.DADA2.homd.uncorrected.tar Output/Step57/SVM-two.Deblur.gg.uncorrected.tar Output/Step57/SVM-two.Deblur.silva.uncorrected.tar Output/Step57/SVM-two.Deblur.homd.uncorrected.tar
+step57-corrected: Output/Step57/SVM.DADA2.gg.tar Output/Step57/SVM.DADA2.silva.tar Output/Step57/SVM.DADA2.homd.tar Output/Step57/SVM.Deblur.gg.tar Output/Step57/SVM.Deblur.silva.tar Output/Step57/SVM.Deblur.homd.tar Output/Step57/SVM-two.DADA2.gg.tar Output/Step57/SVM-two.DADA2.silva.tar Output/Step57/SVM-two.DADA2.homd.tar Output/Step57/SVM-two.Deblur.gg.tar Output/Step57/SVM-two.Deblur.silva.tar Output/Step57/SVM-two.Deblur.homd.tar
+step57-uncorrected-Proportion: Output/Step57_Proportion/SVM.DADA2.gg.uncorrected.tar Output/Step57_Proportion/SVM.DADA2.silva.uncorrected.tar Output/Step57_Proportion/SVM.DADA2.homd.uncorrected.tar Output/Step57_Proportion/SVM.Deblur.gg.uncorrected.tar Output/Step57_Proportion/SVM.Deblur.silva.uncorrected.tar Output/Step57_Proportion/SVM.Deblur.homd.uncorrected.tar Output/Step57_Proportion/SVM-two.DADA2.gg.uncorrected.tar Output/Step57_Proportion/SVM-two.DADA2.silva.uncorrected.tar Output/Step57_Proportion/SVM-two.DADA2.homd.uncorrected.tar Output/Step57_Proportion/SVM-two.Deblur.gg.uncorrected.tar Output/Step57_Proportion/SVM-two.Deblur.silva.uncorrected.tar Output/Step57_Proportion/SVM-two.Deblur.homd.uncorrected.tar
+step57-corrected-Proportion: Output/Step57_Proportion/SVM.DADA2.gg.tar Output/Step57_Proportion/SVM.DADA2.silva.tar Output/Step57_Proportion/SVM.DADA2.homd.tar Output/Step57_Proportion/SVM.Deblur.gg.tar Output/Step57_Proportion/SVM.Deblur.silva.tar Output/Step57_Proportion/SVM.Deblur.homd.tar Output/Step57_Proportion/SVM-two.DADA2.gg.tar Output/Step57_Proportion/SVM-two.DADA2.silva.tar Output/Step57_Proportion/SVM-two.DADA2.homd.tar Output/Step57_Proportion/SVM-two.Deblur.gg.tar Output/Step57_Proportion/SVM-two.Deblur.silva.tar Output/Step57_Proportion/SVM-two.Deblur.homd.tar
+step57: step57-uncorrected step57-corrected step57-uncorrected-Proportion step57-corrected-Proportion
+.PHONY: step57-uncorrected step57-corrected step57-uncorrected-Proportion step57-corrected-Proportion step57
 
 # Step 58 (RandomForest Classifier with Bagging)
 Output/Step58 Output/Step58_Proportion:
