@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     PTB_palette = dict(zip(step00.detailed_PTB, matplotlib.colors.TABLEAU_COLORS))
 
-    for site in set(input_data["Site"]):
+    for site in tqdm.tqdm(step00.selected_long_sites):
         data = input_data.loc[(input_data["Site"] == site)]
 
         for c in tqdm.tqdm(numeric_columns):
