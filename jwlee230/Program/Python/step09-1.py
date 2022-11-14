@@ -23,7 +23,7 @@ if __name__ == "__main__":
     taxa_column = list(input_data["taxonomy"])
     del input_data["taxonomy"]
 
-    input_data = numpy.log(input_data + 1)
+    input_data = numpy.log(input_data)
     input_data[input_data < 0] = 0
 
     input_data["taxonomy"] = taxa_column
