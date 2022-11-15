@@ -10,6 +10,6 @@ ADD requirements.txt /
 RUN pip install --requirement /requirements.txt && pip install scikit-bio==0.5.6
 
 # R Packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'remotes', 'R.utils', 'Rcpp', 'XML'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install('limma')" && Rscript -e "install.packages(c('nlme', 'tidyverse', 'c=mpositions'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install(c('lefser', 'DESeq2', 'sva'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'remotes', 'R.utils', 'Rcpp', 'XML'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install('limma')" && Rscript -e "install.packages(c('nlme', 'tidyverse', 'c=mpositions'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install(c('lefser', 'DESeq2'))"
 
 CMD ["/bin/bash"]
