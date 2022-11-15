@@ -21,14 +21,14 @@ p_threshold = 0.05
 
 def ratio(taxo: str, site: str) -> float:
     try:
-        return numpy.log2(numpy.mean(input_data.loc[(input_data["Detail Premature"] == "Early PTB") & (input_data["Site"] == site), taxo]) / numpy.mean(input_data.loc[(input_data["Detail Premature"] == "Normal") & (input_data["Site"] == site), taxo]))
+        return numpy.log2(numpy.mean(input_data.loc[(input_data["Detail Premature"] == "Early PTB") & (input_data["Site"] == site), taxo]) / numpy.mean(input_data.loc[(input_data["Detail Premature"].isin(["Late PTB", "Normal"])) & (input_data["Site"] == site), taxo]))
     except RuntimeWarning:
         return 0
 
 
 def pvalue(taxo: str, site: str) -> float:
     try:
-        return -1 * numpy.log10(scipy.stats.mannwhitneyu(input_data.loc[(input_data["Detail Premature"] == "Early PTB") & (input_data["Site"] == site), taxo], input_data.loc[(input_data["Detail Premature"] == "Normal") & (input_data["Site"] == site), taxo], alternative="two-sided")[1])
+        return -1 * numpy.log10(scipy.stats.mannwhitneyu(input_data.loc[(input_data["Detail Premature"] == "Early PTB") & (input_data["Site"] == site), taxo], input_data.loc[(input_data["Detail Premature"].isin(["Late PTB", "Normal"])) & (input_data["Site"] == site), taxo], alternative="two-sided")[1])
     except ValueError:
         return 0
 
@@ -74,30 +74,30 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
         texts = list()
 
-        output_data = pandas.DataFrame(data=numpy.zeros((len(taxa), 2)), index=taxa, columns=["log2(EP/F)", "-log10(p)"])
+        output_data = pandas.DataFrame(data=numpy.zeros((len(taxa), 2)), index=taxa, columns=["log2(EP/LP+F)", "-log10(p)"])
 
         with multiprocessing.Pool(args.cpus) as pool:
-            output_data.loc[:, "log2(EP/F)"] = pool.starmap(ratio, [(taxo, site) for taxo in taxa])
+            output_data.loc[:, "log2(EP/LP+F)"] = pool.starmap(ratio, [(taxo, site) for taxo in taxa])
             output_data.loc[:, "-log10(p)"] = pool.starmap(pvalue, [(taxo, site) for taxo in taxa])
         print(output_data)
 
-        down_results = output_data.loc[((output_data["log2(EP/F)"] < numpy.log2(1 / ratio_threshold)) & (output_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
-        up_results = output_data.loc[((output_data["log2(EP/F)"] > numpy.log2(ratio_threshold)) & (output_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
-        ns_results = output_data.loc[(((output_data["log2(EP/F)"] < numpy.log2(ratio_threshold)) & (output_data["log2(EP/F)"] > numpy.log2(1 / ratio_threshold))) | (output_data["-log10(p)"] < (-1 * numpy.log10(p_threshold)))), :]
+        down_results = output_data.loc[((output_data["log2(EP/LP+F)"] < numpy.log2(1 / ratio_threshold)) & (output_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
+        up_results = output_data.loc[((output_data["log2(EP/LP+F)"] > numpy.log2(ratio_threshold)) & (output_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
+        ns_results = output_data.loc[(((output_data["log2(EP/LP+F)"] < numpy.log2(ratio_threshold)) & (output_data["log2(EP/LP+F)"] > numpy.log2(1 / ratio_threshold))) | (output_data["-log10(p)"] < (-1 * numpy.log10(p_threshold)))), :]
 
-        matplotlib.pyplot.scatter(ns_results["log2(EP/F)"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
-        matplotlib.pyplot.scatter(up_results["log2(EP/F)"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
-        matplotlib.pyplot.scatter(down_results["log2(EP/F)"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
+        matplotlib.pyplot.scatter(ns_results["log2(EP/LP+F)"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
+        matplotlib.pyplot.scatter(up_results["log2(EP/LP+F)"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
+        matplotlib.pyplot.scatter(down_results["log2(EP/LP+F)"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
 
         for index, row in down_results.iterrows():
             print(site, " / Down / ", index)
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/LP+F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
         for index, row in up_results.iterrows():
             print(site, " / Up / ", index)
-            texts.append(matplotlib.pyplot.text(row["log2(EP/F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
+            texts.append(matplotlib.pyplot.text(row["log2(EP/LP+F)"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
-        matplotlib.pyplot.xlabel("log2(EP/F)")
+        matplotlib.pyplot.xlabel("log2(EP/LP+F)")
         matplotlib.pyplot.ylabel("-log10(p)")
         matplotlib.pyplot.title(site)
         matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
