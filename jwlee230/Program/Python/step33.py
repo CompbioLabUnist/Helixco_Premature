@@ -4,7 +4,6 @@ step33.py: Read & clearify raw TSV for LefSe
 import argparse
 import pandas
 import tqdm
-import step00
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -22,8 +21,6 @@ if __name__ == "__main__":
         raise ValueError("Metadata file must end with .TSV!!")
 
     raw_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby(by="taxonomy").sum()
-    raw_data["readable_taxonomy"] = list(map(lambda x: step00.simplified_taxonomy(x).replace(" ", "_").replace(".", ""), list(raw_data.index)))
-    raw_data.set_index(keys="readable_taxonomy", inplace=True)
     print(raw_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1])
@@ -35,7 +32,7 @@ if __name__ == "__main__":
     raw_data.sort_index(inplace=True)
     print(raw_data)
 
-    for site in tqdm.tqdm(step00.selected_long_sites):
+    for site in tqdm.tqdm(["Cervix", "Mouth", "Vagina", "Neonate-3day", "Neonate-5day"]):
         selected_IDs = metadata.loc[(metadata["Site"] == site), "#SampleID"]
         tmp_data = raw_data.loc[:, selected_IDs]
         tmp_data.to_csv("{0}.{1}.tsv".format(args.output, site), sep="\t")
