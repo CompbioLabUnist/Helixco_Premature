@@ -147,7 +147,7 @@ if __name__ == "__main__":
             for real, prediction in zip(y_test, classifier.predict(x_test)):
                 heatmap_data.loc[real, prediction] += 1
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
 
@@ -180,10 +180,10 @@ if __name__ == "__main__":
         for i, feature in enumerate(best_features[:10]):
             print(feature)
 
-            fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
+            fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+            seaborn.violinplot(data=input_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
             try:
-                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:
                 pass
 

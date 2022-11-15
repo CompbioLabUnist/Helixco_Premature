@@ -179,9 +179,9 @@ if __name__ == "__main__":
             print(feature)
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-            seaborn.violinplot(data=tmp_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
+            seaborn.violinplot(data=input_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
             try:
-                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=tmp_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+                statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
             except ValueError:
                 pass
 
