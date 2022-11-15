@@ -631,7 +631,7 @@ step34-cladogram: $(addprefix Output/Step34/Cladogram/everything.DADA2.gg.,$(add
 step34: step34-tsv step34-in step34-res step34-default step34-cladogram
 .PHONY: step34-tsv step34-in step34-res step34-default step34-cladogram step34
 
-# Step 35 (Cluster map plot within bacteria)
+# Step 35 (Clustermap plot within bacteria)
 Output/Step35:
 	mkdir -p $@
 
@@ -1259,8 +1259,8 @@ step58-uncorrected: Output/Step58/RF.DADA2.gg.uncorrected.tar Output/Step58/RF.D
 step58-corrected: Output/Step58/RF.DADA2.gg.tar Output/Step58/RF.DADA2.silva.tar Output/Step58/RF.DADA2.homd.tar Output/Step58/RF.Deblur.gg.tar Output/Step58/RF.Deblur.silva.tar Output/Step58/RF.Deblur.homd.tar Output/Step58/RF-two.DADA2.gg.tar Output/Step58/RF-two.DADA2.silva.tar Output/Step58/RF-two.DADA2.homd.tar Output/Step58/RF-two.Deblur.gg.tar Output/Step58/RF-two.Deblur.silva.tar Output/Step58/RF-two.Deblur.homd.tar
 step58-uncorrected-Proportion: Output/Step58_Proportion/RF.DADA2.gg.uncorrected.tar Output/Step58_Proportion/RF.DADA2.silva.uncorrected.tar Output/Step58_Proportion/RF.DADA2.homd.uncorrected.tar Output/Step58_Proportion/RF.Deblur.gg.uncorrected.tar Output/Step58_Proportion/RF.Deblur.silva.uncorrected.tar Output/Step58_Proportion/RF.Deblur.homd.uncorrected.tar Output/Step58_Proportion/RF-two.DADA2.gg.uncorrected.tar Output/Step58_Proportion/RF-two.DADA2.silva.uncorrected.tar Output/Step58_Proportion/RF-two.DADA2.homd.uncorrected.tar Output/Step58_Proportion/RF-two.Deblur.gg.uncorrected.tar Output/Step58_Proportion/RF-two.Deblur.silva.uncorrected.tar Output/Step58_Proportion/RF-two.Deblur.homd.uncorrected.tar
 step58-corrected-Proportion: Output/Step58_Proportion/RF.DADA2.gg.tar Output/Step58_Proportion/RF.DADA2.silva.tar Output/Step58_Proportion/RF.DADA2.homd.tar Output/Step58_Proportion/RF.Deblur.gg.tar Output/Step58_Proportion/RF.Deblur.silva.tar Output/Step58_Proportion/RF.Deblur.homd.tar Output/Step58_Proportion/RF-two.DADA2.gg.tar Output/Step58_Proportion/RF-two.DADA2.silva.tar Output/Step58_Proportion/RF-two.DADA2.homd.tar Output/Step58_Proportion/RF-two.Deblur.gg.tar Output/Step58_Proportion/RF-two.Deblur.silva.tar Output/Step58_Proportion/RF-two.Deblur.homd.tar
-step58: step58-uncorrected step58-corrected step58-uncorrected-Proportionstep58-corrected-Proportion
-.PHONY: step58-uncorrected step58-corrected step58-uncorrected-Proportionstep58-corrected-Proportion step58
+step58: step58-uncorrected step58-corrected step58-uncorrected-Proportion step58-corrected-Proportion
+.PHONY: step58-uncorrected step58-corrected step58-uncorrected-Proportion step58-corrected-Proportion step58
 
 # Step 59 (Violin Plots for Taxonomy Distribution)
 Output/Step59:
