@@ -35,9 +35,33 @@
             \thesection. \insertsectionhead
             \par
         \end{beamercolorbox}
-        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+        \begin{beamercolorbox}[sep=6pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{subtitle}
             \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\AtBeginSubsubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \thesection. \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=6pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subsubtitle}
+            \thesection.\thesubsection.\thesubsubsection. \insertsubsubsectionhead
             \par
         \end{beamercolorbox}
         \vfill
@@ -283,6 +307,7 @@
     \end{frame}
 
     \subsection{Taxonomy Overview}
+    \subsubsection{Abundance}
     \begin{frame}
         \frametitle{Abundance Distribution}
 
@@ -347,10 +372,11 @@
                 \\
                 \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
-            \caption{t-SNE plot of Abundance with Premature}
+            \caption{t-SNE plot of Abundance with PTB}
         \end{figure}
     \end{frame}
 
+    \subsubsection{Proportion}
     \begin{frame}
         \frametitle{Proportion Distribution}
 
@@ -415,13 +441,13 @@
                 \\
                 \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
             \end{array}$
-            \caption{t-SNE plot of Proportion with Proportion}
+            \caption{t-SNE plot of Proportion with PTB}
         \end{figure}
     \end{frame}
 
     \subsection{Diversity Index}
     \begin{frame}
-        \frametitle{Diversity Indices}
+        \frametitle{Diversity Index}
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/phylogenic.jpg}
@@ -435,8 +461,9 @@
         \end{itemize}
     \end{frame}
 
+    \subsubsection{Alpha-diversity}
     \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plot with Alpha diversity}
+        \frametitle{Violin Plot with Alpha-diversity}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -481,11 +508,11 @@
             \end{array}$
             \caption{Detail premature \& Shannon Entropy}
         \end{figure}
-
     \end{frame}
 
+    \subsubsection{Beta-diversity}
     \begin{frame}[allowframebreaks]
-        \frametitle{Cluster map with Beta diversity}
+        \frametitle{Cluster map with Beta-diversity}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Step47/everything.DADA2.weighted_unifrac.pdf}
@@ -505,6 +532,7 @@
     \end{frame}
 
     \subsection{Taxonomy Analyses}
+    \subsubsection{Differentially Abundant Taxa}
     \begin{frame}
         \frametitle{Volcano plot}
 
@@ -520,15 +548,26 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Shared Taxonomy with Neonates \& Mothers}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Differentially Abundant Taxa}
 
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Step48/everything.DADA2.homd.pdf}
-            \caption{Shared Taxonomy with Neonates \& Mothers}
-        \end{figure}
+        \begin{block}{\textit{L. umeaense}}
+            \begin{itemize}
+                \item
+            \end{itemize}
+        \end{block}
     \end{frame}
 
+%    \begin{frame}
+%        \frametitle{Shared Taxonomy with Neonates \& Mothers}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.6 \linewidth]{figures/Step48/everything.DADA2.homd.pdf}
+%            \caption{Shared Taxonomy with Neonates \& Mothers}
+%        \end{figure}
+%    \end{frame}
+
+    \subsubsection{Correlation with Clinical Data}
     \begin{frame}[allowframebreaks]
         \frametitle{Correlation between Taxonomy \& Clinical data}
 
@@ -545,17 +584,6 @@
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.spearman.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Step49/everything.DADA2.homd.spearman.Sites/Mouth.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mouth} \\
-            \end{array}$
-            \caption{Spearman correlation on Taxonomy Abundance}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.pearson.pdf}
                 &
                 \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.pearson.Sites/Mouth.pdf}
@@ -564,21 +592,6 @@
             \end{array}$
             \caption{Pearson correlation on Taxonomy Proportion}
         \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.spearman.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Step49_Proportion/everything.DADA2.homd.spearman.Sites/Mouth.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mouth} \\
-            \end{array}$
-            \caption{Spearman correlation on Taxonomy Proportion}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Correlation Plot}
     \end{frame}
 
     \subsection{Machine Learning}
@@ -591,6 +604,19 @@
         \end{figure}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{Oversampling}
+
+        \begin{block}{Naive Random Oversampling}
+            \begin{enumerate}
+                \item Randomly pick a sample from under-represented class.
+                \item Duplicate it.
+                \item Repeat until all classes are even.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{Random Forest Classifier on Abundance}
     \begin{frame}[allowframebreaks]
         \frametitle{Random Forest with (Early vs. Late vs. Full)}
 
@@ -631,84 +657,68 @@
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
+                \\
+            \end{array}$
+            \caption{RF most important taxa}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Random Forest Classifier on Proportion}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Random Forest with (Early vs. Late vs. Full)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.uncorrected/Mouth+metrics.pdf}
+            \caption{RF evaluations with feature counts}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
+            \caption{RF confusion matrix}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
+                \\
+            \end{array}$
             \caption{RF most important taxa}
         \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{K-Nearest Neighbors with (Early vs. Late vs. Full)}
+        \frametitle{Random Forest with (Early vs. Late + Full)}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+metrics.pdf}
-            \caption{KNN evaluations with feature counts}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.uncorrected/Mouth+metrics.pdf}
+            \caption{RF evaluations with feature counts}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+heatmap.pdf}
-            \caption{KNN confusion matrix}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
+            \caption{RF confusion matrix}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN.DADA2.homd/Mouth+Violin_0.pdf}
-            \caption{KNN most important taxa}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{K-Nearest Neighbors with (Early vs. Late + Full)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+metrics.pdf}
-            \caption{KNN evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+heatmap.pdf}
-            \caption{KNN confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/KNN/KNN-two.DADA2.homd/Mouth+Violin_0.pdf}
-            \caption{KNN most important taxa}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Support Vector Machine with (Early vs. Late vs. Full)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+metrics.pdf}
-            \caption{SVM evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+heatmap.pdf}
-            \caption{SVM confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM.DADA2.homd/Mouth+Violin_0.pdf}
-            \caption{SVM most important taxa}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Support Vector Machine with (Early vs. Late + Full)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+metrics.pdf}
-            \caption{SVM evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+heatmap.pdf}
-            \caption{SVM confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/SVM/SVM-two.DADA2.homd/Mouth+Violin_0.pdf}
-            \caption{SVM most important taxa}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
+                \\
+            \end{array}$
+            \caption{RF most important taxa}
         \end{figure}
     \end{frame}
 
