@@ -108,7 +108,7 @@ def remove_preceding_underscores(x: str) -> str:
         return x
 
 
-def consistency_taxonomy(taxonomy: str, number: int = 3) -> str:
+def consistency_taxonomy(taxonomy: str, number: int = 2) -> str:
     """
     consistency_taxonomy: make taxonomy information with consistency
     """

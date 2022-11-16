@@ -29,6 +29,7 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     input_data["-log10(p)"] = -1 * numpy.log10(input_data["padj"])
+    input_data["simple_name"] = list(map(step00.consistency_taxonomy, list(input_data.index)))
     print(input_data)
 
     matplotlib.use("Agg")
@@ -42,16 +43,17 @@ if __name__ == "__main__":
     up_results = input_data.loc[((input_data["log2FoldChange"] > numpy.log2(ratio_threshold)) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :].sort_values("-log10(p)", ascending=False)
     ns_results = input_data.loc[(((input_data["log2FoldChange"] < numpy.log2(ratio_threshold)) & (input_data["log2FoldChange"] > numpy.log2(1 / ratio_threshold))) | (input_data["-log10(p)"] < (-1 * numpy.log10(p_threshold)))), :]
 
+    print(up_results.sort_values("simple_name"))
+    print(down_results.sort_values("simple_name"))
+
     matplotlib.pyplot.scatter(ns_results["log2FoldChange"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
     matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
     matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
 
     for index, row in down_results.iloc[:5, :].iterrows():
-        print("Down /", index)
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
     for index, row in up_results.iloc[:5, :].iterrows():
-        print("Up /", index)
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
     matplotlib.pyplot.xlabel("log2FoldChange")
