@@ -877,10 +877,10 @@ Output/Step44/everything.%.DAT.tsv: R/run_DESeq.R Output/Step44/everything.%.tsv
 Output/Step44/everything.%.pdf: Python/step44.py Output/Step44/everything.%.DAT.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step44_Proportion/everything.%.Cervix.tsv Output/Step44_Proportion/everything.%.Mouth.tsv Output/Step44_Proportion/everything.%.Vagina.tsv: Python/step44-1.py Output/TSV/everything.%.tsv | build.log Output/Step44_Proportion
+Output/Step44_Proportion/everything.%.Cervix.tsv Output/Step44_Proportion/everything.%.Mouth.tsv Output/Step44_Proportion/everything.%.Vagina.tsv: Python/step44-3.py Output/TSV_Proportion/everything.%.tsv | build.log Output/Step44_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step44_Proportion/everything.%.Cervix.coldata Output/Step44_Proportion/everything.%.Mouth.coldata Output/Step44_Proportion/everything.%.Vagina.coldata: Python/step44-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
+Output/Step44_Proportion/everything.%.Cervix.coldata Output/Step44_Proportion/everything.%.Mouth.coldata Output/Step44_Proportion/everything.%.Vagina.coldata: Python/step44-2.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step44_Proportion/everything.%.DAT.tsv: R/run_DESeq.R Output/Step44_Proportion/everything.%.tsv Output/Step44_Proportion/everything.%.coldata | build.log
