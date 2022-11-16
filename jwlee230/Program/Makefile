@@ -865,16 +865,34 @@ step43: step43-everything-DADA2 step43-everything-Deblur
 Output/Step44 Output/Step44_Proportion:
 	mkdir -p $@
 
-Output/Step44/everything.%.tar: Python/step44.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Step44/everything.%.Cervix.tsv Output/Step44/everything.%.Mouth.tsv Output/Step44/everything.%.Vagina.tsv: Python/step44-1.py Output/TSV/everything.%.tsv | build.log Output/Step44
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-Output/Step44_Proportion/everything.%.tar: Python/step44.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Step44/everything.%.Cervix.coldata Output/Step44/everything.%.Mouth.coldata Output/Step44/everything.%.Vagina.coldata: Python/step44-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
-step44-uncorrected: Output/Step44/everything.DADA2.gg.uncorrected.tar Output/Step44/everything.DADA2.silva.uncorrected.tar Output/Step44/everything.DADA2.homd.uncorrected.tar Output/Step44/everything.Deblur.gg.uncorrected.tar Output/Step44/everything.Deblur.silva.uncorrected.tar Output/Step44/everything.Deblur.homd.uncorrected.tar
-step44-corrected: Output/Step44/everything.DADA2.gg.tar Output/Step44/everything.DADA2.silva.tar Output/Step44/everything.DADA2.homd.tar Output/Step44/everything.Deblur.gg.tar Output/Step44/everything.Deblur.silva.tar Output/Step44/everything.Deblur.homd.tar
-step44-uncorrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step44_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step44_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step44_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step44_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step44_Proportion/everything.Deblur.homd.uncorrected.tar
-step44-corrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.tar Output/Step44_Proportion/everything.DADA2.silva.tar Output/Step44_Proportion/everything.DADA2.homd.tar Output/Step44_Proportion/everything.Deblur.gg.tar Output/Step44_Proportion/everything.Deblur.silva.tar Output/Step44_Proportion/everything.Deblur.homd.tar
+Output/Step44/everything.%.DAT.tsv: R/run_DESeq.R Output/Step44/everything.%.tsv Output/Step44/everything.%.coldata | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step44/everything.%.pdf: Python/step44.py Output/Step44/everything.%.DAT.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step44_Proportion/everything.%.Cervix.tsv Output/Step44_Proportion/everything.%.Mouth.tsv Output/Step44_Proportion/everything.%.Vagina.tsv: Python/step44-1.py Output/TSV/everything.%.tsv | build.log Output/Step44_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+
+Output/Step44_Proportion/everything.%.Cervix.coldata Output/Step44_Proportion/everything.%.Mouth.coldata Output/Step44_Proportion/everything.%.Vagina.coldata: Python/step44-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+
+Output/Step44_Proportion/everything.%.DAT.tsv: R/run_DESeq.R Output/Step44_Proportion/everything.%.tsv Output/Step44_Proportion/everything.%.coldata | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step44_Proportion/everything.%.pdf: Python/step44.py Output/Step44_Proportion/everything.%.DAT.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step44-uncorrected: Output/Step44/everything.DADA2.gg.uncorrected.Cervix.tsv Output/Step44/everything.DADA2.gg.uncorrected.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.gg.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.gg.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina))
+step44-corrected: Output/Step44/everything.DADA2.gg.Cervix.tsv Output/Step44/everything.DADA2.gg.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.gg.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Vagina))
+step44-uncorrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.uncorrected.Cervix.tsv Output/Step44_Proportion/everything.DADA2.gg.uncorrected.Cervix.coldata $(addprefix Output/Step44_Proportion/everything.DADA2.gg.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44_Proportion/everything.DADA2.gg.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina))
+step44-corrected-Proportion: Output/Step44_Proportion/everything.DADA2.gg.Cervix.tsv Output/Step44_Proportion/everything.DADA2.gg.Cervix.coldata $(addprefix Output/Step44_Proportion/everything.DADA2.gg.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44_Proportion/everything.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Vagina))
 step44: step44-uncorrected step44-corrected step44-uncorrected-Proportion step44-corrected-Proportion
 .PHONY: step44-uncorrected step44-corrected step44-uncorrected-Proportion step44-corrected-Proportion step44
 
