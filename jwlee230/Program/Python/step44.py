@@ -38,19 +38,19 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     texts = list()
 
-    down_results = input_data.loc[((input_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold)) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
-    up_results = input_data.loc[((input_data["log2FoldChange"] > numpy.log2(ratio_threshold)) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :]
+    down_results = input_data.loc[((input_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold)) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :].sort_values("-log10(p)", ascending=False)
+    up_results = input_data.loc[((input_data["log2FoldChange"] > numpy.log2(ratio_threshold)) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))), :].sort_values("-log10(p)", ascending=False)
     ns_results = input_data.loc[(((input_data["log2FoldChange"] < numpy.log2(ratio_threshold)) & (input_data["log2FoldChange"] > numpy.log2(1 / ratio_threshold))) | (input_data["-log10(p)"] < (-1 * numpy.log10(p_threshold)))), :]
 
     matplotlib.pyplot.scatter(ns_results["log2FoldChange"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
     matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
     matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
 
-    for index, row in down_results.iterrows():
+    for index, row in down_results.iloc[:5, :].iterrows():
         print("Down /", index)
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
-    for index, row in up_results.iterrows():
+    for index, row in up_results.iloc[:5, :].iterrows():
         print("Up /", index)
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
@@ -60,9 +60,11 @@ if __name__ == "__main__":
     matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
     matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
     matplotlib.pyplot.tight_layout()
 
-    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.small, ax=ax)
+    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.big, ax=ax)
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
