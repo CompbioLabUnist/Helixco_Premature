@@ -1281,10 +1281,21 @@ step58: step58-uncorrected step58-corrected step58-uncorrected-Proportion step58
 .PHONY: step58-uncorrected step58-corrected step58-uncorrected-Proportion step58-corrected-Proportion step58
 
 # Step 59 (Violin Plots for Taxonomy Distribution)
-Output/Step59:
+Output/Step59 Output/Step59_Proportion:
 	mkdir -p $@
 
 Output/Step59/%.tar: Python/step59.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step59 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step59: Output/Step59/everything.DADA2.homd.uncorrected.tar Output/Step59/everything.DADA2.homd.tar
+Output/Step59_Proportion/%.tar: Python/step59.py Output/TSV_Proportion/%.tsv Output/Metadata/everything.tsv | Output/Step59_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step59-uncorrected: Output/Step59/everything.DADA2.gg.uncorrected.tar Output/Step59/everything.DADA2.silva.uncorrected.tar Output/Step59/everything.DADA2.homd.uncorrected.tar Output/Step59/everything.Deblur.gg.uncorrected.tar Output/Step59/everything.Deblur.silva.uncorrected.tar Output/Step59/everything.Deblur.homd.uncorrected.tar
+step59-corrected: Output/Step59/everything.DADA2.gg.tar Output/Step59/everything.DADA2.silva.tar Output/Step59/everything.DADA2.homd.tar Output/Step59/everything.Deblur.gg.tar Output/Step59/everything.Deblur.silva.tar Output/Step59/everything.Deblur.homd.tar
+step59-uncorrected-Proportion: Output/Step59_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step59_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step59_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step59_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step59_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step59_Proportion/everything.Deblur.homd.uncorrected.tar
+step59-corrected-Proportion: Output/Step59_Proportion/everything.DADA2.gg.tar Output/Step59_Proportion/everything.DADA2.silva.tar Output/Step59_Proportion/everything.DADA2.homd.tar Output/Step59_Proportion/everything.Deblur.gg.tar Output/Step59_Proportion/everything.Deblur.silva.tar Output/Step59_Proportion/everything.Deblur.homd.tar
+.PHONY: step59
+
+# Step 60 (Abundance/Proportion Distribution)
+Output/Step60:
+	mkdir -p $@

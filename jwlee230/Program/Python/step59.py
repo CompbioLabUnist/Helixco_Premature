@@ -48,6 +48,34 @@ def draw_all(meta: str) -> str:
     return fig_name
 
 
+def draw(meta: str, site: str) -> str:
+    tmp_data = drawing_data.loc[(drawing_data["Site"] == site)]
+    order = sorted(set(tmp_data[meta]))
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+    try:
+        seaborn.violinplot(data=tmp_data, x=meta, y="Taxonomy", order=order, linewidth=5, cut=1, ax=ax)
+    except TypeError:
+        matplotlib.pyplot.close(fig)
+        return ""
+
+    try:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=tmp_data, x=meta, y="Taxonomy", order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    except ValueError:
+        pass
+
+    matplotlib.pyplot.title(site)
+    matplotlib.pyplot.ylabel("Taxonomy Abundances")
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"{site}+{meta.replace(' ', '_')}.pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+
+    return fig_name
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -92,6 +120,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = pool.map(draw_all, metadata_columns)
+        figures += pool.starmap(draw, itertools.product(metadata_columns, step00.selected_long_sites))
     figures = list(filter(None, figures))
 
     with tarfile.open(args.output, "w") as tar:
