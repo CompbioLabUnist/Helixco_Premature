@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     classifier = sklearn.svm.SVC(kernel="rbf", cache_size=10240, verbose=True, decision_function_shape="ovo", random_state=42)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
-    oversampler = imblearn.over_sampling.RandomOverSampler(random_state=0)
+    oversampler = imblearn.over_sampling.SMOTE(random_state=42, k_neighbors=3, n_jobs=args.cpus)
 
     for site in tqdm.tqdm(step00.selected_long_sites):
         selected_data = input_data.loc[(input_data["Site"] == site)]

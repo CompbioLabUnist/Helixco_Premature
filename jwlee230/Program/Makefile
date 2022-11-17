@@ -1299,3 +1299,8 @@ step59-corrected-Proportion: Output/Step59_Proportion/everything.DADA2.gg.tar Ou
 # Step 60 (Abundance/Proportion Distribution)
 Output/Step60:
 	mkdir -p $@
+
+Output/Step60/%.pdf: Python/step60.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step60 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+
+step60: Output/Step60/everything.DADA2.gg.uncorrected.pdf

@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
-    oversampler = imblearn.over_sampling.RandomOverSampler(random_state=0)
+    oversampler = imblearn.over_sampling.SMOTE(random_state=42, k_neighbors=3, n_jobs=args.cpus)
 
     for site in tqdm.tqdm(step00.selected_long_sites):
         selected_data = input_data.loc[(input_data["Site"] == site)]
