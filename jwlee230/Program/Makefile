@@ -1297,10 +1297,18 @@ step59-corrected-Proportion: Output/Step59_Proportion/everything.DADA2.gg.tar Ou
 .PHONY: step59
 
 # Step 60 (Abundance/Proportion Distribution)
-Output/Step60:
+Output/Step60 Output/Step60_Proportion:
 	mkdir -p $@
 
-Output/Step60/%.pdf: Python/step60.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step60 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+Output/Step60/%.tar: Python/step60.py Output/TSV/%.tsv Output/Metadata/everything.tsv | Output/Step60 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step60: Output/Step60/everything.DADA2.gg.uncorrected.pdf
+Output/Step60_Proportion/%.tar: Python/step60.py Output/TSV_Proportion/%.tsv Output/Metadata/everything.tsv | Output/Step60_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) >1 >$@.stdout 2> $@.stderr
+
+step60-uncorrected: Output/Step60/everything.DADA2.gg.uncorrected.tar Output/Step60/everything.DADA2.silva.uncorrected.tar Output/Step60/everything.DADA2.homd.uncorrected.tar Output/Step60/everything.Deblur.gg.uncorrected.tar Output/Step60/everything.Deblur.silva.uncorrected.tar Output/Step60/everything.Deblur.homd.uncorrected.tar
+step60-corrected: Output/Step60/everything.DADA2.gg.tar Output/Step60/everything.DADA2.silva.tar Output/Step60/everything.DADA2.homd.tar Output/Step60/everything.Deblur.gg.tar Output/Step60/everything.Deblur.silva.tar Output/Step60/everything.Deblur.homd.tar
+step60-uncorrected-Proportion: Output/Step60_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step60_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step60_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step60_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step60_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step60_Proportion/everything.Deblur.homd.uncorrected.tar
+step60-corrected-Proportion: Output/Step60_Proportion/everything.DADA2.gg.tar Output/Step60_Proportion/everything.DADA2.silva.tar Output/Step60_Proportion/everything.DADA2.homd.tar Output/Step60_Proportion/everything.Deblur.gg.tar Output/Step60_Proportion/everything.Deblur.silva.tar Output/Step60_Proportion/everything.Deblur.homd.tar
+step60: step60-uncorrected step60-corrected step60-uncorrected-Proportion step60-corrected-Proportion
+.PHONY: step60-uncorrected step60-corrected step60-uncorrected-Proportion step60-corrected-Proportion step60
