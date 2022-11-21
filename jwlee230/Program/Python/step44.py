@@ -1,5 +1,5 @@
 """
-step44.py: Volcano plot with differetially expressed taxa
+step44.py: Volcano plot with differetially abundant taxa
 """
 import argparse
 import warnings

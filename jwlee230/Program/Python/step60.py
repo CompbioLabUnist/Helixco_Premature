@@ -36,8 +36,7 @@ if __name__ == "__main__":
     metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), :].replace(to_replace=-1, value=None).sort_values("Detail Gestational Week")
     print(metadata)
 
-    taxa = sorted(list(input_data.columns), key=lambda x: sum(input_data[x]), reverse=True)
-    input_data = input_data.loc[metadata.index, taxa]
+    input_data = input_data.loc[metadata.index, :]
     print(input_data)
 
     matplotlib.use("Agg")
@@ -47,23 +46,24 @@ if __name__ == "__main__":
     figures = list()
     for s, site in step00.selected_sites_dict.items():
         tmp_data = input_data.loc[list(filter(lambda x: x.endswith(s), list(input_data.index))), :]
-        tmp_taxa = list(filter(lambda x: sum(tmp_data[x]) > 0, taxa))
+        taxa = sorted(list(tmp_data.columns), key=lambda x: sum(tmp_data[x]), reverse=True)
+        tmp_data = tmp_data.loc[:, taxa]
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
-        for i, (color, taxon) in tqdm.tqdm(list(enumerate(zip(itertools.cycle(matplotlib.colors.XKCD_COLORS), tmp_taxa)))):
+        for i, (color, taxon) in tqdm.tqdm(list(enumerate(zip(itertools.cycle(matplotlib.colors.XKCD_COLORS), taxa)))):
             if i < 5:
                 try:
                     label = step00.simplified_taxonomy(taxon)
                 except IndexError:
                     label = step00.consistency_taxonomy(taxon, 1)
-                matplotlib.pyplot.bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, label=label)
+                matplotlib.pyplot.bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, linewidth=0, label=label)
             else:
-                matplotlib.pyplot.bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color)
+                matplotlib.pyplot.bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, linewidth=0)
 
         matplotlib.pyplot.xticks(range(tmp_data.shape[0]), list(map(lambda x: metadata.loc[x, "Detail Gestational Week"], list(tmp_data.index))), rotation="vertical", fontsize="xx-small")
         matplotlib.pyplot.xlabel(f"{tmp_data.shape[0]} {site} samples (order by GW)")
-        matplotlib.pyplot.ylabel(f"{len(tmp_taxa)} bacteria")
+        matplotlib.pyplot.ylabel(f"{len(taxa)} bacteria")
         matplotlib.pyplot.legend()
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.tight_layout()
