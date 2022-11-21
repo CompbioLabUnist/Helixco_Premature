@@ -40,7 +40,7 @@ def draw(metric: str, column: str, site: str) -> str:
     except ValueError:
         p_value = 1.0
 
-    matplotlib.pyplot.title("{0} ({1}; p={2:.3f})".format(column, metric, p_value))
+    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(column, p_value))
     matplotlib.pyplot.tight_layout()
 
     file_name = "{2}+{0}+{1}.pdf".format(column.replace(" ", "_"), metric, site)
@@ -103,13 +103,15 @@ if __name__ == "__main__":
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
     metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
-    columns = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
-    columns = {"Data", "Site"}
+    columns = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate"}
     print(metadata)
     print(sorted(columns))
 
     for metric in tqdm.tqdm(step00.pdist_list):
-        distance_data[metric] = skbio.diversity.beta_diversity(metric, input_data.to_numpy(), list(input_data.index)).to_data_frame()
+        try:
+            distance_data[metric] = skbio.diversity.beta_diversity(metric, input_data.to_numpy(), list(input_data.index)).to_data_frame()
+        except Exception:
+            continue
 
         tsne_data[metric] = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=0, method="exact", n_jobs=args.cpus, perplexity=50).fit_transform(distance_data[metric]), columns=["tSNE1", "tSNE2"])
 
@@ -124,8 +126,8 @@ if __name__ == "__main__":
 
     files = list()
     with multiprocessing.Pool(args.cpus) as pool:
-        files += pool.starmap(draw, itertools.product(step00.pdist_list, columns, step00.selected_long_sites))
-        files += pool.starmap(draw_all, itertools.product(step00.pdist_list, columns))
+        files += pool.starmap(draw, itertools.product(distance_data.keys(), columns, step00.selected_long_sites))
+        files += pool.starmap(draw_all, itertools.product(distance_data.keys(), columns))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(files):

@@ -523,15 +523,16 @@ Output/Step32 Output/Step32/Macrogen:
 	mkdir -p $@
 
 Output/Step32/everything.%.tar: Python/step32.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step32
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step32/Macrogen/everything.%.tar: Python/step32-1.py Output/TSV/Macrogen.tsv Output/Metadata/everything.tsv | Output/Step32/Macrogen build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --beta "$*" 1> $@.stdout 2> $@.stderr
 
-step32-DADA2:
+step32-uncorrected: Output/Step32/everything.DADA2.gg.uncorrected.tar Output/Step32/everything.DADA2.silva.uncorrected.tar Output/Step32/everything.DADA2.homd.uncorrected.tar Output/Step32/everything.Deblur.gg.uncorrected.tar Output/Step32/everything.Deblur.silva.uncorrected.tar Output/Step32/everything.Deblur.homd.uncorrected.tar
+step32-corrected: Output/Step32/everything.DADA2.gg.tar Output/Step32/everything.DADA2.silva.tar Output/Step32/everything.DADA2.homd.tar Output/Step32/everything.Deblur.gg.tar Output/Step32/everything.Deblur.silva.tar Output/Step32/everything.Deblur.homd.tar
 step32-Macrogen: Output/Step32/Macrogen/everything.unweighted_unifrac.tar Output/Step32/Macrogen/First.unweighted_unifrac.tar Output/Step32/Macrogen/Second_Third.unweighted_unifrac.tar Output/Step32/Macrogen/everything.weighted_unifrac.tar Output/Step32/Macrogen/First.weighted_unifrac.tar Output/Step32/Macrogen/Second_Third.weighted_unifrac.tar
-step32: step32-DADA2 step32-Deblur step32-Macrogen
-.PHONY: step32-DADA2 step32-Deblur step32-Macrogen step32
+step32: step32-uncorrected step32-corrected
+.PHONY: step32-uncorrected step32-corrected step32-Macrogen step32
 
 # Step 33 (LEfSe analysis)
 Output/Step33 Output/Step33/Default Output/Step33/Cladogram:
