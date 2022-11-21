@@ -185,6 +185,9 @@ if __name__ == "__main__":
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
 
+        for derivation in step00.derivations:
+            print("--", derivation, numpy.mean(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]), numpy.std(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]))
+
         for i, feature in enumerate(best_features[:10]):
             print(feature)
 

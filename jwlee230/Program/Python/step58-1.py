@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
         seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
         matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
-        matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.2f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
+        matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.ylim(0, 1)
@@ -185,6 +185,9 @@ if __name__ == "__main__":
         tar_files.append("{0}+metrics.pdf".format(site))
         fig.savefig(tar_files[-1])
         matplotlib.pyplot.close(fig)
+
+        for derivation in step00.derivations:
+            print("--", derivation, numpy.mean(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]), numpy.std(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]))
 
         for i, feature in enumerate(best_features[:10]):
             fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
