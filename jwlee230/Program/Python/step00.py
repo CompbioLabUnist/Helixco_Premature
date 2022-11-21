@@ -29,7 +29,7 @@ selected_sites = ("M", "C", "V")
 selected_long_sites = ("Mouth", "Cervix", "Vagina")
 selected_sites_dict = dict(zip(selected_sites, selected_long_sites))
 
-pdist_list = ["braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine", "dice", "euclidean", "hamming", "jaccard", "jensenshannon", "kulczynski1", "mahalanobis", "matching", "minkowski", "rogerstanimoto", "russellrao", "seuclidean", "sokalmichener", "sokalsneath", "sqeuclidean", "yule"]
+pdist_list = ["braycurtis", "euclidean", "hamming", "jaccard"]
 
 
 def file_list(path: str) -> typing.List[str]:

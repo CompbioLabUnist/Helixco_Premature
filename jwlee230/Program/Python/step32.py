@@ -30,7 +30,7 @@ def draw(metric: str, column: str, site: str) -> str:
     palette = dict(zip(sorted(set(selected_tsne_data[column])), matplotlib.colors.XKCD_COLORS))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    seaborn.scatterplot(data=selected_tsne_data, x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(selected_tsne_data[column])), s=40 ** 2, edgecolor=None, palette=palette)
+    seaborn.scatterplot(data=selected_tsne_data, x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(selected_tsne_data[column])), s=40 ** 2, palette=palette)
 
     for item, color in palette.items():
         step00.confidence_ellipse(selected_tsne_data.loc[(selected_tsne_data[column] == item), "tSNE1"], selected_tsne_data.loc[(selected_tsne_data[column] == item), "tSNE2"], ax, facecolor=color, alpha=0.3)
@@ -40,7 +40,7 @@ def draw(metric: str, column: str, site: str) -> str:
     except ValueError:
         p_value = 1.0
 
-    matplotlib.pyplot.title("{0} (PERMANOVA p={1:.3f})".format(column, p_value))
+    matplotlib.pyplot.title("{0} (p={1:.3f})".format(column, p_value))
     matplotlib.pyplot.tight_layout()
 
     file_name = "{2}+{0}+{1}.pdf".format(column.replace(" ", "_"), metric, site)
@@ -54,7 +54,7 @@ def draw_all(metric: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.scatterplot(data=tsne_data[metric], x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(tsne_data[metric][column])), s=40 ** 2, edgecolor=None, palette=palette)
+    seaborn.scatterplot(data=tsne_data[metric], x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(tsne_data[metric][column])), s=40 ** 2, palette=palette)
 
     for item, color in palette.items():
         step00.confidence_ellipse(tsne_data[metric].loc[(tsne_data[metric][column] == item), "tSNE1"], tsne_data[metric].loc[(tsne_data[metric][column] == item), "tSNE2"], ax, facecolor=color, alpha=0.3)
@@ -64,7 +64,7 @@ def draw_all(metric: str, column: str) -> str:
     except ValueError:
         p_value = 1.0
 
-    matplotlib.pyplot.title("{0} ({1}; p={2:.3f})".format(column, metric, p_value))
+    matplotlib.pyplot.title("{0} (p={1:.3f})".format(column, p_value))
     matplotlib.pyplot.tight_layout()
 
     file_name = "All+{0}+{1}.pdf".format(column.replace(" ", "_"), metric)
