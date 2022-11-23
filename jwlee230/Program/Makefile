@@ -935,15 +935,15 @@ Output/Step46/%.uncorrected.tar: Python/step46.py Output/TSV/%.homd.uncorrected.
 Output/Step46/%.tar: Python/step46.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step46/%.unweighted_unifrac.uncorrected.tsv Output/Step46/%.weighted_unifrac.uncorrected.tsv: Python/step46-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) 1> $@.stdout 2> $@.stderr
+Output/Step46/%.uncorrected.unweighted_unifrac.tsv Output/Step46/%.uncorrected.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.uncorrected.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 Output/Step46/%.unweighted_unifrac.tsv Output/Step46/%.weighted_unifrac.tsv: Python/step46-1.py Output/TSV/%.homd.tsv Output/Metadata/everything.tsv Output/Step46/%/tree.nwk | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
 
 step46-tree: Output/Step46/everything.DADA2/tree.nwk Output/Step46/everything.Deblur/tree.nwk
 step46-beta: Output/Step46/everything.DADA2.uncorrected.tar Output/Step46/everything.DADA2.tar Output/Step46/everything.Deblur.uncorrected.tar Output/Step46/everything.Deblur.tar
-step46-beta-tsv: Output/Step46/everything.DADA2.unweighted_unifrac.uncorrected.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.uncorrected.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
+step46-beta-tsv: Output/Step46/everything.DADA2.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.DADA2.unweighted_unifrac.tsv Output/Step46/everything.Deblur.uncorrected.unweighted_unifrac.tsv Output/Step46/everything.Deblur.unweighted_unifrac.tsv
 step46: step46-tree step46-beta step46-beta-tsv
 .PHONY: step46-tree step46-beta step46-beta-tsv step46
 
@@ -957,9 +957,9 @@ Output/Step47/%.pdf: Python/step47.py Output/Step46/%.tsv Output/Metadata/everyt
 Output/Step47/%.Sites.tar: Python/step47-2.py Output/Step46/%.tsv Output/Metadata/everything.tsv | Output/Step47 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step47-All-uncorrected: Output/Step47/everything.DADA2.unweighted_unifrac.uncorrected.pdf Output/Step47/everything.DADA2.weighted_unifrac.uncorrected.pdf Output/Step47/everything.Deblur.unweighted_unifrac.uncorrected.pdf Output/Step47/everything.Deblur.weighted_unifrac.uncorrected.pdf
+step47-All-uncorrected: Output/Step47/everything.DADA2.uncorrected.unweighted_unifrac.pdf Output/Step47/everything.DADA2.uncorrected.weighted_unifrac.pdf Output/Step47/everything.Deblur.uncorrected.unweighted_unifrac.pdf Output/Step47/everything.Deblur.uncorrected.weighted_unifrac.pdf
 step47-All: Output/Step47/everything.DADA2.unweighted_unifrac.pdf Output/Step47/everything.DADA2.weighted_unifrac.pdf Output/Step47/everything.Deblur.unweighted_unifrac.pdf Output/Step47/everything.Deblur.weighted_unifrac.pdf
-step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.uncorrected.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.uncorrected.Sites.tar
+step47-Sites: Output/Step47/everything.DADA2.uncorrected.unweighted_unifrac.Sites.tar Output/Step47/everything.DADA2.uncorrected.weighted_unifrac.Sites.tar Output/Step47/everything.Deblur.uncorrected.unweighted_unifrac.Sites.tar Output/Step47/everything.Deblur.uncorrected.weighted_unifrac.Sites.tar
 step47-Sites: Output/Step47/everything.DADA2.unweighted_unifrac.Sites.tar Output/Step47/everything.DADA2.weighted_unifrac.Sites.tar Output/Step47/everything.Deblur.unweighted_unifrac.Sites.tar Output/Step47/everything.Deblur.weighted_unifrac.Sites.tar
 step47: step47-All-uncorrected step47-All step47-Sites-uncorrected step47-Sites
 .PHONY: step47-All-uncorrected step47-All step47-Sites-uncorrected step47-Sites step47
