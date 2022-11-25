@@ -57,6 +57,9 @@ if __name__ == "__main__":
     DAT_data = DAT_data.loc[((DAT_data["log2FoldChange"] > numpy.log2(ratio_threshold)) | (DAT_data["log2FoldChange"] < -1 * numpy.log2(ratio_threshold))) & (DAT_data["padj"] < p_threshold)]
     print(DAT_data)
 
+    if DAT_data.empty:
+        exit()
+
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
     input_data = input_data.loc[:, DAT_data.index]
     input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
