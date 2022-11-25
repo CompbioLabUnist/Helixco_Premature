@@ -533,7 +533,7 @@
 
     \subsection{Taxonomy Analyses}
     \subsubsection{Differentially Abundant Taxa}
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Volcano plot}
 
         \begin{figure}
@@ -599,11 +599,18 @@
     \begin{frame}
         \frametitle{Oversampling}
 
-        \begin{block}{SMOTE Random Oversampling}
-            \begin{enumerate}
-                \item
-            \end{enumerate}
+        \begin{block}{SMOTE \cite{SMOTE1}}
+            \begin{itemize}
+                \item Synthetic Minority Oversampling Technique
+                \item an algorithm that makes pseudo-sample
+                \item Using K-Nearest Neighbor algorithm
+            \end{itemize}
         \end{block}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/SMOTE.png}
+            \caption{Workflow of SMOTE}
+        \end{figure}
     \end{frame}
 
     \subsubsection{Random Forest Classifier on Abundance}
