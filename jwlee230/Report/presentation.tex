@@ -185,198 +185,7 @@
     \end{frame}
 
     \section{Results}
-    \subsection{Data Processing with Qiime}
-    \begin{frame}
-        \frametitle{Filtering with Quality Score}
-
-        Drawback between:
-         \begin{itemize}
-            \item Longer sequence read
-            \item Higher quality value
-        \end{itemize}
-
-        $\therefore$ Select the maximum length $n$ where:
-        \begin{equation}
-            \begin{array}{c}
-                \forall n_i \in \{ n_k | \mbox{MedianQualityScore} \geq 30 \} \\
-                \exists ! n \in \{n_i\} : n \geq n_i
-            \end{array}
-        \end{equation}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Quality Score from JBNU/Helixco Data}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/EverythingForward.png}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/QualityFilter/EverythingReverse.png}
-                \\
-                \mbox{(a) Forward} & \mbox{(b) Reverse} \\
-            \end{array}$
-            \caption{Quality Score Plot}
-        \end{figure}
-
-        \begin{itemize}
-            \item $\ell_{Forward} = 300$
-            \item $\ell_{Reverse} = 245$
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Denoising Techinques}
-
-        \begin{itemize}
-            \item DADA2: Amplicon Sequence Variants (ASVs) \cite{DADA2}
-            \item Deblur: Operational Taxonomic Units (OTUs) \cite{Deblur1}
-        \end{itemize}
-
-        \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/tikz/denoising.pdf}
-            \caption{Denoising Algorithms}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Taxonomy Classification}
-
-        \begin{itemize}
-            \item Greengenes (GG) \cite{greengenes1}
-            \item SILVA \cite{silva1, silva2}
-            \item Human Oral Microbiome Database (HOMD) \cite{homd1}
-        \end{itemize}
-
-        “A \textbf{higher} performance at taxonomic levels above \textit{genus level}; \\
-        but performance appears to \textbf{drop} at \textit{species level}” \cite{performance1}
-    \end{frame}
-
-%    \subsection{Abundance Test with ANCOM}
-%    \begin{frame}
-%        \frametitle{ANCOM}
-%
-%        \begin{itemize}
-%            \item Analysis with composition of microbiome \cite{ANCOM1}
-%            \item ANCOM detects significantly abundant taxa, while maintain high statistical power
-%            \item Find taxa that can divide each classes
-%        \end{itemize}
-%    \end{frame}
-%
-%    \begin{frame}
-%        \frametitle{ANCOM with Detail PTB}
-%
-%        \begin{figure}
-%            $\begin{array}{ccc}
-%                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-1day.pseudocount.Detail_PTB.pdf}
-%                &
-%                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-3day.pseudocount.Detail_PTB.pdf}
-%                &
-%                \includegraphics[width=0.3 \linewidth]{figures/ANCOM/DADA2/homd/everything.DADA2.homd.Neonate-5day.pseudocount.Detail_PTB.pdf}
-%                \\
-%                \mbox{(a) 1-day} & \mbox{(b) 3-day } & \mbox{(c) 5-day} \\
-%            \end{array}$
-%            \caption{ANCOM for Detail PTB from Neonatal Mouth with DADA2+HOMD}
-%        \end{figure}
-%    \end{frame}
-%
-%    \subsection{Abundance Test with LefSe}
-%    \begin{frame}
-%        \frametitle{LefSe}
-%
-%        \begin{itemize}
-%            \item Linear discriminant analysis Effect Size \cite{lefse1}
-%            \item LefSe finds the features likely to explicate differences between groups
-%        \end{itemize}
-%    \end{frame}
-%
-%    \begin{frame}
-%        \frametitle{LefSe with Detail PTB}
-%
-%        \begin{figure}
-%            $\begin{array}{ccc}
-%                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Cervix.pdf}
-%                &
-%                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Mouth.pdf}
-%                &
-%                \includegraphics[width=0.3 \linewidth]{figures/LEfSe/Default/everything.Deblur.silva.Vagina.pdf}
-%                \\
-%                \mbox{(a) Cervix} & \mbox{(b) Maternal Mouth} & \mbox{(c) Vagina} \\
-%            \end{array}$
-%            \caption{LefSe for Detail PTB with Deblur + Silva}
-%        \end{figure}
-%    \end{frame}
-
     \subsection{Taxonomy Overview}
-    \subsubsection{Abundance}
-    \begin{frame}
-        \frametitle{Abundance Distribution}
-
-        \begin{columns}
-            \begin{column}{0.4 \linewidth}
-                \begin{block}{Abundance}
-                    \begin{itemize}
-                        \item Minimum: 0
-                        \item Mean: 1.8
-                        \item Median: 0.0
-                        \item Maximum: 8848.0
-                    \end{itemize}
-                \end{block}
-            \end{column}
-
-            \begin{column}{0.4 \linewidth}
-                \begin{block}{Abundance without Zero}
-                    \begin{itemize}
-                        \item Minimum: 1.0
-                        \item Mean: 189.6
-                        \item Median: 28.0
-                        \item Maximum: 8848.0
-                    \end{itemize}
-                \end{block}
-            \end{column}
-        \end{columns}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/Step53/everything.DADA2.homd.uncorrected.pdf}
-            \caption{Abundance distribution}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Microbial community with Abundance}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Step60/everything.DADA2.homd.uncorrected/Mouth.pdf}
-            \caption{Microbial community with Abundance}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{t-SNE with Abundance}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/All+Data.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/Mouth+Data.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{t-SNE plot of Abundance with Data Batch}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/All+Detail_Premature.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{t-SNE plot of Abundance with PTB}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Proportion}
     \begin{frame}
         \frametitle{Proportion Distribution}
 
@@ -419,19 +228,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{t-SNE with Proportion}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/All+Data.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/Mouth+Data.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{t-SNE plot of Proportion with Data Batch}
-        \end{figure}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -443,6 +241,57 @@
             \end{array}$
             \caption{t-SNE plot of Proportion with PTB}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Notable Taxa}
+
+        \begin{block}{\textit{Streptococcus} spp.}
+            \begin{itemize}
+                \item \textit{S. mutans}: pathogen of dental caries
+                \item Membrane vesicles of Group B \textit{Streptococcus} disrupt feto-maternal barrier \cite{streptococcus-1}. \\
+                    $\therefore$ Leading to PTB
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{\textit{Neisseria} spp.}
+            \begin{itemize}
+                \item \textit{N.} colonize the mucosal surfaces of many animals.
+                \item Only two pathogens in 11 known species
+                    \begin{itemize}
+                        \item \textit{N. meningitidis}: Meningitis \& Sepsis
+                        \item \textit{N. gonorrhoeae}: Gonorrhea (sexual transmitted disease)
+                    \end{itemize}
+                \item \textit{N. gonorrhoeae} results adverse pregnancy outcomes \cite{neisseria-1}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{\textit{Haemophilus} spp.}
+            \begin{itemize}
+                \item \textit{H.} inhabit the mucous membranes \\
+                    of upper respiratory tract, mouth, vagina, \& intestinal tract.
+                \item \textit{H. influenzae}: Influenza
+                \item PTB caused by \textit{H. influenzae} \cite{haemophilus-1} and \textit{H. parainfluenzae} \cite{haemophilus-2}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{\textit{R. mucilaginosa}}
+            \begin{itemize}
+                \item \textit{Rhodotorula mucilaginosa}
+                \item \textit{R.} is a genus of pigmented yeasts.
+                \item Catheter-related bloodstream infection due to \textit{R. mucilaginosa} \cite{rhodotorula-1}.
+                \item $\therefore$ \textit{Rhodotorula} bloodstream infections
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{\textit{Gemella} spp.}
+            \begin{itemize}
+                \item \textit{G.} bacteria are primarily found in mucous membranes of human \\
+                    \textit{e.g.} oral cavity \& upper digestive tract.
+                \item \textit{G. haemolysans} causes endocarditis \cite{gemella-2}.
+                \item Women who have PTB also have significant lower level of \textit{G.} \cite{gemella-1}.
+            \end{itemize}
+        \end{block}
     \end{frame}
 
     \subsection{Diversity Index}
@@ -512,52 +361,56 @@
 
     \subsubsection{Beta-diversity}
     \begin{frame}[allowframebreaks]
-        \frametitle{Cluster map with Beta-diversity}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step47/everything.DADA2.weighted_unifrac.pdf}
-            \caption{Cluster map with Weighted UniFrac distance index for DADA2}
-        \end{figure}
+        \frametitle{Beta-diversity t-SNE plots}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step47/everything.DADA2.unweighted_unifrac.Sites/Mouth.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+braycurtis.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Step47/everything.DADA2.weighted_unifrac.Sites/Mouth.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+euclidean.pdf}
                 \\
-                \mbox{(a) Unweighted UniFrac} & \mbox{(b) Weighted UniFrac} \\
+                \mbox{(a) Bray-Curtis} & \mbox{(b) Euclidean} \\
             \end{array}$
-            \caption{Clustermap of Abundance in Maternal Mouth}
+            \caption{Beta-diversity t-SNE plots}
         \end{figure}
     \end{frame}
 
     \subsection{Taxonomy Analyses}
     \subsubsection{Differentially Abundant Taxa}
     \begin{frame}[allowframebreaks]
-        \frametitle{Volcano plot}
+        \frametitle{Volcano plots}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd.uncorrected.Mouth.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd.uncorrected.Vagina.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step44/everything.DADA2.homd.uncorrected.Cervix.pdf}
-                \\
-                \mbox{(a) Mouth} & \mbox{(b) Vagina} & \mbox{(c) Cervix} \\
-            \end{array}$
-            \caption{Deferentially abundant taxa}
+            \includegraphics[width=0.5 \linewidth]{figures/Step44/everything.DADA2.homd.uncorrected.Mouth.pdf}
+            \caption{Deferentially abundant taxa in Mouth}
         \end{figure}
     \end{frame}
 
-%    \begin{frame}
-%        \frametitle{Shared Taxonomy with Neonates \& Mothers}
-%
-%        \begin{figure}
-%            \includegraphics[width=0.6 \linewidth]{figures/Step48/everything.DADA2.homd.pdf}
-%            \caption{Shared Taxonomy with Neonates \& Mothers}
-%        \end{figure}
-%    \end{frame}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin plots}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step61/everything.DADA2.homd.uncorrected.Mouth/S. sp. HMT 442.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step61/everything.DADA2.homd.uncorrected.Mouth/B. sp. HMT 206.pdf}
+                \\
+                \mbox{(a) \textit{Selenomonas} sp. \textit{HMT 442}} & \mbox{(b) \textit{Bergeyella} sp. \textit{HMT 206}} \\
+            \end{array}$
+            \caption{Up-regulated taxa}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Step61/everything.DADA2.homd.uncorrected.Mouth/P. bacterium HMT 081.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Step61/everything.DADA2.homd.uncorrected.Mouth/S. sp. HMT 134.pdf}
+                \\
+                \mbox{(a) \textit{P. bacterium HMT 081}} & \mbox{(b) \textit{Selenomonas} sp. \textit{HMT 134}} \\
+            \end{array}$
+            \caption{Down-regulated taxa}
+        \end{figure}
+    \end{frame}
 
     \subsubsection{Correlation with Clinical Data}
     \begin{frame}[allowframebreaks]
@@ -602,67 +455,14 @@
         \begin{block}{SMOTE \cite{SMOTE1}}
             \begin{itemize}
                 \item Synthetic Minority Oversampling Technique
-                \item an algorithm that makes pseudo-sample
-                \item Using K-Nearest Neighbor algorithm
+                \item An algorithm that makes pseudo-sample
+                \item Using $K$-Nearest Neighbor algorithm
             \end{itemize}
         \end{block}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/SMOTE.png}
             \caption{Workflow of SMOTE}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Random Forest Classifier on Abundance}
-    \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest with (Early vs. Late vs. Full)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+metrics.pdf}
-            \caption{RF evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
-            \caption{RF confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
-                \\
-            \end{array}$
-            \caption{RF most important taxa}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest with (Early vs. Late + Full)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+metrics.pdf}
-            \caption{RF evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+heatmap.pdf}
-            \caption{RF confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_0.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/RandomForest/RF-two.DADA2.homd.uncorrected/Mouth+Violin_2.pdf}
-                \\
-            \end{array}$
-            \caption{RF most important taxa}
         \end{figure}
     \end{frame}
 
