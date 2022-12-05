@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1348,3 +1348,19 @@ step62-uncorrected-proportion: $(addprefix Output/Step62_Proportion/RF.DADA2.gg.
 step62-corrected-proportion: $(addprefix Output/Step62_Proportion/RF.DADA2.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF.DADA2.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF.Deblur.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF.Deblur.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF.Deblur.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.DADA2.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.DADA2.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.Deblur.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.Deblur.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step62_Proportion/RF-two.Deblur.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
 step62: step62-uncorrected step62-corrected step62-uncorrected-proportion step62-corrected-proportion
 .PHONY: step62-uncorrected step62-corrected step62-uncorrected-proportion step62-corrected-proportion step62
+
+# Step 63 (Differentially abundant taxa with metagenomeSeq)
+Output/Step63:
+	mkdir -p $@
+
+Output/Step63/everything.%/table.biom Output/Step63/everything.%/taxonomy.tsv: Bash/export_biom.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.%.qza | Output/Step63 build.log
+	mkdir -p $(@D)
+	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+
+Output/Step63/%.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Metadata/everything.tsv | Output/Step63 build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step63-biom: Output/Step63/everything.DADA2.gg/taxonomy.tsv Output/Step63/everything.DADA2.silva/taxonomy.tsv Output/Step63/everything.DADA2.homd/taxonomy.tsv Output/Step63/everything.Deblur.gg/taxonomy.tsv Output/Step63/everything.Deblur.silva/taxonomy.tsv Output/Step63/everything.Deblur.homd/taxonomy.tsv
+step63-tsv: Output/Step63/everything.DADA2.gg.tsv Output/Step63/everything.DADA2.silva.tsv Output/Step63/everything.DADA2.homd.tsv Output/Step63/everything.Deblur.gg.tsv Output/Step63/everything.Deblur.silva.tsv Output/Step63/everything.Deblur.homd.tsv
+step63: step63-biom step63-tsv
+.PHONY: step63-biom step63-tsv step63
