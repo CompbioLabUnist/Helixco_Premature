@@ -50,6 +50,10 @@ if __name__ == "__main__":
     matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
     matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
 
+    matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), 0, f"log2(FC)={numpy.log2(1 / ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
+    matplotlib.pyplot.text(numpy.log2(ratio_threshold), 0, f"log2(FC)={numpy.log2(ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
+    matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), -1 * numpy.log10(p_threshold), f"p={p_threshold:.2f}", c="k", fontsize="xx-small", horizontalalignment="left", verticalalignment="baseline")
+
     for index, row in down_results.iloc[:5, :].iterrows():
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 

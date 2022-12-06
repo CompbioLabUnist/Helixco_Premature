@@ -179,7 +179,7 @@ def confidence_ellipse(x, y, ax, n_std=2.0, facecolor="none", **kwargs):
 
 
 def filtering_taxonomy(taxonomy: str) -> bool:
-    taxonomy_list = taxonomy.split("; ")
+    taxonomy_list = list(map(lambda x: x.strip(), taxonomy.split(";")))
     if len(taxonomy_list) < 6:
         return False
     if taxonomy_list[5] in ("g__", "__"):
@@ -189,12 +189,12 @@ def filtering_taxonomy(taxonomy: str) -> bool:
 
 
 def select_taxonomy(taxonomy: str) -> str:
-    taxonomy_list = taxonomy.split("; ")
+    taxonomy_list = list(map(lambda x: x.strip(), taxonomy.split(";")))
     return remove_preceding_underscores(taxonomy_list[1]).replace("_", " ")
 
 
 def simplified_taxonomy(taxonomy: str) -> str:
-    taxonomy_list = taxonomy.split("; ")
+    taxonomy_list = list(map(lambda x: x.strip(), taxonomy.split(";")))
     if (len(taxonomy_list) == 6):
         return remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ") + " spp."
     elif (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
