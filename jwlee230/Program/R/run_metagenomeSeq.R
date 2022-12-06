@@ -17,7 +17,7 @@ main <- function(input, taxonomy, metadata, output)
 
     b <- biom2MRexperiment(read_biom(input))
     b_data <- biom_data(read_biom(input))
-    print(rownames(b_data))
+    print(b)
 
     taxa <- as.data.frame(read.table(taxonomy, header=TRUE, sep="\t", comment.char="", as.is=TRUE))
     rownames(taxa) <- taxa[, 1]
@@ -27,6 +27,7 @@ main <- function(input, taxonomy, metadata, output)
     clin <- read.table(metadata, header=FALSE, sep="\t", comment.char="", as.is=TRUE, skip=2)
     colnames(clin) <- unlist(header)
     rownames(clin) <- clin[, 1]
+    clin <- clin[clin["Site"] == "Mouth", ]
     clin["SimplePremature"] <- clin["Simple Premature"]
     print(head(clin))
 
@@ -39,12 +40,9 @@ main <- function(input, taxonomy, metadata, output)
     b_data <- b_data[ord, ]
 
     obj <- newMRexperiment(b_data, phenoData=AnnotatedDataFrame(clin), featureData=AnnotatedDataFrame(taxa))
-    obj <- cumNorm(obj, p=0.5)
+    obj <- cumNorm(obj)
     mod <- model.matrix(~1 + SimplePremature, data=pData(obj))
-    res <- MRcoefs(fitFeatureModel(obj, mod))
-    print(res)
-
-    write.table(as.data.frame(res), file=output, sep="\t")
+    res <- MRcoefs(fitFeatureModel(obj, mod), number=100000, numberEff=TRUE, group=3, file=output)
 }
 
 if (length(opt) == 5)

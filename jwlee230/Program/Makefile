@@ -1364,7 +1364,11 @@ Output/Step63/everything.Deblur.%/table.biom Output/Step63/everything.Deblur.%/t
 Output/Step63/%.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Metadata/everything.tsv | Output/Step63 build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/Step63/%.pdf: Python/step63.py Output/Step63/%.tsv Output/Step63/%/taxonomy.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 step63-biom: Output/Step63/everything.DADA2.gg/taxonomy.tsv Output/Step63/everything.DADA2.silva/taxonomy.tsv Output/Step63/everything.DADA2.homd/taxonomy.tsv Output/Step63/everything.Deblur.gg/taxonomy.tsv Output/Step63/everything.Deblur.silva/taxonomy.tsv Output/Step63/everything.Deblur.homd/taxonomy.tsv
 step63-tsv: Output/Step63/everything.DADA2.gg.tsv Output/Step63/everything.DADA2.silva.tsv Output/Step63/everything.DADA2.homd.tsv Output/Step63/everything.Deblur.gg.tsv Output/Step63/everything.Deblur.silva.tsv Output/Step63/everything.Deblur.homd.tsv
-step63: step63-biom step63-tsv
-.PHONY: step63-biom step63-tsv step63
+step63-pdf: Output/Step63/everything.DADA2.gg.pdf Output/Step63/everything.DADA2.silva.pdf Output/Step63/everything.DADA2.homd.pdf Output/Step63/everything.Deblur.gg.pdf Output/Step63/everything.Deblur.silva.pdf Output/Step63/everything.Deblur.homd.pdf
+step63: step63-biom step63-tsv step63-pdf
+.PHONY: step63-biom step63-tsv step63-pdf step63
