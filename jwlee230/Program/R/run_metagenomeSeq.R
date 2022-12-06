@@ -13,9 +13,11 @@ main <- function(input, taxonomy, metadata, output)
 {
     library(metagenomeSeq)
     library(biomformat)
+    library(dplyr)
+
     b <- biom2MRexperiment(read_biom(input))
     b_data <- biom_data(read_biom(input))
-    print(b)
+    print(rownames(b_data))
 
     taxa <- as.data.frame(read.table(taxonomy, header=TRUE, sep="\t", comment.char="", as.is=TRUE))
     rownames(taxa) <- taxa[, 1]
@@ -26,9 +28,15 @@ main <- function(input, taxonomy, metadata, output)
     colnames(clin) <- unlist(header)
     rownames(clin) <- clin[, 1]
     clin["SimplePremature"] <- clin["Simple Premature"]
-    ord <- match(colnames(b_data), rownames(clin))
-    clin <- as.data.frame(clin[ord, ])
     print(head(clin))
+
+    ord <- intersect(colnames(b_data), rownames(clin))
+    clin <- clin[ord, ]
+    b_data <- b_data[, ord]
+
+    ord <- intersect(rownames(b_data), rownames(taxa))
+    taxa <- taxa[ord, ]
+    b_data <- b_data[ord, ]
 
     obj <- newMRexperiment(b_data, phenoData=AnnotatedDataFrame(clin), featureData=AnnotatedDataFrame(taxa))
     obj <- cumNorm(obj, p=0.5)

@@ -1353,9 +1353,13 @@ step62: step62-uncorrected step62-corrected step62-uncorrected-proportion step62
 Output/Step63:
 	mkdir -p $@
 
-Output/Step63/everything.%/table.biom Output/Step63/everything.%/taxonomy.tsv: Bash/export_biom.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.%.qza | Output/Step63 build.log
+Output/Step63/everything.DADA2.%/table.biom Output/Step63/everything.DADA2.%/taxonomy.tsv: Bash/export_biom.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/Step63 build.log
 	mkdir -p $(@D)
-	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $@.stdout 2> $@.stderr
+
+Output/Step63/everything.Deblur.%/table.biom Output/Step63/everything.Deblur.%/taxonomy.tsv: Bash/export_biom.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/Step63 build.log
+	mkdir -p $(@D)
+	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $@.stdout 2> $@.stderr
 
 Output/Step63/%.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Metadata/everything.tsv | Output/Step63 build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
