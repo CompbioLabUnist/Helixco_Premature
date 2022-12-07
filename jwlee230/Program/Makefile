@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1372,3 +1372,45 @@ step63-tsv: Output/Step63/everything.DADA2.gg.tsv Output/Step63/everything.DADA2
 step63-pdf: Output/Step63/everything.DADA2.gg.pdf Output/Step63/everything.DADA2.silva.pdf Output/Step63/everything.DADA2.homd.pdf Output/Step63/everything.Deblur.gg.pdf Output/Step63/everything.Deblur.silva.pdf Output/Step63/everything.Deblur.homd.pdf
 step63: step63-biom step63-tsv step63-pdf
 .PHONY: step63-biom step63-tsv step63-pdf step63
+
+# Step 64 (Differential abundance analysis with gneiss)
+Output/Step64:
+	mkdir -p $@
+
+Output/Step64/everything.DADA2.PTB.qza: Output/DADA2/everything.table.qza | Output/Step64 build.log
+	$(DOCKER) qiime gneiss correlation-clustering --i-table $(addprefix /,$(filter %.qza,$^)) --p-pseudocount 1.0 --o-clustering $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.Deblur.PTB.qza: Output/Deblur/everything.table.qza | Output/Step64 build.log
+	$(DOCKER) qiime gneiss correlation-clustering --i-table $(addprefix /,$(filter %.qza,$^)) --p-pseudocount 1.0 --o-clustering $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.DADA2.GW.qza: Output/DADA2/everything.table.qza Output/Metadata/everything.tsv | Output/Step64 build.log
+	$(DOCKER) qiime gneiss gradient-clustering --i-table $(addprefix /,$(filter %.qza,$^)) --m-gradient-file $(addprefix /,$(filter %.tsv,$^)) --m-gradient-column "Gestational Week" --p-ignore-missing-samples --o-clustering $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.Deblur.GW.qza: Output/Deblur/everything.table.qza Output/Metadata/everything.tsv | Output/Step64 build.log
+	$(DOCKER) qiime gneiss gradient-clustering --i-table $(addprefix /,$(filter %.qza,$^)) --m-gradient-file $(addprefix /,$(filter %.tsv,$^)) --m-gradient-column "Gestational Week" --p-ignore-missing-samples --o-clustering $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/homd.alignment.qza Output/Step64/homd.masked_alignment.qza Output/Step64/homd.tree.qza Output/Step64/homd.rooted_tree.qza: Output/Taxonomy/homd_fasta.qza | Output/Step64 build.log
+	$(DOCKER) qiime phylogeny align-to-tree-mafft-fasttree --i-sequences $(addprefix /,$^) --p-n-threads $(CPUS) --o-alignment $(addprefix /,$(@D)/homd.alignment.qza) --o-masked-alignment $(addprefix /,$(@D)/homd.masked_alignment.qza) --o-tree $(addprefix /,$(@D)/homd.tree.qza) --o-rooted-tree $(addprefix /,$(@D)/homd.rooted_tree.qza) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.DADA2.%.hierarchical.qza: Output/DADA2/everything.table.qza Output/Step64/everything.DADA2.%.qza | build.log
+	$(DOCKER) qiime gneiss ilr-hierarchical --i-table $(addprefix /,$(word 1,$(filter %.qza,$^))) --i-tree $(addprefix /,$(word 2,$(filter %.qza,$^))) --p-pseudocount 1.0 --o-balances $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.Deblur.%.hierarchical.qza: Output/Deblur/everything.table.qza Output/Step64/everything.Deblur.%.qza | build.log
+	$(DOCKER) qiime gneiss ilr-hierarchical --i-table $(addprefix /,$(word 1,$(filter %.qza,$^))) --i-tree $(addprefix /,$(word 2,$(filter %.qza,$^))) --p-pseudocount 1.0 --o-balances $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.DADA2.%.hierarchical.tsv: Bash/export_TSV.bash Output/Step64/everything.DADA2.%.hierarchical.qza Output/Taxonomy/everything.DADA2.homd.qza | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.Deblur.%.hierarchical.tsv: Bash/export_TSV.bash Output/Step64/everything.Deblur.%.hierarchical.qza Output/Taxonomy/everything.Deblur.homd.qza | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.DADA2.%.dendrogram.qzv: Output/DADA2/everything.table.qza Output/Step64/everything.DADA2.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime gneiss dendrogram-heatmap --i-table $(addprefix /,$(word 1,$(filter %.qza,$^))) --i-tree $(addprefix /,$(word 2,$(filter %.qza,$^))) --m-metadata-file $(addprefix /,$(filter %.tsv,$^)) --m-metadata-column "Detail Premature" --p-pseudocount 1.0 --p-method "log" --p-color-map "coolwarm" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step64/everything.Deblur.%.dendrogram.qzv: Output/Deblur/everything.table.qza Output/Step64/everything.Deblur.%.qza Output/Metadata/everything.tsv | build.log
+	$(DOCKER) qiime gneiss dendrogram-heatmap --i-table $(addprefix /,$(word 1,$(filter %.qza,$^))) --i-tree $(addprefix /,$(word 2,$(filter %.qza,$^))) --m-metadata-file $(addprefix /,$(filter %.tsv,$^)) --m-metadata-column "Detail Premature" --p-pseudocount 1.0 --p-method "log" --p-color-map "coolwarm" --o-visualization $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step64-clustering: Output/Step64/everything.DADA2.PTB.qza Output/Step64/everything.Deblur.PTB.qza Output/Step64/everything.DADA2.GW.qza Output/Step64/everything.Deblur.GW.qza
+step64-dendrogram: Output/Step64/everything.DADA2.PTB.dendrogram.qzv Output/Step64/everything.Deblur.PTB.dendrogram.qzv Output/Step64/everything.DADA2.GW.dendrogram.qzv Output/Step64/everything.Deblur.GW.dendrogram.qzv
+step64: step64-clustering step64-dendrogram
+.PHONY: step64-clustering step64-dendrogram step64
