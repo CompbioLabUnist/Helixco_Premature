@@ -18,9 +18,7 @@ main <- function(readcount, cdata, output)
     print(head(coldata))
 
     cts <- data.frame(fread(readcount), row.names=1, check.names=FALSE)[, colnames(data.table(t(coldata)))]
-    cts <- round(cts)
-    cts <- subset(cts, rowSums(cts) != 0)
-    cts <- cts + 1
+    cts <- ceiling(cts) + 1
     print(head(cts))
 
     dds <- DESeq(DESeqDataSetFromMatrix(countData=cts, colData=coldata, design=~condition))
