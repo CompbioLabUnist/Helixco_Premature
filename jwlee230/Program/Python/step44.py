@@ -74,3 +74,6 @@ if __name__ == "__main__":
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
+
+    output_results = input_data.loc[((input_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold)) | (input_data["log2FoldChange"] > numpy.log2(ratio_threshold))) & (input_data["-log10(p)"] > (-1 * numpy.log10(p_threshold)))].sort_values("log2FoldChange")
+    output_results.to_csv(args.output.replace(".pdf", ".selected.tsv"), sep="\t")
