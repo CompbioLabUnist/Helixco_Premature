@@ -31,6 +31,8 @@ selected_sites_dict = dict(zip(selected_sites, selected_long_sites))
 
 pdist_list = ["braycurtis", "euclidean", "hamming", "jaccard"]
 
+venn_format = "{size:d} ({percentage:.1f}%)"
+
 
 def file_list(path: str) -> typing.List[str]:
     """

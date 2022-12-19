@@ -1438,3 +1438,13 @@ step64-clustering: Output/Step64/everything.DADA2.PTB.qza Output/Step64/everythi
 step64-dendrogram: Output/Step64/everything.DADA2.PTB.dendrogram.qzv Output/Step64/everything.Deblur.PTB.dendrogram.qzv Output/Step64/everything.DADA2.GW.dendrogram.qzv Output/Step64/everything.Deblur.GW.dendrogram.qzv
 step64: step64-clustering step64-dendrogram
 .PHONY: step64-clustering step64-dendrogram step64
+
+# Step 65 (Venn diagram for differentially abundant taxa)
+Output/Step65:
+	mkdir -p $@
+
+Output/Step65/everything.%.Mouth.Up.pdf: Python/step65.py Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
+
+Output/Step65/everything.%.Mouth.Down.pdf: Python/step65.py Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
