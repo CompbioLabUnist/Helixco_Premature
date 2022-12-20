@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1451,3 +1451,51 @@ Output/Step65/everything.%.Mouth.Down.pdf: Python/step65.py Output/Step44/everyt
 
 step65: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Down.pdf
 .PHONY: step65
+
+# Step 66 (Select DAT for classification)
+Output/Step66 Output/Step66_Proportion:
+	mkdir -p $@
+
+Output/Step66/everything.%.Mouth.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step66/everything.%.Vagina.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step66/everything.%.Cervix.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step66_Proportion/everything.%.Mouth.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step66_Proportion/everything.%.Vagina.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step66_Proportion/everything.%.Cervix.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step66: Output/Step66/everything.DADA2.homd.Mouth.tsv Output/Step66/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66/everything.DADA2.homd.Vagina.tsv Output/Step66/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66/everything.DADA2.homd.Cervix.tsv Output/Step66/everything.DADA2.homd.uncorrected.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Cervix.tsv
+.PHONY: step66
+
+# Step 67 (RandomForest Classifier with DAT-union)
+Output/Step67 Output/Step67_Proportion:
+	mkdir -p $@
+
+Output/Step67/RF.%.tar: Python/step67.py Output/Step66/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step67
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step67/RF-two.%.tar: Python/step67-1.py Output/Step66/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step67
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step67_Proportion/RF.%.tar: Python/step67.py Output/Step66_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step67_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step67_Proportion/RF-two.%.tar: Python/step67-1.py Output/Step66_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step67_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step67-uncorrected: $(addprefix Output/Step67/RF.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67/RF-two.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step67-corrected: $(addprefix Output/Step67/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+step67-uncorrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67_Proportion/RF-two.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step67-corrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+step67: step67-uncorrected step67-corrected step67-uncorrected-proportion step67-corrected-proportion
+.PHONY: step67-uncorrected step67-corrected step67-uncorrected-proportion step67-corrected-proportion step67
