@@ -26,7 +26,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tsv"):
         raise ValueError("Output file must end with .TSV!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby("taxonomy").sum().T
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
     DAT_set = set()
@@ -38,6 +38,6 @@ if __name__ == "__main__":
     DAT = sorted(DAT_set)
     print("Union:", len(DAT))
 
-    input_data = input_data.loc[:, DAT]
+    input_data = input_data.loc[DAT, :]
     print(input_data)
     input_data.to_csv(args.output, sep="\t")

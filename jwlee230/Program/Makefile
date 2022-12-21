@@ -1456,22 +1456,22 @@ step65: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everythin
 Output/Step66 Output/Step66_Proportion:
 	mkdir -p $@
 
-Output/Step66/everything.%.Mouth.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66
+Output/Step66/everything.%.Mouth.tsv: Python/step66.py Output/Step44/everything.%.Mouth.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step66/everything.%.Vagina.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66
+Output/Step66/everything.%.Vagina.tsv: Python/step66.py Output/Step44/everything.%.Vagina.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step66/everything.%.Cervix.tsv: Python/step66.py Output/TSV/everything.%.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66
+Output/Step66/everything.%.Cervix.tsv: Python/step66.py Output/Step44/everything.%.Cervix.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step66_Proportion/everything.%.Mouth.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66_Proportion
+Output/Step66_Proportion/everything.%.Mouth.tsv: Python/step66.py Output/Step44_Proportion/everything.%.Mouth.tsv Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step66_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step66_Proportion/everything.%.Vagina.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66_Proportion
+Output/Step66_Proportion/everything.%.Vagina.tsv: Python/step66.py Output/Step44_Proportion/everything.%.Vagina.tsv Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step66_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step66_Proportion/everything.%.Cervix.tsv: Python/step66.py Output/TSV_Proportion/everything.%.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66_Proportion
+Output/Step66_Proportion/everything.%.Cervix.tsv: Python/step66.py Output/Step44_Proportion/everything.%.Cervix.tsv Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step66_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step66: Output/Step66/everything.DADA2.homd.Mouth.tsv Output/Step66/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66/everything.DADA2.homd.Vagina.tsv Output/Step66/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66/everything.DADA2.homd.Cervix.tsv Output/Step66/everything.DADA2.homd.uncorrected.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Cervix.tsv
