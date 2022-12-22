@@ -1,4 +1,3 @@
-
 rm(list = ls())
 
 library(optparse)
@@ -24,11 +23,9 @@ main <- function(input, taxonomy, metadata, output)
     print(head(taxa))
 
     header <- read.table(metadata, header=FALSE, sep="\t", comment.char="", as.is=TRUE, nrows=1)
-    clin <- read.table(metadata, header=FALSE, sep="\t", comment.char="", as.is=TRUE, skip=2)
+    clin <- read.table(metadata, header=FALSE, sep="\t", comment.char="", as.is=TRUE, skip=1)
     colnames(clin) <- unlist(header)
     rownames(clin) <- clin[, 1]
-    clin <- clin[clin["Site"] == "Mouth", ]
-    clin["SimplePremature"] <- clin["Simple Premature"]
     print(head(clin))
 
     ord <- intersect(colnames(b_data), rownames(clin))
@@ -41,7 +38,7 @@ main <- function(input, taxonomy, metadata, output)
 
     obj <- newMRexperiment(b_data, phenoData=AnnotatedDataFrame(clin), featureData=AnnotatedDataFrame(taxa))
     obj <- cumNorm(obj)
-    mod <- model.matrix(~1 + SimplePremature, data=pData(obj))
+    mod <- model.matrix(~1 + Comparing, data=pData(obj))
     res <- MRcoefs(fitFeatureModel(obj, mod), number=100000, numberEff=TRUE, group=3, file=output)
 }
 

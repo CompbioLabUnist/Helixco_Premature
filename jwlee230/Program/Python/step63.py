@@ -63,10 +63,10 @@ if __name__ == "__main__":
     matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), -1 * numpy.log10(p_threshold), f"p={p_threshold:.2f}", c="k", fontsize="xx-small", horizontalalignment="left", verticalalignment="baseline")
 
     for index, row in down_results.iloc[:5, :].iterrows():
-        texts.append(matplotlib.pyplot.text(row["logFC"], row["-log10(p)"], step00.simplified_taxonomy(row["taxonomy"]), color="black", fontsize="small"))
+        texts.append(matplotlib.pyplot.text(row["logFC"], row["-log10(p)"], f"{step00.simplified_taxonomy(row['taxonomy'])} (ASV {index[:5]})", color="black", fontsize="small"))
 
     for index, row in up_results.iloc[:5, :].iterrows():
-        texts.append(matplotlib.pyplot.text(row["logFC"], row["-log10(p)"], step00.simplified_taxonomy(row["taxonomy"]), color="black", fontsize="small"))
+        texts.append(matplotlib.pyplot.text(row["logFC"], row["-log10(p)"], f"{step00.simplified_taxonomy(row['taxonomy'])} (ASV {index[:5]})", color="black", fontsize="small"))
 
     matplotlib.pyplot.xlabel("logFC")
     matplotlib.pyplot.ylabel("-log10(p)")
@@ -75,6 +75,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
+    matplotlib.pyplot.xlim((-4, 4))
     matplotlib.pyplot.tight_layout()
 
     adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.big, ax=ax)
