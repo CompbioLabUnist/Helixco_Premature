@@ -1440,7 +1440,7 @@ step64: step64-clustering step64-dendrogram
 .PHONY: step64-clustering step64-dendrogram step64
 
 # Step 65 (Venn diagram for differentially abundant taxa)
-Output/Step65:
+Output/Step65 Output/Step65_Updown:
 	mkdir -p $@
 
 Output/Step65/everything.%.Mouth.Up.pdf: Python/step65.py Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step65
@@ -1449,8 +1449,31 @@ Output/Step65/everything.%.Mouth.Up.pdf: Python/step65.py Output/Step44/everythi
 Output/Step65/everything.%.Mouth.Down.pdf: Python/step65.py Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step65
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
 
-step65: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Down.pdf
-.PHONY: step65
+Output/Step65/everything.%.Cervix.Up.pdf: Python/step65.py Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
+
+Output/Step65/everything.%.Cervix.Down.pdf: Python/step65.py Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
+
+Output/Step65/everything.%.Vagina.Up.pdf: Python/step65.py Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
+
+Output/Step65/everything.%.Vagina.Down.pdf: Python/step65.py Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step65
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
+
+Output/Step65_Updown/everything.%.Mouth.tsv: Python/step65-1.py Output/Step44/everything.%.Mouth.DAT.tsv Output/Step44/everything.%.EL.Mouth.DAT.tsv Output/Step44/everything.%.EF.Mouth.DAT.tsv Output/Step44/everything.%.LF.Mouth.DAT.tsv | build.log Output/Step65_Updown
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
+
+Output/Step65_Updown/everything.%.Cervix.tsv: Python/step65-1.py Output/Step44/everything.%.Cervix.DAT.tsv Output/Step44/everything.%.EL.Cervix.DAT.tsv Output/Step44/everything.%.EF.Cervix.DAT.tsv Output/Step44/everything.%.LF.Cervix.DAT.tsv | build.log Output/Step65_Updown
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
+
+Output/Step65_Updown/everything.%.Vagina.tsv: Python/step65-1.py Output/Step44/everything.%.Vagina.DAT.tsv Output/Step44/everything.%.EL.Vagina.DAT.tsv Output/Step44/everything.%.EF.Vagina.DAT.tsv Output/Step44/everything.%.LF.Vagina.DAT.tsv | build.log Output/Step65_Updown
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
+
+step65-multiple: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.uncorrected.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.Cervix.Up.pdf Output/Step65/everything.DADA2.homd.Cervix.Down.pdf Output/Step65/everything.DADA2.homd.uncorrected.Cervix.Up.pdf Output/Step65/everything.DADA2.homd.uncorrected.Cervix.Down.pdf Output/Step65/everything.DADA2.homd.Vagina.Up.pdf Output/Step65/everything.DADA2.homd.Vagina.Down.pdf Output/Step65/everything.DADA2.homd.uncorrected.Vagina.Up.pdf Output/Step65/everything.DADA2.homd.uncorrected.Vagina.Down.pdf
+step65-updown: Output/Step65_Updown/everything.DADA2.homd.Mouth.tsv Output/Step65_Updown/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step65_Updown/everything.DADA2.homd.Cervix.tsv Output/Step65_Updown/everything.DADA2.homd.uncorrected.Cervix.tsv Output/Step65_Updown/everything.DADA2.homd.Vagina.tsv Output/Step65_Updown/everything.DADA2.homd.uncorrected.Vagina.tsv
+step65: step65-multiple step65-updown
+.PHONY: step65-multiple step65-updown step65
 
 # Step 66 (Select DAT for classification)
 Output/Step66 Output/Step66_Proportion:
