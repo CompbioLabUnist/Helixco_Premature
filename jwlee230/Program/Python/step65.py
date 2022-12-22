@@ -52,7 +52,8 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(10, 10))
 
-    venn.venn(input_dict, fmt=step00.venn_format, ax=ax)
+    if set.union(*input_dict.values()):
+        venn.venn(input_dict, fmt=step00.venn_format, ax=ax)
 
     matplotlib.pyplot.tight_layout()
 
