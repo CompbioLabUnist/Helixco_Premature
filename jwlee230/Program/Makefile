@@ -1541,7 +1541,7 @@ Output/Step66_Proportion/everything.%.Cervix.tsv: Python/step66.py Output/Step44
 step66: Output/Step66/everything.DADA2.homd.Mouth.tsv Output/Step66/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66/everything.DADA2.homd.Vagina.tsv Output/Step66/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66/everything.DADA2.homd.Cervix.tsv Output/Step66/everything.DADA2.homd.uncorrected.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step66_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Vagina.tsv Output/Step66_Proportion/everything.DADA2.homd.Cervix.tsv Output/Step66_Proportion/everything.DADA2.homd.uncorrected.Cervix.tsv
 .PHONY: step66
 
-# Step 67 (RandomForest Classifier with DAT-union)
+# Step 67 (RandomForest Classifier with DAT-union of DESeq2)
 Output/Step67 Output/Step67_Proportion:
 	mkdir -p $@
 
@@ -1577,4 +1577,36 @@ Output/Step68/everything.%.Down.pdf: Python/step68.py Output/Step63/everything.%
 step68: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.Cervix.Up.pdf Output/Step65/everything.DADA2.homd.Cervix.Down.pdf Output/Step65/everything.DADA2.homd.Vagina.Up.pdf Output/Step65/everything.DADA2.homd.Vagina.Down.pdf
 .PHONY: step68
 
-# Step 69 ()
+# Step 69 (Select DAT of metagenomeSeq for classification)
+Output/Step69 Output/Step69_Proportion:
+	mkdir -p $@
+
+Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step69: Output/Step69/everything.DADA2.homd.Mouth.tsv Output/Step69/everything.DADA2.homd.Vagina.tsv Output/Step69/everything.DADA2.homd.Cervix.tsv Output/Step69_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step69_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step69_Proportion/everything.DADA2.homd.Cervix.tsv
+.PHONY: step69
+
+# Step 70 (RandomForest Classifier with DAT-union of DESeq2)
+Output/Step70 Output/Step70_Proportion:
+	mkdir -p $@
+
+Output/Step70/RF.%.tar: Python/step67.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step70/RF-two.%.tar: Python/step67-1.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step70_Proportion/RF.%.tar: Python/step67.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step70_Proportion/RF-two.%.tar: Python/step67-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step70-corrected: $(addprefix Output/Step70/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+step70-corrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+step70: step70-corrected step70-corrected-proportion
+.PHONY: step70-corrected step70-corrected-proportion step70
