@@ -1377,13 +1377,8 @@ step62: step62-uncorrected step62-corrected step62-uncorrected-proportion step62
 Output/Step63:
 	mkdir -p $@
 
-Output/Step63/everything.DADA2.%/table.biom Output/Step63/everything.DADA2.%/taxonomy.tsv: Bash/export_biom.bash Output/DADA2/everything.table.qza Output/Taxonomy/everything.DADA2.%.qza | Output/Step63 build.log
-	mkdir -p $(@D)
-	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/everything.Deblur.%/table.biom Output/Step63/everything.Deblur.%/taxonomy.tsv: Bash/export_biom.bash Output/Deblur/everything.table.qza Output/Taxonomy/everything.Deblur.%.qza | Output/Step63 build.log
-	mkdir -p $(@D)
-	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $@.stdout 2> $@.stderr
+Output/Step63/everything.%.tsv: Python/step63-2.py Output/TSV/everything.%.tsv | build.log Output/Step63
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step63/metadata.%.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" 1> $@.stdout 2> $@.stderr
@@ -1397,79 +1392,46 @@ Output/Step63/metadata.%.EF.tsv: Python/step63-1.py Output/Metadata/everything.t
 Output/Step63/metadata.%.LF.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --LF 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Mouth.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Mouth.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Mouth.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Cervix.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Cervix.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Cervix.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Cervix.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Vagina.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Vagina.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Vagina.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Mouth.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Mouth.EL.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Mouth.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.EL.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Cervix.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Cervix.EL.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Cervix.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Cervix.EL.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Vagina.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Vagina.EL.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Vagina.EL.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.EL.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Mouth.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Mouth.EF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Mouth.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.EF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Cervix.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Cervix.EF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Cervix.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Cervix.EF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Vagina.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Vagina.EF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Vagina.EF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.EF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Mouth.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Mouth.LF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Mouth.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.LF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Cervix.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Cervix.LF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Cervix.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Cervix.LF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Vagina.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%/table.biom Output/Step63/%/taxonomy.tsv Output/Step63/metadata.Vagina.LF.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.biom,$^)) --taxonomy $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Step63/%.Vagina.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.LF.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Mouth.pdf: Python/step63.py Output/Step63/%.Mouth.tsv Output/Step63/%/taxonomy.tsv | build.log
+Output/Step63/%.pdf: Python/step63.py Output/Step63/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step63/%.Cervix.pdf: Python/step63.py Output/Step63/%.Cervix.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Vagina.pdf: Python/step63.py Output/Step63/%.Vagina.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Mouth.EL.pdf: Python/step63.py Output/Step63/%.Mouth.EL.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Cervix.EL.pdf: Python/step63.py Output/Step63/%.Cervix.EL.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Vagina.EL.pdf: Python/step63.py Output/Step63/%.Vagina.EL.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Mouth.EF.pdf: Python/step63.py Output/Step63/%.Mouth.EF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Cervix.EF.pdf: Python/step63.py Output/Step63/%.Cervix.EF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Vagina.EF.pdf: Python/step63.py Output/Step63/%.Vagina.EF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Mouth.LF.pdf: Python/step63.py Output/Step63/%.Mouth.LF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Cervix.LF.pdf: Python/step63.py Output/Step63/%.Cervix.LF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-Output/Step63/%.Vagina.LF.pdf: Python/step63.py Output/Step63/%.Vagina.LF.tsv Output/Step63/%/taxonomy.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
-step63-biom: Output/Step63/everything.DADA2.gg/taxonomy.tsv Output/Step63/everything.DADA2.silva/taxonomy.tsv Output/Step63/everything.DADA2.homd/taxonomy.tsv Output/Step63/everything.Deblur.gg/taxonomy.tsv Output/Step63/everything.Deblur.silva/taxonomy.tsv Output/Step63/everything.Deblur.homd/taxonomy.tsv
+step63-biom: Output/Step63/everything.DADA2.gg.uncorrected.tsv Output/Step63/everything.DADA2.silva.uncorrected.tsv Output/Step63/everything.DADA2.homd.uncorrected.tsv Output/Step63/everything.Deblur.gg.uncorrected.tsv Output/Step63/everything.Deblur.silva.uncorrected.tsv Output/Step63/everything.Deblur.homd.uncorrected.tsv
 step63-metadata: Output/Step63/metadata.Mouth.tsv Output/Step63/metadata.Cervix.tsv Output/Step63/metadata.Vagina.tsv Output/Step63/metadata.Mouth.EL.tsv Output/Step63/metadata.Cervix.EL.tsv Output/Step63/metadata.Vagina.EL.tsv Output/Step63/metadata.Mouth.EF.tsv Output/Step63/metadata.Cervix.EF.tsv Output/Step63/metadata.Vagina.EF.tsv Output/Step63/metadata.Mouth.LF.tsv Output/Step63/metadata.Cervix.LF.tsv Output/Step63/metadata.Vagina.LF.tsv
 step63-tsv: Output/Step63/everything.DADA2.homd.Mouth.tsv Output/Step63/everything.DADA2.homd.Cervix.tsv Output/Step63/everything.DADA2.homd.Vagina.tsv Output/Step63/everything.DADA2.homd.Mouth.EL.tsv Output/Step63/everything.DADA2.homd.Cervix.EL.tsv Output/Step63/everything.DADA2.homd.Vagina.EL.tsv Output/Step63/everything.DADA2.homd.Mouth.EF.tsv Output/Step63/everything.DADA2.homd.Cervix.EF.tsv Output/Step63/everything.DADA2.homd.Vagina.EF.tsv Output/Step63/everything.DADA2.homd.Mouth.LF.tsv Output/Step63/everything.DADA2.homd.Cervix.LF.tsv Output/Step63/everything.DADA2.homd.Vagina.LF.tsv
 step63-pdf: Output/Step63/everything.DADA2.homd.Mouth.pdf Output/Step63/everything.DADA2.homd.Cervix.pdf Output/Step63/everything.DADA2.homd.Vagina.pdf Output/Step63/everything.DADA2.homd.Mouth.EL.pdf Output/Step63/everything.DADA2.homd.Cervix.EL.pdf Output/Step63/everything.DADA2.homd.Vagina.EL.pdf Output/Step63/everything.DADA2.homd.Mouth.EF.pdf Output/Step63/everything.DADA2.homd.Cervix.EF.pdf Output/Step63/everything.DADA2.homd.Vagina.EF.pdf Output/Step63/everything.DADA2.homd.Mouth.LF.pdf Output/Step63/everything.DADA2.homd.Cervix.LF.pdf Output/Step63/everything.DADA2.homd.Vagina.LF.pdf
@@ -1518,7 +1480,7 @@ step64-dendrogram: Output/Step64/everything.DADA2.PTB.dendrogram.qzv Output/Step
 step64: step64-clustering step64-dendrogram
 .PHONY: step64-clustering step64-dendrogram step64
 
-# Step 65 (Venn diagram for differentially abundant taxa)
+# Step 65 (Venn diagram for differentially abundant taxa of DESeq2)
 Output/Step65 Output/Step65_Updown:
 	mkdir -p $@
 
@@ -1554,7 +1516,7 @@ step65-updown: Output/Step65_Updown/everything.DADA2.homd.Mouth.tsv Output/Step6
 step65: step65-multiple step65-updown
 .PHONY: step65-multiple step65-updown step65
 
-# Step 66 (Select DAT for classification)
+# Step 66 (Select DAT of DESeq2 for classification)
 Output/Step66 Output/Step66_Proportion:
 	mkdir -p $@
 
@@ -1601,3 +1563,18 @@ step67-uncorrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.hom
 step67-corrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
 step67: step67-uncorrected step67-corrected step67-uncorrected-proportion step67-corrected-proportion
 .PHONY: step67-uncorrected step67-corrected step67-uncorrected-proportion step67-corrected-proportion step67
+
+# Step 68 (Venn diagram for differentially abundant taxa of metagenomeSeq)
+Output/Step68:
+	mkdir -p $@
+
+Output/Step68/everything.%.Up.pdf: Python/step68.py Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
+
+Output/Step68/everything.%.Down.pdf: Python/step68.py Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
+
+step68: Output/Step65/everything.DADA2.homd.Mouth.Up.pdf Output/Step65/everything.DADA2.homd.Mouth.Down.pdf Output/Step65/everything.DADA2.homd.Cervix.Up.pdf Output/Step65/everything.DADA2.homd.Cervix.Down.pdf Output/Step65/everything.DADA2.homd.Vagina.Up.pdf Output/Step65/everything.DADA2.homd.Vagina.Down.pdf
+.PHONY: step68
+
+# Step 69 ()

@@ -1,5 +1,5 @@
 """
-step65.py: Venn diagram for differentially abundant taxa
+step65.py: Venn diagram for differentially abundant taxa of DESeq2
 """
 import argparse
 import matplotlib
