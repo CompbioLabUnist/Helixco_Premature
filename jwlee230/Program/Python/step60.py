@@ -66,8 +66,8 @@ if __name__ == "__main__":
         axs[0].legend(loc="lower left")
         axs[0].grid(True)
 
-        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Early PTB") else 0, list(tmp_data.index))), color="tab:red", linewidth=0, label="Early PTB")
-        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Late PTB") else 0, list(tmp_data.index))), color="tab:pink", linewidth=0, label="Late PTB")
+        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Early PTB") else 0, list(tmp_data.index))), color="tab:blue", linewidth=0, label="Early PTB")
+        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Late PTB") else 0, list(tmp_data.index))), color="tab:orange", linewidth=0, label="Late PTB")
         axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Normal") else 0, list(tmp_data.index))), color="tab:green", linewidth=0, label="Normal")
 
         matplotlib.pyplot.tight_layout()

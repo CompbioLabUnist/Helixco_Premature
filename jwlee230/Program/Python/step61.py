@@ -1,5 +1,5 @@
 """
-step61.py: Volcano plot with differetially abundant taxa
+step61.py: Volcano plot with differetially abundant taxa from DESeq2
 """
 import argparse
 import itertools
@@ -54,7 +54,6 @@ if __name__ == "__main__":
 
     figures = list()
     for index in tqdm.tqdm(list(DAT_data.index)):
-        print(index)
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=input_data, x="condition", y=index, order=order, linewidth=5, cut=1, ax=ax)

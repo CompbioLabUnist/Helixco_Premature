@@ -79,7 +79,7 @@ if __name__ == "__main__":
     best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, taxa), reverse=True)))
 
     test_scores = list()
-    for i in tqdm.trange(1, len(best_features)):
+    for i in tqdm.trange(1, len(best_features) + 1):
         for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features[:i]], tmp_data[target])):
             x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
             y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     best_BA, tmp_features = -1.0, best_features[:]
 
     for i in sorted(set(score_data["Features"])):
-        BA = numpy.mean(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "Balanced Accuracy"), "Values"])
+        BA = numpy.mean(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "BA"), "Values"])
         if best_BA < BA:
             best_BA = BA
             tmp_features = best_features[:i]
@@ -129,6 +129,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
     matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
+    matplotlib.pyplot.xticks(range(1, len(taxa) + 1), range(1, len(taxa) + 1))
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.ylabel("Evaluations")
@@ -136,6 +137,22 @@ if __name__ == "__main__":
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("metrics.pdf")
+    fig.savefig(tar_files[-1])
+    matplotlib.pyplot.close(fig)
+
+    # Draw bar
+    tmp_data = score_data.loc[(score_data["Features"] == len(tmp_features))]
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+    seaborn.barplot(data=tmp_data, x="Metrics", y="Values", order=step00.derivations, ax=ax)
+
+    matplotlib.pyplot.xlabel("")
+    matplotlib.pyplot.ylabel("Evaluations")
+    matplotlib.pyplot.ylim(0, 1)
+    matplotlib.pyplot.tight_layout()
+
+    tar_files.append("bar.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
