@@ -40,7 +40,7 @@ if __name__ == "__main__":
         if args.up:
             input_data = input_data.loc[(input_data["logFC"] > numpy.log2(ratio_threshold)) & (input_data["pvalues"] < p_threshold)]
         elif args.down:
-            input_data = input_data.loc[(input_data["log2FC"] < numpy.log2(1 / ratio_threshold)) & (input_data["pvalues"] < p_threshold)]
+            input_data = input_data.loc[(input_data["logFC"] < numpy.log2(1 / ratio_threshold)) & (input_data["pvalues"] < p_threshold)]
         else:
             raise Exception("Something went wrong!!")
         input_dict[annot] = set(input_data.index)

@@ -50,8 +50,12 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
     input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
-    taxa = list(input_data.columns)
     print(input_data)
+
+    if input_data.empty:
+        exit()
+
+    taxa = list(input_data.columns)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
