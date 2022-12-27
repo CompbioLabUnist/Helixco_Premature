@@ -1589,10 +1589,14 @@ Output/Step68/everything.%.Down.pdf: Python/step68.py Output/Step63/everything.%
 Output/Step68_Updown/everything.%.pdf: Python/step68-1.py Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68_Updown
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "PTB vs. Normal" "Early PTB vs. Late PTB" "Early PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
 
+Output/Step68_Updown/everything.%.tsv: Python/step68-2.py Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68_Updown
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "PTB vs. Normal" "Early PTB vs. Late PTB" "Early PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
+
 step68-volcano: Output/Step68/everything.DADA2.homd.Mouth.Up.pdf Output/Step68/everything.DADA2.homd.Mouth.Down.pdf Output/Step68/everything.DADA2.homd.Cervix.Up.pdf Output/Step68/everything.DADA2.homd.Cervix.Down.pdf Output/Step68/everything.DADA2.homd.Vagina.Up.pdf Output/Step68/everything.DADA2.homd.Vagina.Down.pdf
 step68-upset: Output/Step68_Updown/everything.DADA2.homd.Mouth.pdf Output/Step68_Updown/everything.DADA2.homd.Cervix.pdf Output/Step68_Updown/everything.DADA2.homd.Vagina.pdf
-step68: step68-volcano step68-upset
-.PHONY: step68-volcano step68-upset step68
+step68-tsv: Output/Step68_Updown/everything.DADA2.homd.Mouth.tsv Output/Step68_Updown/everything.DADA2.homd.Cervix.tsv Output/Step68_Updown/everything.DADA2.homd.Vagina.tsv
+step68: step68-volcano step68-upset step68-tsv
+.PHONY: step68-volcano step68-upset step68-tsv step68
 
 # Step 69 (Select DAT of metagenomeSeq for classification)
 Output/Step69 Output/Step69_Proportion:

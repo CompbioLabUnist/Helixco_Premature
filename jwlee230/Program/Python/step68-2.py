@@ -1,10 +1,11 @@
 """
-step65-1.py: TSV for differentially abundant taxa from DESeq2
+step68-2.py: TSV for differentially abundant taxa from metagenomeSeq
 """
 import argparse
 import numpy
 import pandas
 import tqdm
+import step00
 
 ratio_threshold = 2
 p_threshold = 0.05
@@ -30,22 +31,23 @@ if __name__ == "__main__":
     DAT_set = set()
     for file, annot in tqdm.tqdm(zip(args.input, args.annotation)):
         input_data = pandas.read_csv(file, sep="\t", index_col=0)
+        input_data = input_data.loc[list(filter(step00.filtering_taxonomy, list(input_data.index))), ]
 
-        up_data = input_data.loc[(input_data["log2FoldChange"] > numpy.log2(ratio_threshold)) & (input_data["padj"] < p_threshold)]
-        input_dict[annot + "-Up"] = set(up_data.index)
+        up_data = input_data.loc[(input_data["logFC"] > numpy.log2(ratio_threshold)) & (input_data["pvalues"] < p_threshold)]
+        input_dict[annot + ": Up"] = set(up_data.index)
         DAT_set |= set(up_data.index)
 
-        down_data = input_data.loc[(input_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold)) & (input_data["padj"] < p_threshold)]
-        input_dict[annot + "-Down"] = set(down_data.index)
+        down_data = input_data.loc[(input_data["logFC"] < numpy.log2(1 / ratio_threshold)) & (input_data["pvalues"] < p_threshold)]
+        input_dict[annot + ": Down"] = set(down_data.index)
         DAT_set |= set(down_data.index)
 
     output_data = pandas.DataFrame(index=sorted(DAT_set), columns=args.annotation, dtype=str)
     output_data.loc[:, :] = ""
     for taxon in tqdm.tqdm(DAT_set):
         for annot in args.annotation:
-            if taxon in input_dict[annot + "-Up"]:
+            if taxon in input_dict[annot + ": Up"]:
                 output_data.loc[taxon, annot] = "Up"
-            elif taxon in input_dict[annot + "-Down"]:
+            elif taxon in input_dict[annot + ": Down"]:
                 output_data.loc[taxon, annot] = "Down"
 
     print(output_data)
