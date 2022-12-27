@@ -1392,6 +1392,9 @@ Output/Step63/metadata.%.EF.tsv: Python/step63-1.py Output/Metadata/everything.t
 Output/Step63/metadata.%.LF.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --LF 1> $@.stdout 2> $@.stderr
 
+Output/Step63/metadata.%.PTB.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --PTB 1> $@.stdout 2> $@.stderr
+
 Output/Step63/%.Mouth.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -1428,13 +1431,22 @@ Output/Step63/%.Cervix.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected
 Output/Step63/%.Vagina.LF.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.LF.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/Step63/%.Mouth.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step63/%.Cervix.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Cervix.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step63/%.Vagina.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/Step63/%.pdf: Python/step63.py Output/Step63/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step63-biom: Output/Step63/everything.DADA2.gg.uncorrected.tsv Output/Step63/everything.DADA2.silva.uncorrected.tsv Output/Step63/everything.DADA2.homd.uncorrected.tsv Output/Step63/everything.Deblur.gg.uncorrected.tsv Output/Step63/everything.Deblur.silva.uncorrected.tsv Output/Step63/everything.Deblur.homd.uncorrected.tsv
-step63-metadata: Output/Step63/metadata.Mouth.tsv Output/Step63/metadata.Cervix.tsv Output/Step63/metadata.Vagina.tsv Output/Step63/metadata.Mouth.EL.tsv Output/Step63/metadata.Cervix.EL.tsv Output/Step63/metadata.Vagina.EL.tsv Output/Step63/metadata.Mouth.EF.tsv Output/Step63/metadata.Cervix.EF.tsv Output/Step63/metadata.Vagina.EF.tsv Output/Step63/metadata.Mouth.LF.tsv Output/Step63/metadata.Cervix.LF.tsv Output/Step63/metadata.Vagina.LF.tsv
-step63-tsv: Output/Step63/everything.DADA2.homd.Mouth.tsv Output/Step63/everything.DADA2.homd.Cervix.tsv Output/Step63/everything.DADA2.homd.Vagina.tsv Output/Step63/everything.DADA2.homd.Mouth.EL.tsv Output/Step63/everything.DADA2.homd.Cervix.EL.tsv Output/Step63/everything.DADA2.homd.Vagina.EL.tsv Output/Step63/everything.DADA2.homd.Mouth.EF.tsv Output/Step63/everything.DADA2.homd.Cervix.EF.tsv Output/Step63/everything.DADA2.homd.Vagina.EF.tsv Output/Step63/everything.DADA2.homd.Mouth.LF.tsv Output/Step63/everything.DADA2.homd.Cervix.LF.tsv Output/Step63/everything.DADA2.homd.Vagina.LF.tsv
-step63-pdf: Output/Step63/everything.DADA2.homd.Mouth.pdf Output/Step63/everything.DADA2.homd.Cervix.pdf Output/Step63/everything.DADA2.homd.Vagina.pdf Output/Step63/everything.DADA2.homd.Mouth.EL.pdf Output/Step63/everything.DADA2.homd.Cervix.EL.pdf Output/Step63/everything.DADA2.homd.Vagina.EL.pdf Output/Step63/everything.DADA2.homd.Mouth.EF.pdf Output/Step63/everything.DADA2.homd.Cervix.EF.pdf Output/Step63/everything.DADA2.homd.Vagina.EF.pdf Output/Step63/everything.DADA2.homd.Mouth.LF.pdf Output/Step63/everything.DADA2.homd.Cervix.LF.pdf Output/Step63/everything.DADA2.homd.Vagina.LF.pdf
+step63-metadata: Output/Step63/metadata.Mouth.tsv Output/Step63/metadata.Cervix.tsv Output/Step63/metadata.Vagina.tsv Output/Step63/metadata.Mouth.EL.tsv Output/Step63/metadata.Cervix.EL.tsv Output/Step63/metadata.Vagina.EL.tsv Output/Step63/metadata.Mouth.EF.tsv Output/Step63/metadata.Cervix.EF.tsv Output/Step63/metadata.Vagina.EF.tsv Output/Step63/metadata.Mouth.LF.tsv Output/Step63/metadata.Cervix.LF.tsv Output/Step63/metadata.Vagina.LF.tsv Output/Step63/metadata.Mouth.PTB.tsv Output/Step63/metadata.Cervix.PTB.tsv Output/Step63/metadata.Vagina.PTB.tsv
+step63-tsv: Output/Step63/everything.DADA2.homd.Mouth.tsv Output/Step63/everything.DADA2.homd.Cervix.tsv Output/Step63/everything.DADA2.homd.Vagina.tsv Output/Step63/everything.DADA2.homd.Mouth.EL.tsv Output/Step63/everything.DADA2.homd.Cervix.EL.tsv Output/Step63/everything.DADA2.homd.Vagina.EL.tsv Output/Step63/everything.DADA2.homd.Mouth.EF.tsv Output/Step63/everything.DADA2.homd.Cervix.EF.tsv Output/Step63/everything.DADA2.homd.Vagina.EF.tsv Output/Step63/everything.DADA2.homd.Mouth.LF.tsv Output/Step63/everything.DADA2.homd.Cervix.LF.tsv Output/Step63/everything.DADA2.homd.Vagina.LF.tsv Output/Step63/everything.DADA2.homd.Mouth.PTB.tsv Output/Step63/everything.DADA2.homd.Cervix.PTB.tsv Output/Step63/everything.DADA2.homd.Vagina.PTB.tsv
+step63-pdf: Output/Step63/everything.DADA2.homd.Mouth.pdf Output/Step63/everything.DADA2.homd.Cervix.pdf Output/Step63/everything.DADA2.homd.Vagina.pdf Output/Step63/everything.DADA2.homd.Mouth.EL.pdf Output/Step63/everything.DADA2.homd.Cervix.EL.pdf Output/Step63/everything.DADA2.homd.Vagina.EL.pdf Output/Step63/everything.DADA2.homd.Mouth.EF.pdf Output/Step63/everything.DADA2.homd.Cervix.EF.pdf Output/Step63/everything.DADA2.homd.Vagina.EF.pdf Output/Step63/everything.DADA2.homd.Mouth.LF.pdf Output/Step63/everything.DADA2.homd.Cervix.LF.pdf Output/Step63/everything.DADA2.homd.Vagina.LF.pdf Output/Step63/everything.DADA2.homd.Mouth.PTB.pdf Output/Step63/everything.DADA2.homd.Cervix.PTB.pdf Output/Step63/everything.DADA2.homd.Vagina.PTB.pdf
 step63: step63-biom step63-metadata step63-tsv step63-pdf
 .PHONY: step63-biom step63-metadata step63-tsv step63-pdf step63
 
@@ -1565,26 +1577,31 @@ step67: step67-uncorrected step67-corrected step67-uncorrected-proportion step67
 .PHONY: step67-uncorrected step67-corrected step67-uncorrected-proportion step67-corrected-proportion step67
 
 # Step 68 (Venn diagram for differentially abundant taxa of metagenomeSeq)
-Output/Step68:
+Output/Step68 Output/Step68_Updown:
 	mkdir -p $@
 
 Output/Step68/everything.%.Up.pdf: Python/step68.py Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Early PTB vs. Normal" "Late PTB vs. Normal" --up 1> $@.stdout 2> $@.stderr
 
 Output/Step68/everything.%.Down.pdf: Python/step68.py Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Earlry PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "Early PTB vs. Late PTB" "Early PTB vs. Normal" "Late PTB vs. Normal" --down 1> $@.stdout 2> $@.stderr
 
-step68: Output/Step68/everything.DADA2.homd.Mouth.Up.pdf Output/Step68/everything.DADA2.homd.Mouth.Down.pdf Output/Step68/everything.DADA2.homd.Cervix.Up.pdf Output/Step68/everything.DADA2.homd.Cervix.Down.pdf Output/Step68/everything.DADA2.homd.Vagina.Up.pdf Output/Step68/everything.DADA2.homd.Vagina.Down.pdf
-.PHONY: step68
+Output/Step68_Updown/everything.%.pdf: Python/step68-1.py Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step68_Updown
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Early PTB vs. Late PTB+Normal" "PTB vs. Normal" "Early PTB vs. Late PTB" "Early PTB vs. Normal" "Late PTB vs. Normal" 1> $@.stdout 2> $@.stderr
+
+step68-volcano: Output/Step68/everything.DADA2.homd.Mouth.Up.pdf Output/Step68/everything.DADA2.homd.Mouth.Down.pdf Output/Step68/everything.DADA2.homd.Cervix.Up.pdf Output/Step68/everything.DADA2.homd.Cervix.Down.pdf Output/Step68/everything.DADA2.homd.Vagina.Up.pdf Output/Step68/everything.DADA2.homd.Vagina.Down.pdf
+step68-upset: Output/Step68_Updown/everything.DADA2.homd.Mouth.pdf Output/Step68_Updown/everything.DADA2.homd.Cervix.pdf Output/Step68_Updown/everything.DADA2.homd.Vagina.pdf
+step68: step68-volcano step68-upset
+.PHONY: step68-volcano step68-upset step68
 
 # Step 69 (Select DAT of metagenomeSeq for classification)
 Output/Step69 Output/Step69_Proportion:
 	mkdir -p $@
 
-Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69
+Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69_Proportion
+Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step69: Output/Step69/everything.DADA2.homd.Mouth.tsv Output/Step69/everything.DADA2.homd.Vagina.tsv Output/Step69/everything.DADA2.homd.Cervix.tsv Output/Step69_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step69_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step69_Proportion/everything.DADA2.homd.Cervix.tsv
@@ -1600,14 +1617,20 @@ Output/Step70/RF.%.tar: Python/step67.py Output/Step69/everything.%.tsv Output/M
 Output/Step70/RF-two.%.tar: Python/step67-1.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step70/RF-PTB.%.tar: Python/step67-2.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step70_Proportion/RF.%.tar: Python/step67.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step70_Proportion/RF-two.%.tar: Python/step67-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step70-corrected: $(addprefix Output/Step70/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
-step70-corrected-proportion: $(addprefix Output/Step67_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step67_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+Output/Step70_Proportion/RF-PTB.%.tar: Python/step67-2.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step70_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step70-corrected: $(addprefix Output/Step70/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70/RF-PTB.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+step70-corrected-proportion: $(addprefix Output/Step70_Proportion/RF.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70_Proportion/RF-two.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step70_Proportion/RF-PTB.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
 step70: step70-corrected step70-corrected-proportion
 .PHONY: step70-corrected step70-corrected-proportion step70
 

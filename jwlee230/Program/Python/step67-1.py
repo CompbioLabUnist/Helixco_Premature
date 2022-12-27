@@ -1,5 +1,5 @@
 """
-step67.py: RandomForest Classifier with DAT-union
+step67-1.py: RandomForest Classifier with DAT-union
 """
 import argparse
 import itertools
@@ -133,6 +133,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.ylabel("Evaluations")
+    matplotlib.pyplot.title("title")
     ax.invert_xaxis()
     matplotlib.pyplot.tight_layout()
 

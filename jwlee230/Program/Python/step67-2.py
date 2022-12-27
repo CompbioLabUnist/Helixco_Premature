@@ -1,5 +1,5 @@
 """
-step67.py: RandomForest Classifier with DAT-union
+step67-2.py: RandomForest Classifier with DAT-union
 """
 import argparse
 import itertools
@@ -63,8 +63,8 @@ if __name__ == "__main__":
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
     print(input_data)
 
-    target = "Detail Premature"
-    orders = step00.detailed_PTB
+    target = "Premature"
+    orders = ["PTB", "Normal"]
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
             for metric in step00.derivations:
                 try:
-                    test_scores.append((i, metric, step00.aggregate_confusion_matrix(numpy.sum(sklearn.metrics.multilabel_confusion_matrix(y_test, classifier.predict(x_test)), axis=0), metric)))
+                    test_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(y_test, classifier.predict(x_test)), metric)))
                 except ZeroDivisionError:
                     continue
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         for real, prediction in zip(y_test, classifier.predict(x_test)):
             heatmap_data.loc[real, prediction] += 1
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
 
