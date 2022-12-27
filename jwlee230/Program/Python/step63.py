@@ -50,9 +50,9 @@ if __name__ == "__main__":
     print(up_results.sort_values("simple_name"))
     print(down_results.sort_values("simple_name"))
 
-    matplotlib.pyplot.scatter(ns_results["logFC"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(up_results["logFC"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(down_results["logFC"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(ns_results["logFC"], ns_results["-log10(p)"], s=400, c="gray", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(up_results["logFC"], up_results["-log10(p)"], s=400, c="red", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(down_results["logFC"], down_results["-log10(p)"], s=400, c="blue", marker="o", edgecolors=None)
 
     matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), 0, f"log2(FC)={numpy.log2(1 / ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
     matplotlib.pyplot.text(numpy.log2(ratio_threshold), 0, f"log2(FC)={numpy.log2(ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
@@ -66,9 +66,9 @@ if __name__ == "__main__":
 
     matplotlib.pyplot.xlabel("logFC")
     matplotlib.pyplot.ylabel("-log10(p)")
-    matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
-    matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
-    matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
+    matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--", linewidth=3)
+    matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--", linewidth=3)
+    matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--", linewidth=3)
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
     matplotlib.pyplot.xlim((-ceil, ceil))

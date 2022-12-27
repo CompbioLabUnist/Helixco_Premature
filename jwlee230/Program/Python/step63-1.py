@@ -15,6 +15,7 @@ if __name__ == "__main__":
     comparing.add_argument("--EL", help="Early & Late", action="store_true", default=False)
     comparing.add_argument("--EF", help="Early & Normal", action="store_true", default=False)
     comparing.add_argument("--LF", help="Late & Normal", action="store_true", default=False)
+    comparing.add_argument("--PTB", help="PTB & Normal", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -38,6 +39,8 @@ if __name__ == "__main__":
     elif args.LF:
         metadata = metadata.loc[(metadata["Detail Premature"].isin({"Late PTB", "Normal"}))]
         metadata["Comparing"] = metadata["Detail Premature"]
+    elif args.PTB:
+        metadata["Comparing"] = metadata["Premature"]
     else:
         metadata["Comparing"] = metadata["Simple Premature"]
     print(metadata)
