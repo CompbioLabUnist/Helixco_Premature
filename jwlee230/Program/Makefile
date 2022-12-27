@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1642,10 +1642,10 @@ step70: step70-corrected step70-corrected-proportion
 Output/Step71 Output/Step71_Proportion:
 	mkdir -p $@
 
-Output/Step71/everything.%.tar: Python/step71.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step71
+Output/Step71/everything.%.tar: Python/step71.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step71
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step71_Proportion/everything.%.tar: Python/step71.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step71_Proportion
+Output/Step71_Proportion/everything.%.tar: Python/step71.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step71_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step71: $(addprefix Output/Step71/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71_Proportion/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))

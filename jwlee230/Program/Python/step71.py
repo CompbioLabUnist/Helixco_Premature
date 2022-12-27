@@ -18,6 +18,9 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
+    parser.add_argument("EL", help="EL data TSV file", type=str)
+    parser.add_argument("EF", help="EF data TSV file", type=str)
+    parser.add_argument("LF", help="LF data TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
 
     args = parser.parse_args()
@@ -45,16 +48,21 @@ if __name__ == "__main__":
     input_data["Detail Premature"] = list(map(lambda x: metadata.loc[x, "Detail Premature"], list(input_data.index)))
     print(input_data)
 
+    EL_data = pandas.read_csv(args.EL, sep="\t", index_col=0)
+    EF_data = pandas.read_csv(args.EF, sep="\t", index_col=0)
+    LF_data = pandas.read_csv(args.LF, sep="\t", index_col=0)
+
     for taxon in tqdm.tqdm(taxa):
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=input_data, x="Detail Premature", y=taxon, order=step00.detailed_PTB, linewidth=5, cut=1, ax=ax)
 
         try:
-            statannotations.Annotator.Annotator(ax, list(itertools.combinations(step00.detailed_PTB, r=2)), data=input_data, x="Detail Premature", y=taxon, order=step00.detailed_PTB).configure(test="Mann-Whitney", text_format="simple", loc="inside", comparisons_correction=None, verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(itertools.combinations(step00.detailed_PTB, r=2)), data=input_data, x="Detail Premature", y=taxon, order=step00.detailed_PTB).configure(test=None, text_format="simple", loc="inside", comparisons_correction=None, verbose=0).set_pvalues_and_annotate([EL_data.loc[taxon, "pvalues"], EF_data.loc[taxon, "pvalues"], LF_data.loc[taxon, "pvalues"]])
         except ValueError:
             pass
 
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(step00.simplified_taxonomy(taxon))
         matplotlib.pyplot.tight_layout()
 
