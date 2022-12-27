@@ -5,6 +5,7 @@ import argparse
 import numpy
 import pandas
 import tqdm
+import step00
 
 ratio_threshold = 2
 p_threshold = 0.05
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     DAT_set = set()
     for file in tqdm.tqdm(args.DAT):
         DAT_data = pandas.read_csv(file, sep="\t", index_col=0)
+        DAT_data = DAT_data.loc[list(map(step00.filtering_taxonomy, list(DAT_data.index))), ]
         DAT_data = DAT_data.loc[((DAT_data["logFC"] > numpy.log2(ratio_threshold)) | (DAT_data["logFC"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["pvalues"] < p_threshold)]
         DAT_set |= set(DAT_data.index)
 
