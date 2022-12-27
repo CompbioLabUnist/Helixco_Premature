@@ -3,7 +3,7 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-RUN apt-get update --allow-releaseinfo-change && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev libncurses5-dev unzip libcurl4-openssl-dev libfontconfig1 libxml2 cabextract libblas-dev liblapack-dev gfortran freetype* && wget "https://www.freedesktop.org/software/fontconfig/webfonts/webfonts.tar.gz" && tar -zxvf webfonts.tar.gz && cd msfonts && cabextract *.exe && mkdir -p /home/qiime2/.fonts && cp *.ttf *.TTF /home/qiime2/.fonts && fc-cache -fv
+RUN apt-get update --allow-releaseinfo-change && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev libncurses5-dev unzip libcurl4-openssl-dev libfontconfig1 libxml2 cabextract && wget "https://www.freedesktop.org/software/fontconfig/webfonts/webfonts.tar.gz" && tar -zxvf webfonts.tar.gz && cd msfonts && cabextract *.exe && mkdir -p /home/qiime2/.fonts && cp *.ttf *.TTF /home/qiime2/.fonts && fc-cache -fv
 
 # PIP
 ADD requirements.txt /
