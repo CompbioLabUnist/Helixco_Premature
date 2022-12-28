@@ -8,9 +8,9 @@ MEMS = 100G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
-PYTHON = python3 -B
+PYTHON = /opt/conda/envs/qiime2-2022.2/bin/python3 -B
 BASH = /bin/bash
-R = Rscript --vanilla
+R = /opt/conda/envs/qiime2-2022.2/bin/Rscript --vanilla
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath Bash):/Bash:ro --volume $(abspath R):/R:ro --tmpfs /tmpfs

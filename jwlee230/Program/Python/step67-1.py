@@ -151,6 +151,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel("Evaluations")
     matplotlib.pyplot.ylim(0, 1)
+    matplotlib.pyplot.title("title")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("bar.pdf")
