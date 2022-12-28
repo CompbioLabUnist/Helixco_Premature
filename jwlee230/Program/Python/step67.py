@@ -111,6 +111,19 @@ if __name__ == "__main__":
         for real, prediction in zip(y_test, classifier.predict(x_test)):
             heatmap_data.loc[real, prediction] += 1
 
+    # Importances
+    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+
+    seaborn.histplot(data=feature_importances, stat="count", kde=True, ax=ax)
+
+    matplotlib.pyplot.xlabel("Importances")
+    matplotlib.pyplot.tight_layout()
+
+    tar_files.append("importances.pdf")
+    fig.savefig(tar_files[-1])
+    matplotlib.pyplot.close(fig)
+
+    # Heatmap
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)

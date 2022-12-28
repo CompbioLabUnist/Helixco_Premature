@@ -101,6 +101,19 @@ if __name__ == "__main__":
             best_BA = BA
             tmp_features = best_features[:i]
 
+    # Importances
+    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+
+    seaborn.histplot(data=feature_importances, stat="proportion", kde=True, ax=ax)
+
+    matplotlib.pyplot.xlabel("Importances")
+    matplotlib.pyplot.tight_layout()
+
+    tar_files.append("importances.pdf")
+    fig.savefig(tar_files[-1])
+    matplotlib.pyplot.close(fig)
+
+    # Heatmap
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
     for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
         x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
