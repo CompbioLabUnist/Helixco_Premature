@@ -13,6 +13,7 @@ RUN pip install --requirement /requirements.txt && pip install scikit-bio==0.5.6
 RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'remotes', 'R.utils', 'Rcpp', 'XML'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install('limma')" && Rscript -e "install.packages(c('nlme', 'tidyverse', 'c=mpositions'), repos='http://cran.r-project.org')" && Rscript -e "BiocManager::install(c('lefser', 'DESeq2', 'phyloseq', 'metagenomeSeq'))" && Rscript -e "install.packages(c('statmod'), repos='http://cran.us.r-project.org')"
 
 # Picrust
-RUN conda create -n picrust2 -c bioconda -c conda-forge picrust2=2.5.1
+RUN conda install mamba -n base -c conda-forge -y && mamba create -n picrust2 -c bioconda -c conda-forge picrust2=2.5.1 -y
+ENV PATH=/opt/conda/envs/picrust2/bin:$PATH
 
 CMD ["/bin/bash"]
