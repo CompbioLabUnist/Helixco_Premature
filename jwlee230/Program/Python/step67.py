@@ -117,6 +117,7 @@ if __name__ == "__main__":
     seaborn.histplot(data=feature_importances, stat="count", kde=True, ax=ax)
 
     matplotlib.pyplot.xlabel("Importances")
+    matplotlib.pyplot.title("Early PTB vs. Late PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("importances.pdf")
@@ -130,6 +131,7 @@ if __name__ == "__main__":
 
     matplotlib.pyplot.xlabel("Prediction")
     matplotlib.pyplot.ylabel("Real")
+    matplotlib.pyplot.title("Early PTB vs. Late PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
     tar_files.append("heatmap.pdf")
     fig.savefig(tar_files[-1])
@@ -146,7 +148,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.ylabel("Evaluations")
-    matplotlib.pyplot.title("title")
+    matplotlib.pyplot.title("Early PTB vs. Late PTB vs. Normal")
     ax.invert_xaxis()
     matplotlib.pyplot.tight_layout()
 
@@ -164,7 +166,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel("Evaluations")
     matplotlib.pyplot.ylim(0, 1)
-    matplotlib.pyplot.title("title")
+    matplotlib.pyplot.title("Early PTB vs. Late PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("bar.pdf")
