@@ -114,6 +114,10 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
+    importance_data = pandas.DataFrame(index=best_features, data=feature_importances).sort_index()
+    print(importance_data)
+    importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
+
     # Heatmap
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
     for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
@@ -131,7 +135,6 @@ if __name__ == "__main__":
 
     matplotlib.pyplot.xlabel("Prediction")
     matplotlib.pyplot.ylabel("Real")
-    matplotlib.pyplot.title("PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
     tar_files.append("heatmap.pdf")
     fig.savefig(tar_files[-1])

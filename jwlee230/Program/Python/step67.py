@@ -101,16 +101,6 @@ if __name__ == "__main__":
             best_BA = BA
             tmp_features = best_features[:i]
 
-    heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
-    for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
-        x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
-        y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
-
-        classifier.fit(x_train, y_train)
-
-        for real, prediction in zip(y_test, classifier.predict(x_test)):
-            heatmap_data.loc[real, prediction] += 1
-
     # Importances
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
@@ -124,14 +114,27 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
+    importance_data = pandas.DataFrame(index=best_features, data=feature_importances).sort_index()
+    print(importance_data)
+    importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
+
     # Heatmap
+    heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
+    for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
+        x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
+        y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
+
+        classifier.fit(x_train, y_train)
+
+        for real, prediction in zip(y_test, classifier.predict(x_test)):
+            heatmap_data.loc[real, prediction] += 1
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.heatmap(data=heatmap_data, annot=True, fmt="d", cbar=False, square=True, xticklabels=True, yticklabels=True, ax=ax)
 
     matplotlib.pyplot.xlabel("Prediction")
     matplotlib.pyplot.ylabel("Real")
-    matplotlib.pyplot.title("Early PTB vs. Late PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
     tar_files.append("heatmap.pdf")
     fig.savefig(tar_files[-1])
