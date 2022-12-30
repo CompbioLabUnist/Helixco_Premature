@@ -453,7 +453,7 @@
                         \item \textit{Porphyromonas gingivalis}
                         \item \textit{P. gingivalis} is well-known periodontitis pathogen.
                         \item \textit{P. gingivalis} is associated with bacterial vaginosis \cite{Porphyromonas-1}.
-                        \item \text{P. gingivalis} $\Rightarrow$ Adverse prenancy outcomes \cite{Porphyromonas-2}.
+                        \item \textit{P. gingivalis} $\Rightarrow$ Adverse prenancy outcomes \cite{Porphyromonas-2}.
                     \end{itemize}
                 \end{block}
             \end{column}
@@ -537,11 +537,6 @@
         \frametitle{Random Forest with (Early vs. Late vs. Normal)}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/importances.pdf}
-            \caption{RF importances}
-        \end{figure}
-
-        \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/metrics.pdf}
             \caption{RF evaluations with feature counts}
         \end{figure}
@@ -550,15 +545,23 @@
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/importances.pdf}
+            \caption{RF importances}
+        \end{figure}
+
+        \begin{block}{Highest Importances}
+            \begin{enumerate}
+                \item \textit{L. umeaense}
+                \item \textit{S. sp. HMT 442}
+                \item \textit{V. dispar}
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
         \frametitle{Random Forest with (Early vs. Late + Normal)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/importances.pdf}
-            \caption{RF importances}
-        \end{figure}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/metrics.pdf}
@@ -569,15 +572,23 @@
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/importances.pdf}
+            \caption{RF importances}
+        \end{figure}
+
+        \begin{block}{Highest Importances}
+            \begin{enumerate}
+                \item \textit{L. umeaense}
+                \item \textit{S. sp. HMT 442}
+                \item \textit{C. durum}
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
         \frametitle{Random Forest with (PTB vs. Normal)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/importances.pdf}
-            \caption{RF importances}
-        \end{figure}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/metrics.pdf}
@@ -588,6 +599,19 @@
             \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/importances.pdf}
+            \caption{RF importances}
+        \end{figure}
+
+        \begin{block}{Highest Importances}
+            \begin{enumerate}
+                \item \textit{L. umeaense}
+                \item \textit{P. gingivalis}
+                \item \textit{B. sp. HMT 931}
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \section{Discussion}
