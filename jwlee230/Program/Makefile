@@ -1650,3 +1650,21 @@ Output/Step71_Proportion/everything.%.tar: Python/step71.py Output/Step69_Propor
 
 step71: $(addprefix Output/Step71/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71_Proportion/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
 .PHONY: step71
+
+# Step 72 (PICRUSt2)
+Output/Step72:
+	mkdir -p $@
+
+Output/Step72/everything.DADA2.fna: Bash/export_fna.bash Output/DADA2/everything.seq.qza | build.log Output/Step72
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step72/%.biom: Output/TSV/%.tsv | build.log Output/Step72
+	$(DOCKER) biom convert --input-fp $(addprefix /,$^) --output-fp $(addprefix /,$@) --table-type="OTU table" --to-hdf5
+
+Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step72/everything.DADA2.homd/path_abun_unstrat.tsv.gz: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.homd.biom | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D))
+	$(DOCKER) picrust2_pipeline.py --study_fasta $(addprefix /,$(filter %.fna,$^)) --input $(addprefix /,$(filter %.biom,$^)) --output $(addprefix /,$(@D)) --processes $(CPUS) --stratified --per_sequence_contrib --remove_intermediate 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) cp $(addprefix /,$(@D)/pathways_out/** $(@D))
+
+Output/Step72/everything.DADA2.homd.%.tsv.gz: Output/Step72/everything.DADA2.homd/%.tsv.gz | build.log
+	$(DOCKER) add_descriptions.py --input $(addprefix /,$^) --output $(addprefix /,$@) --map_type "METACYC" 1> $@.stdout 2> $@.stderr
