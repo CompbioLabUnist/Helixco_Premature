@@ -1668,3 +1668,6 @@ Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step
 
 Output/Step72/everything.DADA2.homd.%.tsv.gz: Output/Step72/everything.DADA2.homd/%.tsv.gz | build.log
 	$(DOCKER) add_descriptions.py --input $(addprefix /,$^) --output $(addprefix /,$@) --map_type "METACYC" 1> $@.stdout 2> $@.stderr
+
+step72: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.homd.biom Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step72/path_abun_unstrat_per_seq.tsv.gz Output/Step72/path_abun_unstrat.tsv.gz
+.PHONY: step72
