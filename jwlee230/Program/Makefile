@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1669,5 +1669,5 @@ Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step
 Output/Step72/everything.DADA2.homd.%.tsv.gz: Output/Step72/everything.DADA2.homd/%.tsv.gz | build.log
 	$(DOCKER) add_descriptions.py --input $(addprefix /,$^) --output $(addprefix /,$@) --map_type "METACYC" 1> $@.stdout 2> $@.stderr
 
-step72: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.homd.biom Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step72/path_abun_unstrat_per_seq.tsv.gz Output/Step72/path_abun_unstrat.tsv.gz
+step72: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.homd.biom Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step72/everything.DADA2.homd.path_abun_unstrat_per_seq.tsv.gz Output/Step72/everything.DADA2.homd.path_abun_unstrat.tsv.gz
 .PHONY: step72
