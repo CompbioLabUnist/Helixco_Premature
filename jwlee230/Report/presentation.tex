@@ -8,6 +8,7 @@
 \usepackage[notocbib]{apacite}
 \usepackage[style=iso]{datetime2}
 \usepackage{enumerate}
+\usepackage[T1]{fontenc}
 \providecommand\thispdfpagelabel[1]{}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
 
@@ -270,7 +271,7 @@
             \begin{itemize}
                 \item \textit{H.} inhabit the mucous membranes \\
                     of upper respiratory tract, mouth, vagina, \& intestinal tract.
-                \item \textit{H. influenzae}: Influenza
+                \item \textit{H. influenzae}: A major cause of systemic infection
                 \item PTB caused by \textit{H. influenzae} \cite{haemophilus-1} and \textit{H. parainfluenzae} \cite{haemophilus-2}.
             \end{itemize}
         \end{block}
@@ -367,9 +368,9 @@
             $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+braycurtis.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+euclidean.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+hamming.pdf}
                 \\
-                \mbox{(a) Bray-Curtis} & \mbox{(b) Euclidean} \\
+                \mbox{(a) Bray-Curtis} & \mbox{(b) Hamming} \\
             \end{array}$
             \caption{Beta-diversity t-SNE plots}
         \end{figure}
@@ -625,17 +626,90 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Pathway Enrichment Predictions}
+        \frametitle{Pathway Predictions: Early PTB vs. Late PTB}
 
         \begin{figure}
             \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/EL.pdf}
             \caption{Early PTB vs. Late PTB}
         \end{figure}
 
+        \begin{block}{L-arginine biosynthesis III (via N-acetyl-L-citrulline) (PWY-5154)}
+            \begin{itemize}
+                \item PWY-5154 is enriched in late PTB than early PTB.
+                \item PWY-5154 is enriched in normal than early PTB.
+                \item PWY-5154 is increased with age in rats \cite{PWY-5154-1}.
+                \item Arginine deficiency $\Rightarrow$ PTB \cite{PWY-5154-3, PWY-5154-4, PWY-5154-2}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Octane oxidation (P221-PWY)}
+            \begin{itemize}
+                \item P221-PWY is enriched in late PTB than early PTB.
+                \item P221-PWY is important for classifying the PTB \cite{P221-PWY-1}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Norspermidine biosynthesis (PWY-6562)}
+            \begin{itemize}
+                \item PWY-6562 is enriched in late PTB than early PTB.
+                \item Norspermidine has antitumor activity via regulating DNA \cite{PWY-6562-1}.
+                \item Norspermidine is used as a biofilm disassembly trigger \cite{PWY-6562-2}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Superpathway of N-acetylneuraminate degradation (P441-PWY)}
+            \begin{itemize}
+                \item P441-PWY is enriched in late PTB than early PTB.
+                \item P441-PWY is enriched in late PTB than normal.
+                \item NPL gene $\Rightarrow$ N-acetylneuraminate $\Uparrow$ \\
+                    $\therefore$ Viral pathogenicity $\Uparrow$ \cite{P441-PWY-2}.
+                \item N-acetylneuraminate level increased at 24-28 GW in PTB women \cite{P441-PWY-1}.
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Pathway Predictions: Early PTB vs. Normal}
+
         \begin{figure}
             \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/EF.pdf}
             \caption{Early PTB vs. Normal}
         \end{figure}
+
+        \begin{block}{S-adenosyl-L-methionine cycle (PWY-6151)}
+            \begin{itemize}
+                \item PWY-6151 is enriched in early PTB than normal.
+                \item
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{L-lysine biosynthesis VI (PWY-5097)}
+            \begin{itemize}
+                \item PWY-5097 is enriched in normal than early PTB.
+                \item PWY-5097 is enriched in normal than late PTB.
+                \item PWY-5097 negatively associated with severity of multiple sclerosis \cite{PWY-5097-1}.
+                \item Lysine level in serum was higher in term deliveries with PTB symptoms than without PTB symptoms \cite{PWY-5097-2}.
+                \item Lysine level in the first trimester are associated with adverse birth outcomes in Rhea cohort \cite{PWY-5097-3}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Superpathway of glucose and xylose degradation (PWY-6901)}
+            \begin{itemize}
+                \item PWY-6901 associated with zonulin level \cite{PWY-6901-1} \\
+                    $\Leftarrow$ a marker of small intestinal paracellular permeability
+                    $\therefore$ Development of immunity during early life.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{L-tyrosine degradation I (TYRFUMCAT-PWY)}
+            \begin{itemize}
+                \item TYRFUMCAT-PWY is enriched in normal than early PTB.
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Pathway Predictions: Late PTB vs. Normal}
 
         \begin{figure}
             \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/LF.pdf}
