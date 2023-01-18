@@ -9,6 +9,7 @@
 \usepackage[style=iso]{datetime2}
 \usepackage{enumerate}
 \usepackage[T1]{fontenc}
+\usepackage{booktabs}
 \providecommand\thispdfpagelabel[1]{}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
 
@@ -157,22 +158,33 @@
         \end{itemize}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Data Composition}
-        \begin{itemize}
-            \item JBNU/Helixco data
-            \begin{itemize}
-                \item First data
-                \item Second data
-                \item Stool data
-            \end{itemize}
-        \end{itemize}
+
+        \begin{block}{Data composition}
+            50 pregnant women \& 59 newborns
+        \end{block}
 
         \begin{table}
             \centering
-            \caption{Sample Information}
-            \input{tables/metadata.tex}
+            \caption{Clinical characteristics of mothers}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.25 \textheight}{\height}{0.25 \textheight}}
+            {\input{tables/mother.tex}}
         \end{table}
+
+        \begin{table}
+            \centering
+            \caption{Clinical characteristics of newborns}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.25 \textheight}{\height}{0.25 \textheight}}
+            {\input{tables/newborn.tex}}
+        \end{table}
+
+        \begin{exampleblock}{Statistical tests}
+            \begin{itemize}
+                \item Continuous: M.W.W.
+                \item Categorical: Fisher exact
+            \end{itemize}
+        \end{exampleblock}
     \end{frame}
 
     \section{Methods}
@@ -555,7 +567,7 @@
         \begin{block}{Highest Importances}
             \begin{enumerate}
                 \item \textit{L. umeaense}
-                \item \textit{S. sp. HMT 442}
+                \item \textit{S.} sp. \textit{HMT 442}
                 \item \textit{V. dispar}
             \end{enumerate}
         \end{block}
@@ -582,7 +594,7 @@
         \begin{block}{Highest Importances}
             \begin{enumerate}
                 \item \textit{L. umeaense}
-                \item \textit{S. sp. HMT 442}
+                \item \textit{S.} sp. \textit{HMT 442}
                 \item \textit{C. durum}
             \end{enumerate}
         \end{block}
@@ -610,7 +622,7 @@
             \begin{enumerate}
                 \item \textit{L. umeaense}
                 \item \textit{P. gingivalis}
-                \item \textit{B. sp. HMT 931}
+                \item \textit{B.} sp. \textit{HMT 931}
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -637,6 +649,7 @@
             \begin{itemize}
                 \item PWY-5154 is enriched in late PTB than early PTB.
                 \item PWY-5154 is enriched in normal than early PTB.
+                \item PWY-5154 is enriched in other than early PTB.
                 \item PWY-5154 is increased with age in rats \cite{PWY-5154-1}.
                 \item Arginine deficiency $\Rightarrow$ PTB \cite{PWY-5154-3, PWY-5154-4, PWY-5154-2}.
             \end{itemize}
@@ -645,13 +658,17 @@
         \begin{block}{Octane oxidation (P221-PWY)}
             \begin{itemize}
                 \item P221-PWY is enriched in late PTB than early PTB.
-                \item P221-PWY is important for classifying the PTB \cite{P221-PWY-1}.
+                \item P221-PWY is enriched in normal than early PTB.
+                \item P221-PWY is enriched in other than early PTB.
+                \item P221-PWY is important for classifying the PTB \cite{P221-PWY-1}: \\
+                    higher at PTB than normal ?
             \end{itemize}
         \end{block}
 
         \begin{block}{Norspermidine biosynthesis (PWY-6562)}
             \begin{itemize}
                 \item PWY-6562 is enriched in late PTB than early PTB.
+                \item PWY-6562 is enriched in other than early PTB.
                 \item Norspermidine has antitumor activity via regulating DNA \cite{PWY-6562-1}.
                 \item Norspermidine is used as a biofilm disassembly trigger \cite{PWY-6562-2}.
             \end{itemize}
@@ -663,7 +680,7 @@
                 \item P441-PWY is enriched in late PTB than normal.
                 \item NPL gene $\Rightarrow$ N-acetylneuraminate $\Uparrow$ \\
                     $\therefore$ Viral pathogenicity $\Uparrow$ \cite{P441-PWY-2}.
-                \item N-acetylneuraminate level increased at 24-28 GW in PTB women \cite{P441-PWY-1}.
+                \item N-acetylneuraminate level increased at 24-28 GW in PTB women \cite{P441-PWY-1} ??
             \end{itemize}
         \end{block}
     \end{frame}
@@ -675,6 +692,13 @@
             \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/EF.pdf}
             \caption{Early PTB vs. Normal}
         \end{figure}
+
+        \begin{block}{S-adenosyl-L-methionine cycle (PWY-6151)}
+            \begin{itemize}
+                \item PWY-6151 is enriched in early PTB than normal.
+                \item PWY-6151 is enriched in early PTB than other.
+            \end{itemize}
+        \end{block}
 
         \begin{block}{L-lysine biosynthesis VI (PWY-5097)}
             \begin{itemize}
@@ -689,6 +713,7 @@
         \begin{block}{Superpathway of glucose and xylose degradation (PWY-6901)}
             \begin{itemize}
                 \item PWY-6901 is enriched in normal than early PTB.
+                \item PWY-6901 is enriched in other than early PTB.
                 \item PWY-6901 associated with \textit{zonulin} level \cite{PWY-6901-1} \\
                     $\Leftarrow$ a marker of small intestinal paracellular permeability \\
                     $\therefore$ Development of immunity during early life.
@@ -705,32 +730,49 @@
                     $\because$ Alteration in inflammation response
             \end{itemize}
         \end{block}
-    \end{frame}
 
-    \begin{frame}[allowframebreaks]
-        \frametitle{Pathway Predictions: Late PTB vs. Normal}
-
-        \begin{figure}
-            \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/LF.pdf}
-            \caption{Late PTB vs. Normal}
-        \end{figure}
-
-        \begin{block}{Tetrapyrrole biosynthesis I (from glutamate) (PWY-5188)}
+        \begin{block}{Fatty acid $\beta$-oxidation I (FAO-PWY)}
             \begin{itemize}
-                \item PWY-5188 is enriched in normal than late PTB.
-                \item Tetrapyrroles are chemical compounds that contains four pyrrole rings. \\
-                    \textit{e.g.} hemoglobin \& chlorophyll
-                \item PWY-5188 was predominant pathway in 10-29 years old Korean women \cite{PWY-5188-1}.
+                \item FAO-PWY is enriched in normal than early PTB.
+                \item FAO-PWY is enriched in other than early PTB.
+                \item FAO-PWY is associated with fecal calprotectin level and IL12 \cite{FAO-PWY-2}.
+                \item $\Omega$-3 fatty acid $\Rightarrow$ Prevent recurrent PTB \cite{FAO-PWY-1}.
             \end{itemize}
         \end{block}
 
-        \begin{block}{CDP-diacylglycerol biosynthesis II (PWY0-1319)}
+        \begin{block}{L-glutamate degradation VIII (to propanoate) (PWY-5088)}
             \begin{itemize}
-                \item PWY0-1319 is enriched in late PTB than normal.
-                \item Diacylglycerol is a minor components of cellular membrane
-                \item Healthy dietary pattern people have enriched PWY0-1319 than western dietary pattern \cite{PWY0-1319-1}.
-                \item \textit{Trp53} deficient mice showed region-specific lipid alterations including diacylglycerol \\
-                    $\therefore$ Resulting PTB \cite{PWY0-1319-2}.
+                \item PWY-5088 is enriched in normal than early PTB.
+                \item PWY-5088 is enriched in other than early PTB.
+                \item PWY-5088 is enriched in gut microbiome of Parkinson's disease \cite{PWY-5088-1}.
+                \item GABA \& glutamate play a major role in fetal neonatal brain development \cite{PWY-5088-2}.
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Pathway Predictions: Early PTB vs. Other}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/Early.pdf}
+            \caption{Early PTB vs. Late PTB + Normal}
+        \end{figure}
+
+        \begin{block}{Fucose degradation (FUCCAT-PWY)}
+            \begin{itemize}
+                \item FUCCAT-PWY is enriched in other than early PTB.
+                \item Fucose have a linkage with intestinal health \& disease \cite{FUCCAT-PWY-2}.
+                \item FUCCAT-PWY is enriched in upper respiratory microbiome of pregnant women \cite{FUCCAT-PWY-1}.
+                \item Porous cervical mucus plug $\Rightarrow$ Vaginal infection $\Rightarrow$ Fucose pathway \\
+                    $\therefore$ PTB in mice \cite{FUCCAT-PWY-3}.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Methanogenesis from acetate (METH-ACETATE-PWY)}
+            \begin{itemize}
+                \item METH-ACETATE-PWY is enriched in other than early PTB.
+                \item METH-ACETATE-PWY is enriched in upper respiratory microbiome of pregnant women \cite{FUCCAT-PWY-1}.
+                \item Methanogenesis have a major role in preventing acid accumulation \cite{METH-ACETATE-PWY-1}.
             \end{itemize}
         \end{block}
     \end{frame}
