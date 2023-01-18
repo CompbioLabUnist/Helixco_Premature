@@ -1674,3 +1674,16 @@ Output/Step72/%.tsv: Python/step72.py Output/Step72/%.tsv.gz Output/Metadata/eve
 
 step72: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.homd.biom Output/Step72/everything.DADA2.homd/path_abun_unstrat_per_seq.tsv.gz Output/Step72/everything.DADA2.homd.path_abun_unstrat_per_seq.tsv.gz Output/Step72/everything.DADA2.homd.path_abun_unstrat.tsv.gz Output/Step72/everything.DADA2.homd.path_abun_unstrat_per_seq.tsv Output/Step72/everything.DADA2.homd.path_abun_unstrat.tsv
 .PHONY: step72
+
+# Step 73 (Statistical test for PTB)
+Output/Step73:
+	mkdir -p $@
+
+Output/Step73/mother.tex: Python/step73.py Output/Metadata/everything.tsv | build.log Output/Step73
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step73/newborn.tex: Python/step73-1.py Output/Metadata/everything.tsv | build.log Output/Step73
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step73: Output/Step73/mother.tex Output/Step73/newborn.tex
+.PHONY: step73
