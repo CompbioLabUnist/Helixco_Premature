@@ -51,7 +51,7 @@ if __name__ == "__main__":
     metadata.set_index("ID", inplace=True, verify_integrity=True)
 
     data = pandas.DataFrame()
-    data["#SampleID"] = input_data["sample-id"]
+    data["#SampleID"] = sorted(input_data["sample-id"])
     data["BarcodeSequence"] = ""
     data["LinkPrimerSequence"] = ""
     data["Site"] = list(map(lambda x: {"B1": "Neonate-1day", "B3": "Neonate-3day", "B5": "Neonate-5day", "M": "Mouth", "C": "Cervix", "V": "Vagina", "P": "Placenta", "S1": "Stool-1day", "S3": "Stool-3day", "S5": "Stool-5day"}[x.split("-")[-1]], data["#SampleID"]))
