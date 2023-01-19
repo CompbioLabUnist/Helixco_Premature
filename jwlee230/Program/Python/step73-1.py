@@ -2,6 +2,7 @@
 step73-1.py: statistical test for PTB of newborn
 """
 import argparse
+import collections
 import numpy
 import pandas
 import scipy.stats
@@ -29,6 +30,9 @@ if __name__ == "__main__":
 
     metadata.drop_duplicates(subset=["Data", "Mother", "Neonate"], keep="first", inplace=True)
     print(metadata)
+
+    for column in tqdm.tqdm(sorted(metadata.columns)):
+        print(column, collections.Counter(metadata[column]).most_common())
 
     PTB_data = metadata.loc[(metadata["Gestational Week"] < 34)]
     normal_data = metadata.loc[(metadata["Gestational Week"] >= 34)]

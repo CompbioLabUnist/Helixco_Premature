@@ -2,6 +2,7 @@
 step73.py: statistical test for PTB of mother
 """
 import argparse
+import collections
 import numpy
 import pandas
 import scipy.stats
@@ -26,6 +27,9 @@ if __name__ == "__main__":
 
     metadata = metadata.loc[(metadata["Site"] == "Mouth")]
     print(metadata)
+
+    for column in tqdm.tqdm(sorted(metadata.columns)):
+        print(column, collections.Counter(metadata[column]).most_common())
 
     metadata.drop_duplicates(subset=["Data", "Mother"], keep="first", inplace=True)
     print(metadata)
