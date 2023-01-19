@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print(sorted(columns))
 
     numeric_columns = step00.numeric_columns & columns
-    categorical_columns = columns - step00.numeric_columns
+    categorical_columns = columns - step00.numeric_columns - {"Mother", "Neonate", "Detail Gestational Week"}
     print(sorted(numeric_columns))
     print(sorted(categorical_columns))
 
@@ -70,6 +70,8 @@ if __name__ == "__main__":
             seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(data[c])), palette=palette)
 
             for item, color in palette.items():
+                if len(data.loc[(data[c] == item)]) < 2:
+                    continue
                 step00.confidence_ellipse(data.loc[(data[c] == item), "tSNE1"], data.loc[(data[c] == item), "tSNE2"], ax, facecolor=color, alpha=0.3)
 
             matplotlib.pyplot.tight_layout()
