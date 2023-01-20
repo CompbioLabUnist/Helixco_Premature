@@ -55,6 +55,8 @@ if __name__ == "__main__":
             seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue="Detail Premature", size=c, legend="brief", hue_order=step00.detailed_PTB, palette=PTB_palette)
 
             for PTB, color in PTB_palette.items():
+                if len(data.loc[(data["Detail Premature"] == PTB)]) < 2:
+                    continue
                 step00.confidence_ellipse(data.loc[(data["Detail Premature"] == PTB), "tSNE1"], data.loc[(data["Detail Premature"] == PTB), "tSNE2"], ax, facecolor=color, alpha=0.3)
 
             matplotlib.pyplot.tight_layout()
