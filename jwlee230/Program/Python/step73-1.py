@@ -31,6 +31,8 @@ if __name__ == "__main__":
     metadata.drop_duplicates(subset=["Data", "Mother", "Neonate"], keep="first", inplace=True)
     print(metadata)
 
+    metadata["Gender"] = list(map(lambda x: {"Male": True, "Female": False}[x], metadata["Gender"]))
+
     for column in tqdm.tqdm(sorted(metadata.columns)):
         print(column, collections.Counter(metadata[column]).most_common())
 
@@ -45,7 +47,7 @@ if __name__ == "__main__":
         p = scipy.stats.mannwhitneyu(PTB, normal)[1]
         raw_output_data.append([column, f"{numpy.mean(PTB):.1f}±{numpy.std(PTB):.1f}", f"{numpy.mean(normal):.1f}±{numpy.std(normal):.1f}", f"{p:.3f}", "*" if (p < 0.05) else ""])
 
-    for column in tqdm.tqdm(["CPAP", "Dyspnea", "Neonate Antibiotics", "PROM", "Respirator", "Sepsis"]):
+    for column in tqdm.tqdm(["CPAP", "Dyspnea", "Gender", "Neonate Antibiotics", "PROM", "Respirator", "Sepsis"]):
         try:
             PTB = PTB_data[(PTB_data[column])]
             normal = normal_data[(normal_data[column])]
