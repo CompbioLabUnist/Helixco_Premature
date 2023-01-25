@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print(sorted(columns))
 
     numeric_columns = step00.numeric_columns & columns
-    categorical_columns = columns - step00.numeric_columns - {"Mother", "Neonate", "Detail Gestational Week"}
+    categorical_columns = columns - step00.numeric_columns - {"Mother", "Neonate", "Detail Gestational Week", "LGA"}
     print(sorted(numeric_columns))
     print(sorted(categorical_columns))
 
