@@ -176,10 +176,20 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
+    raw_evaluation_data: typing.List[typing.List[str]] = list()
+    for i in range(1, len(best_features) + 1):
+        tmp = list()
+        for derivation in step00.derivations:
+            d = score_data.loc[(score_data["Features"] == i), derivation]
+            tmp.append(f"{numpy.mean(d)}±{numpy.std(d)}")
+    evaluation_data = pandas.DataFrame(raw_evaluation_data, columns=step00.derivations)
+    print(evaluation_data)
+    evaluation_data.to_csv(args.output.replace(".tar", ".evaluation.tsv"), sep="\t")
+
     for derivation in step00.derivations:
         print("--", derivation, numpy.mean(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]), numpy.std(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]))
 
-    for i, feature in enumerate(best_features[:10]):
+    for i, feature in enumerate(best_features):
         print(feature)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
