@@ -180,7 +180,7 @@ if __name__ == "__main__":
     for i in range(1, len(best_features) + 1):
         tmp = list()
         for derivation in step00.derivations:
-            d = score_data.loc[(score_data["Features"] == i), derivation]
+            d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation)]
             tmp.append(f"{numpy.mean(d)}±{numpy.std(d)}")
     evaluation_data = pandas.DataFrame(raw_evaluation_data, columns=step00.derivations)
     print(evaluation_data)

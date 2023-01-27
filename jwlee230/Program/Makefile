@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
 CPUS = 20
-MEMS = 400G
+MEMS = 200G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -508,7 +508,7 @@ Output/Step30/Second_Third.Macrogen.tar: Python/step30-1.py Output/TSV/Macrogen.
 step30-DADA2: Output/Step30/DADA2/everything.evenness.tsv Output/Step30/DADA2/everything.faith_pd.tsv Output/Step30/DADA2/everything.observed_features.tsv Output/Step30/DADA2/everything.shannon.tsv Output/Step30/everything.DADA2.tar Output/Step30/First.DADA2.tar Output/Step30/Second_Third.DADA2.tar
 step30-Deblur: Output/Step30/Deblur/everything.evenness.tsv Output/Step30/Deblur/everything.faith_pd.tsv Output/Step30/Deblur/everything.observed_features.tsv Output/Step30/Deblur/everything.shannon.tsv Output/Step30/everything.Deblur.tar Output/Step30/First.Deblur.tar Output/Step30/Second_Third.Deblur.tar
 step30-Macrogen: Output/Step30/Macrogen.tar Output/Step30/First.Macrogen.tar Output/Step30/Second_Third.Macrogen.tar
-step30: step30-DADA2 step30-Deblur step30-Macrogen
+step30: step30-DADA2 step30-Deblur
 .PHONY: step30-DADA2 step30-Deblur step30-Macrogen step30
 
 # Step 31 (Violin plots from ANCOM)
