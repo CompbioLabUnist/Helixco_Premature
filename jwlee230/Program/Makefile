@@ -1708,3 +1708,16 @@ step74-abundance: Output/Step74/pairplot.DADA2.homd.Mouth.pdf Output/Step74/relp
 step74-proportion: Output/Step74_Proportion/pairplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/relplot.DADA2.homd.Mouth.pdf
 step74: step74-abundance step74-proportion
 .PHONY: step74-abundance step74-proportion step74
+
+# Step 75 (Hierarchical clustering)
+Output/Step75:
+	mkdir -p $@
+
+Output/Step75/Abundance.%.pdf: Python/step75.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step75
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step75/Proportion.%.pdf: Python/step75-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step75
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step75: Output/Step75/Abundance.DADA2.homd.Mouth.pdf Output/Step75/Proportion.DADA2.homd.Mouth.pdf
+.PHONY: step75
