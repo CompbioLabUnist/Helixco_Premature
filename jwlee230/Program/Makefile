@@ -1687,3 +1687,24 @@ Output/Step73/newborn.tex: Python/step73-1.py Output/Metadata/everything.tsv | b
 
 step73: Output/Step73/mother.tex Output/Step73/newborn.tex
 .PHONY: step73
+
+# Step 74 (Correlations within DAT)
+Output/Step74 Output/Step74_Proportion:
+	mkdir -p $@
+
+Output/Step74/pairplot.%.pdf: Python/step74.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74_Proportion/pairplot.%.pdf: Python/step74.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74/relplot.%.pdf: Python/step74-1.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74_Proportion/relplot.%.pdf: Python/step74-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step74-abundance: Output/Step74/pairplot.DADA2.homd.Mouth.pdf Output/Step74/relplot.DADA2.homd.Mouth.pdf
+step74-proportion: Output/Step74_Proportion/pairplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/relplot.DADA2.homd.Mouth.pdf
+step74: step74-abundance step74-proportion
+.PHONY: step74-abundance step74-proportion step74
