@@ -114,7 +114,7 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    importance_data = pandas.DataFrame(index=best_features, data=feature_importances).sort_index()
+    importance_data = pandas.DataFrame(index=best_features, data=feature_importances, columns=["Taxonomy", "Importance"]).sort_index()
     print(importance_data)
     importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
 
@@ -182,6 +182,7 @@ if __name__ == "__main__":
         for derivation in step00.derivations:
             d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation)]
             tmp.append(f"{numpy.mean(d)}±{numpy.std(d)}")
+        raw_evaluation_data.append(tmp)
     evaluation_data = pandas.DataFrame(raw_evaluation_data, columns=step00.derivations)
     print(evaluation_data)
     evaluation_data.to_csv(args.output.replace(".tar", ".evaluation.tsv"), sep="\t")

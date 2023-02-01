@@ -12,7 +12,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input TSV file", type=str)
     parser.add_argument("metadata", help="Metadata file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--compare", help="Compare clinical data", nargs=3, default=["Simple Premature", "Late PTB+Normal", "Early PTB"])
+    parser.add_argument("--compare", help="Compare clinical data", nargs=3, default=["Premature", "Normal", "PTB"])
 
     args = parser.parse_args()
 
