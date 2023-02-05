@@ -1732,13 +1732,19 @@ Output/Step76/everything.%.tsv: Python/step66.py Output/Step44/everything.DADA2.
 Output/Step76/RF-PTB.%.tar: Python/step67-2.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step76/RF-Early.%.tar: Python/step67-3.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step76_Proportion/everything.%.tsv: Python/step66.py Output/Step44_Proportion/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step44/everything.DADA2.homd.uncorrected.Mouth.DAT.tsv | Output/Step76_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step76_Proportion/RF-PTB.%.tar: Python/step67-2.py Output/Step76_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step76-abundance: $(addprefix Output/Step76/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
-step76-proportion: $(addprefix Output/Step76_Proportion/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+Output/Step76_Proportion/RF-Early.%.tar: Python/step67-3.py Output/Step76_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step76-abundance: $(addprefix Output/Step76/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step76/RF-Early.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step76-proportion: $(addprefix Output/Step76_Proportion/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-Early.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
 step76: step76-abundance step76-proportion
 .PHONY: step76-abundance step76-proportion step76

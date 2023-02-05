@@ -1,5 +1,5 @@
 """
-step67-2.py: RandomForest Classifier with DAT-union
+step67-3.py: RandomForest Classifier with DAT-union
 """
 import argparse
 import itertools
@@ -63,8 +63,11 @@ if __name__ == "__main__":
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
     print(input_data)
 
-    target = "Premature"
-    orders = ["PTB", "Normal"]
+    target = "Detail Premature"
+    orders = ["Early PTB", "Normal"]
+
+    input_data = input_data.loc[(input_data[target].isin(orders))]
+    print(input_data)
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
@@ -107,7 +110,7 @@ if __name__ == "__main__":
     seaborn.histplot(data=feature_importances, stat="count", kde=True, ax=ax)
 
     matplotlib.pyplot.xlabel("Importances")
-    matplotlib.pyplot.title("PTB vs. Normal")
+    matplotlib.pyplot.title("Early PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("importances.pdf")
@@ -152,7 +155,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.ylabel("Evaluations")
-    matplotlib.pyplot.title("PTB vs. Normal")
+    matplotlib.pyplot.title("Early PTB vs. Normal")
     ax.invert_xaxis()
     matplotlib.pyplot.tight_layout()
 
@@ -170,7 +173,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel("Evaluations")
     matplotlib.pyplot.ylim(0, 1)
-    matplotlib.pyplot.title("PTB vs. Normal")
+    matplotlib.pyplot.title("Early PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("bar.pdf")
