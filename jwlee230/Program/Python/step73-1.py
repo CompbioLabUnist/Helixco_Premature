@@ -11,6 +11,7 @@ import tqdm
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("input", help="Input XLSX file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output TEX file", type=str)
 
@@ -21,9 +22,16 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tex"):
         raise ValueError("Output file must end with .TEX!!")
 
+    input_data = pandas.read_excel(args.input, sheet_name=0, dtype=str)
+    input_data["ID"] = list(map(lambda x: "-".join(x), zip(input_data["Data"], input_data["Mother"], input_data["Neonate"])))
+    print(input_data)
+
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
     print(sorted(metadata.columns))
+
+    verified_ids = set(map(lambda x: "-".join(x.split("-")[:-1]), metadata.index))
+    print(input_data.loc[~(input_data["ID"].isin(verified_ids))])
 
     metadata = metadata.loc[(metadata["Site"].isin({"Neonate-1day", "Neonate-3day", "Neonate-5day"}))]
     print(metadata)

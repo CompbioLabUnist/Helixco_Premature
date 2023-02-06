@@ -1685,10 +1685,10 @@ step72: Output/Step72/everything.DADA2.fna Output/Step72/everything.DADA2.fna Ou
 Output/Step73:
 	mkdir -p $@
 
-Output/Step73/mother.tex: Python/step73.py Output/Metadata/everything.tsv | build.log Output/Step73
+Output/Step73/mother.tex: Python/step73.py Data/Metadata/metadata.xlsx Output/Metadata/everything.tsv | build.log Output/Step73
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step73/newborn.tex: Python/step73-1.py Output/Metadata/everything.tsv | build.log Output/Step73
+Output/Step73/newborn.tex: Python/step73-1.py Data/Metadata/metadata.xlsx Output/Metadata/everything.tsv | build.log Output/Step73
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step73: Output/Step73/mother.tex Output/Step73/newborn.tex
