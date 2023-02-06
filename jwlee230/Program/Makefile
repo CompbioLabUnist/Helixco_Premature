@@ -1748,3 +1748,55 @@ step76-abundance: $(addprefix Output/Step76/everything.DADA2.homd.uncorrected.,$
 step76-proportion: $(addprefix Output/Step76_Proportion/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-Early.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
 step76: step76-abundance step76-proportion
 .PHONY: step76-abundance step76-proportion step76
+
+# Step 77 (K-Nearest Neighbors for PTB)
+Output/Step77 Output/Step77_Proportion:
+	mkdir -p $@
+
+Output/Step77/KNN-PTB.%.tar: Python/step77.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step77
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step77_Proportion/KNN-PTB.%.tar: Python/step77.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step77_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step77: $(addprefix Output/Step77/KNN-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step77_Proportion/KNN-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+.PHONY: step77
+
+# Step 78 (Gaussian Process)
+Output/Step78 Output/Step78_Proportion:
+	mkdir -p $@
+
+Output/Step78/GP-PTB.%.tar: Python/step78.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step78
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step78_Proportion/GP-PTB.%.tar: Python/step78.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step78_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step78: $(addprefix Output/Step78/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step78_Proportion/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+.PHONY: step78
+
+# Step 79 (Neural Network)
+Output/Step79 Output/Step79_Proportion:
+	mkdir -p $@
+
+Output/Step79/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step79
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step79_Proportion/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step79_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step79: $(addprefix Output/Step79/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step79_Proportion/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+.PHONY: step79
+
+# Step 80 (Support Vector Classifier)
+Output/Step80 Output/Step80_Proportion:
+	mkdir -p $@
+
+Output/Step80/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step80
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step80_Proportion/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step80_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step80: $(addprefix Output/Step80/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step80_Proportion/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+.PHONY: step80
