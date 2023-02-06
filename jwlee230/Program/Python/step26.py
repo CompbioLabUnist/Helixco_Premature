@@ -146,7 +146,7 @@ if __name__ == "__main__":
         best_BA, tmp_features = -1.0, best_features[:]
 
         for i in sorted(set(score_data["Features"])):
-            BA = numpy.mean(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "Balanced Accuracy"), "Values"])
+            BA = numpy.mean(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "BA"), "Values"])
             if best_BA < BA:
                 best_BA = BA
                 tmp_features = best_features[:i]

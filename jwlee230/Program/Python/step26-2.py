@@ -54,8 +54,8 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
-    target = "Simple Premature"
-    orders = ["Early PTB", "Late PTB+Normal"]
+    target = "Premature"
+    orders = ["PTB", "Normal"]
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
     print(input_data)

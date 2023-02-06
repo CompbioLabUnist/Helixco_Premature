@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -392,16 +392,22 @@ Output/Step26/RF.%.tar: Python/step26.py Output/TSV/everything.%.tsv Output/Meta
 Output/Step26/RF-two.%.tar: Python/step26-1.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step26 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step26/RF-PTB.%.tar: Python/step26-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step26 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step26_Proportion/RF.%.tar: Python/step26.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step26_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step26_Proportion/RF-two.%.tar: Python/step26-1.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step26_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step26-uncorrected: Output/Step26/RF.DADA2.gg.uncorrected.tar Output/Step26/RF.DADA2.silva.uncorrected.tar Output/Step26/RF.DADA2.homd.uncorrected.tar Output/Step26/RF.Deblur.gg.uncorrected.tar Output/Step26/RF.Deblur.silva.uncorrected.tar Output/Step26/RF.Deblur.homd.uncorrected.tar Output/Step26/RF-two.DADA2.gg.uncorrected.tar Output/Step26/RF-two.DADA2.silva.uncorrected.tar Output/Step26/RF-two.DADA2.homd.uncorrected.tar Output/Step26/RF-two.Deblur.gg.uncorrected.tar Output/Step26/RF-two.Deblur.silva.uncorrected.tar Output/Step26/RF-two.Deblur.homd.uncorrected.tar
-step26-corrected: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.DADA2.homd.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar Output/Step26/RF.Deblur.homd.tar Output/Step26/RF-two.DADA2.gg.tar Output/Step26/RF-two.DADA2.silva.tar Output/Step26/RF-two.DADA2.homd.tar Output/Step26/RF-two.Deblur.gg.tar Output/Step26/RF-two.Deblur.silva.tar Output/Step26/RF-two.Deblur.homd.tar
-step26-uncorrected-Proportion: Output/Step26_Proportion/RF.DADA2.gg.uncorrected.tar Output/Step26_Proportion/RF.DADA2.silva.uncorrected.tar Output/Step26_Proportion/RF.DADA2.homd.uncorrected.tar Output/Step26_Proportion/RF.Deblur.gg.uncorrected.tar Output/Step26_Proportion/RF.Deblur.silva.uncorrected.tar Output/Step26_Proportion/RF.Deblur.homd.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.gg.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.silva.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.homd.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.gg.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.silva.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.homd.uncorrected.tar
-step26-corrected-Proportion: Output/Step26_Proportion/RF.DADA2.gg.tar Output/Step26_Proportion/RF.DADA2.silva.tar Output/Step26_Proportion/RF.DADA2.homd.tar Output/Step26_Proportion/RF.Deblur.gg.tar Output/Step26_Proportion/RF.Deblur.silva.tar Output/Step26_Proportion/RF.Deblur.homd.tar Output/Step26_Proportion/RF-two.DADA2.gg.tar Output/Step26_Proportion/RF-two.DADA2.silva.tar Output/Step26_Proportion/RF-two.DADA2.homd.tar Output/Step26_Proportion/RF-two.Deblur.gg.tar Output/Step26_Proportion/RF-two.Deblur.silva.tar Output/Step26_Proportion/RF-two.Deblur.homd.tar
+Output/Step26_Proportion/RF-PTB.%.tar: Python/step26-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step26_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step26-uncorrected: Output/Step26/RF.DADA2.gg.uncorrected.tar Output/Step26/RF.DADA2.silva.uncorrected.tar Output/Step26/RF.DADA2.homd.uncorrected.tar Output/Step26/RF.Deblur.gg.uncorrected.tar Output/Step26/RF.Deblur.silva.uncorrected.tar Output/Step26/RF.Deblur.homd.uncorrected.tar Output/Step26/RF-two.DADA2.gg.uncorrected.tar Output/Step26/RF-two.DADA2.silva.uncorrected.tar Output/Step26/RF-two.DADA2.homd.uncorrected.tar Output/Step26/RF-two.Deblur.gg.uncorrected.tar Output/Step26/RF-two.Deblur.silva.uncorrected.tar Output/Step26/RF-two.Deblur.homd.uncorrected.tar Output/Step26/RF-PTB.DADA2.gg.uncorrected.tar Output/Step26/RF-PTB.DADA2.silva.uncorrected.tar Output/Step26/RF-PTB.DADA2.homd.uncorrected.tar Output/Step26/RF-PTB.Deblur.gg.uncorrected.tar Output/Step26/RF-PTB.Deblur.silva.uncorrected.tar Output/Step26/RF-PTB.Deblur.homd.uncorrected.tar
+step26-corrected: Output/Step26/RF.DADA2.gg.tar Output/Step26/RF.DADA2.silva.tar Output/Step26/RF.DADA2.homd.tar Output/Step26/RF.Deblur.gg.tar Output/Step26/RF.Deblur.silva.tar Output/Step26/RF.Deblur.homd.tar Output/Step26/RF-two.DADA2.gg.tar Output/Step26/RF-two.DADA2.silva.tar Output/Step26/RF-two.DADA2.homd.tar Output/Step26/RF-two.Deblur.gg.tar Output/Step26/RF-two.Deblur.silva.tar Output/Step26/RF-two.Deblur.homd.tar Output/Step26/RF-PTB.DADA2.gg.tar Output/Step26/RF-PTB.DADA2.silva.tar Output/Step26/RF-PTB.DADA2.homd.tar Output/Step26/RF-PTB.Deblur.gg.tar Output/Step26/RF-PTB.Deblur.silva.tar Output/Step26/RF-PTB.Deblur.homd.tar
+step26-uncorrected-Proportion: Output/Step26_Proportion/RF.DADA2.gg.uncorrected.tar Output/Step26_Proportion/RF.DADA2.silva.uncorrected.tar Output/Step26_Proportion/RF.DADA2.homd.uncorrected.tar Output/Step26_Proportion/RF.Deblur.gg.uncorrected.tar Output/Step26_Proportion/RF.Deblur.silva.uncorrected.tar Output/Step26_Proportion/RF.Deblur.homd.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.gg.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.silva.uncorrected.tar Output/Step26_Proportion/RF-two.DADA2.homd.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.gg.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.silva.uncorrected.tar Output/Step26_Proportion/RF-two.Deblur.homd.uncorrected.tar Output/Step26_Proportion/RF-PTB.DADA2.gg.uncorrected.tar Output/Step26_Proportion/RF-PTB.DADA2.silva.uncorrected.tar Output/Step26_Proportion/RF-PTB.DADA2.homd.uncorrected.tar Output/Step26_Proportion/RF-PTB.Deblur.gg.uncorrected.tar Output/Step26_Proportion/RF-PTB.Deblur.silva.uncorrected.tar Output/Step26_Proportion/RF-PTB.Deblur.homd.uncorrected.tar
+step26-corrected-Proportion: Output/Step26_Proportion/RF.DADA2.gg.tar Output/Step26_Proportion/RF.DADA2.silva.tar Output/Step26_Proportion/RF.DADA2.homd.tar Output/Step26_Proportion/RF.Deblur.gg.tar Output/Step26_Proportion/RF.Deblur.silva.tar Output/Step26_Proportion/RF.Deblur.homd.tar Output/Step26_Proportion/RF-two.DADA2.gg.tar Output/Step26_Proportion/RF-two.DADA2.silva.tar Output/Step26_Proportion/RF-two.DADA2.homd.tar Output/Step26_Proportion/RF-two.Deblur.gg.tar Output/Step26_Proportion/RF-two.Deblur.silva.tar Output/Step26_Proportion/RF-two.Deblur.homd.tar Output/Step26_Proportion/RF-PTB.DADA2.gg.tar Output/Step26_Proportion/RF-PTB.DADA2.silva.tar Output/Step26_Proportion/RF-PTB.DADA2.homd.tar Output/Step26_Proportion/RF-PTB.Deblur.gg.tar Output/Step26_Proportion/RF-PTB.Deblur.silva.tar Output/Step26_Proportion/RF-PTB.Deblur.homd.tar
 step26: step26-uncorrected step26-corrected step26-uncorrected-Proportion step26-corrected-Proportion
 .PHONY: step26-uncorrected step26-corrected step26-uncorrected-Proportion step26-corrected-Proportion step26
 
@@ -1783,7 +1789,7 @@ Output/Step79/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Outp
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step79_Proportion/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step79_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step79: $(addprefix Output/Step79/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step79_Proportion/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
 .PHONY: step79
@@ -1796,7 +1802,7 @@ Output/Step80/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Out
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Step80_Proportion/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step80_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step80: $(addprefix Output/Step80/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step80_Proportion/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
 .PHONY: step80
