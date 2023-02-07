@@ -114,7 +114,7 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    importance_data = pandas.DataFrame(index=best_features, data=feature_importances).sort_index()
+    importance_data = pandas.DataFrame(index=best_features, data=sorted(feature_importances, reverse=True)).sort_index()
     print(importance_data)
     importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
 

@@ -114,7 +114,7 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    std_data = pandas.DataFrame(index=best_features, data=std, columns=["STD"]).sort_index()
+    std_data = pandas.DataFrame(index=best_features, data=sorted(std, reverse=True), columns=["STD"]).sort_index()
     std_data.index.name = "Taxonomy"
     print(std_data)
     std_data.to_csv(args.output.replace(".tar", ".std.tsv"), sep="\t")

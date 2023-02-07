@@ -13,6 +13,12 @@ import seaborn
 import tqdm
 import step00
 
+
+def GW_to_float(GW):
+    week, day = GW.split("+")
+    return int(week) + int(day) / 7
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -66,9 +72,8 @@ if __name__ == "__main__":
         axs[0].legend(loc="lower left")
         axs[0].grid(True)
 
-        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Early PTB") else 0, list(tmp_data.index))), color="tab:blue", linewidth=0, label="Early PTB")
-        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Late PTB") else 0, list(tmp_data.index))), color="tab:orange", linewidth=0, label="Late PTB")
-        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: int(metadata.loc[x, "Gestational Week"]) if (metadata.loc[x, "Detail Premature"] == "Normal") else 0, list(tmp_data.index))), color="tab:green", linewidth=0, label="Normal")
+        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(tmp_data.index))), color="tab:red", linewidth=0, label="PTB")
+        axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(tmp_data.index))), color="tab:green", linewidth=0, label="Normal")
 
         matplotlib.pyplot.tight_layout()
         axs[1].set_xticks(range(tmp_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(tmp_data.index))), fontsize="xx-small", rotation="vertical")

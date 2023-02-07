@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 step82 step83 step84 step85
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1380,10 +1380,13 @@ step62: step62-uncorrected step62-corrected step62-uncorrected-proportion step62
 .PHONY: step62-uncorrected step62-corrected step62-uncorrected-proportion step62-corrected-proportion step62
 
 # Step 63 (Differentially abundant taxa with metagenomeSeq)
-Output/Step63:
+Output/Step63 Output/Step63_Proportion:
 	mkdir -p $@
 
 Output/Step63/everything.%.tsv: Python/step63-2.py Output/TSV/everything.%.tsv | build.log Output/Step63
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step63_Proportion/everything.%.tsv: Python/step63-2.py Output/TSV_Proportion/everything.%.tsv | build.log Output/Step63_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step63/metadata.%.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
@@ -1728,81 +1731,148 @@ Output/Step75/Proportion.%.pdf: Python/step75-1.py Output/Step69_Proportion/ever
 step75: Output/Step75/Abundance.DADA2.homd.Mouth.pdf Output/Step75/Proportion.DADA2.homd.Mouth.pdf
 .PHONY: step75
 
-# Step 76 (Select RF for PTB)
+# Step 76 (Random Forest for PTB with metagenomeSeq)
 Output/Step76 Output/Step76_Proportion:
 	mkdir -p $@
 
-Output/Step76/everything.%.tsv: Python/step66.py Output/Step44/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step44/everything.DADA2.homd.uncorrected.Mouth.DAT.tsv | Output/Step76 build.log
+Output/Step76/everything.%.Mouth.tsv: Python/step66.py Output/Step63/everything.%.uncorrected.tsv Output/Step63/everything.%.Mouth.PTB.tsv | Output/Step76 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step76/RF-PTB.%.tar: Python/step67-2.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log
+Output/Step76/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step76/RF-Early.%.tar: Python/step67-3.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step76_Proportion/everything.%.tsv: Python/step66.py Output/Step44_Proportion/everything.DADA2.homd.uncorrected.Mouth.tsv Output/Step44/everything.DADA2.homd.uncorrected.Mouth.DAT.tsv | Output/Step76_Proportion build.log
+Output/Step76_Proportion/everything.%.Mouth.tsv: Python/step66.py Output/Step63_Proportion/everything.%.uncorrected.tsv Output/Step63/everything.%.Mouth.PTB.tsv | Output/Step76_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step76_Proportion/RF-PTB.%.tar: Python/step67-2.py Output/Step76_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log
+Output/Step76_Proportion/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step76_Proportion/RF-Early.%.tar: Python/step67-3.py Output/Step76_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step76-abundance: $(addprefix Output/Step76/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step76/RF-Early.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
-step76-proportion: $(addprefix Output/Step76_Proportion/everything.DADA2.homd.uncorrected.,$(addsuffix .tsv,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step76_Proportion/RF-Early.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step76-abundance: Output/Step76/everything.DADA2.homd.Mouth.tsv Output/Step76/RF-PTB.DADA2.homd.Mouth.tar
+step76-proportion: Output/Step76_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step76_Proportion/RF-PTB.DADA2.homd.Mouth.tar
 step76: step76-abundance step76-proportion
 .PHONY: step76-abundance step76-proportion step76
 
-# Step 77 (K-Nearest Neighbors for PTB)
+# Step 77 (K-Nearest Neighbors for PTB with metagenomeSeq)
 Output/Step77 Output/Step77_Proportion:
 	mkdir -p $@
 
-Output/Step77/KNN-PTB.%.tar: Python/step77.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step77
+Output/Step77/KNN-PTB.%.Mouth.tar: Python/step77.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step77
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step77_Proportion/KNN-PTB.%.tar: Python/step77.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step77_Proportion
+Output/Step77_Proportion/KNN-PTB.%.Mouth.tar: Python/step77.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step77_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step77: $(addprefix Output/Step77/KNN-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step77_Proportion/KNN-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step77: Output/Step77/KNN-PTB.DADA2.homd.Mouth.tar Output/Step77_Proportion/KNN-PTB.DADA2.homd.Mouth.tar
 .PHONY: step77
 
-# Step 78 (Gaussian Process)
+# Step 78 (Gaussian Process for PTB with metagenomeSeq)
 Output/Step78 Output/Step78_Proportion:
 	mkdir -p $@
 
-Output/Step78/GP-PTB.%.tar: Python/step78.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step78
+Output/Step78/GP-PTB.%.Mouth.tar: Python/step78.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step78
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step78_Proportion/GP-PTB.%.tar: Python/step78.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step78_Proportion
+Output/Step78_Proportion/GP-PTB.%.Mouth.tar: Python/step78.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step78_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step78: $(addprefix Output/Step78/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step78_Proportion/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step78: Output/Step78/GP-PTB.DADA2.homd.Mouth.tar Output/Step78_Proportion/GP-PTB.DADA2.homd.Mouth.tar
 .PHONY: step78
 
-# Step 79 (Neural Network)
+# Step 79 (Neural Network for PTB with metagenomeSeq)
 Output/Step79 Output/Step79_Proportion:
 	mkdir -p $@
 
-Output/Step79/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step79
+Output/Step79/NN-PTB.%.Mouth.tar: Python/step79.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step79
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step79_Proportion/NN-PTB.%.tar: Python/step79.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step79_Proportion
+Output/Step79_Proportion/NN-PTB.%.Mouth.tar: Python/step79.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step79_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step79: $(addprefix Output/Step79/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step79_Proportion/GP-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step79: Output/Step79/NN-PTB.DADA2.homd.Mouth.tar Output/Step79_Proportion/NN-PTB.DADA2.homd.Mouth.tar
 .PHONY: step79
 
-# Step 80 (Support Vector Classifier)
+# Step 80 (Support Vector Classifier for PTB with metagenomeSeq)
 Output/Step80 Output/Step80_Proportion:
 	mkdir -p $@
 
-Output/Step80/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step80
+Output/Step80/SVC-PTB.%.Mouth.tar: Python/step80.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step80
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step80_Proportion/SVC-PTB.%.tar: Python/step80.py Output/Step76/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step80_Proportion
+Output/Step80_Proportion/SVC-PTB.%.Mouth.tar: Python/step80.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step80_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step80: $(addprefix Output/Step80/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step80_Proportion/SVC-PTB.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step80: Output/Step80/SVC-PTB.DADA2.homd.Mouth.tar Output/Step80_Proportion/SVC-PTB.DADA2.homd.Mouth.tar
 .PHONY: step80
+
+# Step 81 (Random Forest for PTB with DESeq2)
+Output/Step81 Output/Step81_Proportion:
+	mkdir -p $@
+
+Output/Step81/everything.%.Mouth.tsv: Python/step81.py Output/Step44/everything.%.uncorrected.Mouth.tsv Output/Step44/everything.%.uncorrected.Mouth.DAT.tsv | Output/Step81 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step81_Proportion/everything.%.Mouth.tsv: Python/step81.py Output/Step44_Proportion/everything.%.uncorrected.Mouth.tsv Output/Step44/everything.%.uncorrected.Mouth.DAT.tsv | Output/Step81_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step81/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step81/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step81_Proportion/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step81_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF-PTB.DADA2.homd.Mouth.tar
+step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar
+step81: step81-abundance step81-proportion
+.PHONY: step81-abundance step81-proportion step81
+
+# Step 82 (K-Nearest Neighbors for PTB with DESeq2)
+Output/Step82 Output/Step82_Proportion:
+	mkdir -p $@
+
+Output/Step82/KNN-PTB.%.Mouth.tar: Python/step82.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step82
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step82_Proportion/KNN-PTB.%.Mouth.tar: Python/step82.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step82_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step82: Output/Step82/KNN-PTB.DADA2.homd.Mouth.tar Output/Step82_Proportion/KNN-PTB.DADA2.homd.Mouth.tar
+.PHONY: step82
+
+# Step 83 (Gaussian Process for PTB with DESeq2)
+Output/Step83 Output/Step83_Proportion:
+	mkdir -p $@
+
+Output/Step83/GP-PTB.%.Mouth.tar: Python/step83.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step83
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step83_Proportion/GP-PTB.%.Mouth.tar: Python/step83.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step83_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step83: Output/Step83/GP-PTB.DADA2.homd.Mouth.tar Output/Step83_Proportion/GP-PTB.DADA2.homd.Mouth.tar
+.PHONY: step83
+
+# Step 84 (Neural Network for PTB with DESeq2)
+Output/Step84 Output/Step84_Proportion:
+	mkdir -p $@
+
+Output/Step84/NN-PTB.%.Mouth.tar: Python/step84.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step84
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step84_Proportion/NN-PTB.%.Mouth.tar: Python/step84.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step84_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step84: Output/Step84/NN-PTB.DADA2.homd.Mouth.tar Output/Step84_Proportion/NN-PTB.DADA2.homd.Mouth.tar
+.PHONY: step84
+
+# Step 85 (Support Vector Classifier for PTB with DESeq2)
+Output/Step85 Output/Step85_Proportion:
+	mkdir -p $@
+
+Output/Step85/SVC-PTB.%.Mouth.tar: Python/step85.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step85
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step85_Proportion/SVC-PTB.%.Mouth.tar: Python/step85.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step85_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step85: Output/Step85/SVC-PTB.DADA2.homd.Mouth.tar Output/Step85_Proportion/SVC-PTB.DADA2.homd.Mouth.tar
+.PHONY: step85

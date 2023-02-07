@@ -46,9 +46,9 @@ if __name__ == "__main__":
     print(up_results.sort_values("simple_name"))
     print(down_results.sort_values("simple_name"))
 
-    matplotlib.pyplot.scatter(ns_results["log2FoldChange"], ns_results["-log10(p)"], s=100, c="gray", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(ns_results["log2FoldChange"], ns_results["-log10(p)"], s=400, c="gray", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=400, c="red", marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=400, c="blue", marker="o", edgecolors=None)
 
     matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), 0, f"log2(FC)={numpy.log2(1 / ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
     matplotlib.pyplot.text(numpy.log2(ratio_threshold), 0, f"log2(FC)={numpy.log2(ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     for index, row in up_results.iloc[:5, :].iterrows():
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
-    matplotlib.pyplot.xlabel("log2FoldChange")
+    matplotlib.pyplot.xlabel("log2(FoldChange)")
     matplotlib.pyplot.ylabel("-log10(p)")
     matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
