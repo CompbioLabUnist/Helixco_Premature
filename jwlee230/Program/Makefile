@@ -1085,7 +1085,7 @@ step49-Deblur-Proportion: Output/Step49_Proportion/everything.Deblur.gg.pearson.
 step49: step49-DADA2 step49-Deblur step49-DADA2-Proportion step49-Deblur-Proportion
 .PHONY: step49-DADA2 step49-Deblur step49-DADA2-Proportion step49-Deblur-Proportion step49
 
-# Step 50 (Volcano plot with differentially expressed taxa)
+# Step 50 (Volcano plot with differentially abundant taxa)
 Output/Step50:
 	mkdir -p $@
 
