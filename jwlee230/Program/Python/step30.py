@@ -7,6 +7,7 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
 import seaborn
 import statannotations.Annotator
@@ -28,12 +29,19 @@ def draw(alpha: str, disease: str, site: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", ax=ax)
-    if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    if disease == "Premature":
+        seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", linewidth=5, palette=step00.PTB_two_colors, ax=ax)
+    else:
+        seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", linewidth=5, ax=ax)
 
+    if len(order) > 1:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+    matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(drawing_data.loc[(drawing_data[disease] == d), alpha]) for d in order], marker="*", c="white", s=400, zorder=10)
+
+    matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
-    matplotlib.pyplot.title(site)
+    matplotlib.pyplot.title(disease)
     matplotlib.pyplot.tight_layout()
 
     file_name = "{2}+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"), site)
@@ -49,12 +57,19 @@ def draw_all(alpha: str, disease: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", ax=ax)
-    if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    if disease == "Premature":
+        seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", linewidth=5, palette=step00.PTB_two_colors, ax=ax)
+    else:
+        seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", linewidth=5, ax=ax)
 
+    if len(order) > 1:
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+    matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(data.loc[(data[disease] == d), alpha]) for d in order], marker="*", c="white", s=400, zorder=10)
+
+    matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
-    matplotlib.pyplot.title("All")
+    matplotlib.pyplot.title(disease)
     matplotlib.pyplot.tight_layout()
 
     file_name = "All+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"))
@@ -84,7 +99,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .TAR!!")
     elif args.cpus < 1:
-        raise ValueError("CPUS must be positive!!")
+        raise ValueError("CPUs must be positive!!")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -102,7 +117,7 @@ if __name__ == "__main__":
     print(sorted(alphas))
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(raw_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(raw_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))

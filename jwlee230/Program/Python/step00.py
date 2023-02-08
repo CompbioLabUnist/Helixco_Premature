@@ -24,7 +24,7 @@ taxonomics_ranks = ("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "S
 numeric_columns = {"Gestational Week", "Weight", "Mother Age", "Hospitalized Day", "Apgar Score", "Weight gain", "Cholesterol", "TG", "HDL", "LDL", "Glucose", "WBC", "Hb", "Hct", "ESR", "hsCRP", "AST", "ALT", "SBP", "DBP"}
 detailed_PTB = ("Early PTB", "Late PTB", "Normal")
 PTB_colors = {"Early PTB": "tab:red", "Late PTB": "tab:pink", "Normal": "w"}
-PTB_two_colors = {"PTB": "tab:red", "Normal": "tab:green", "FTB": "tab:green"}
+PTB_two_colors = {"PTB": "tab:red", "Normal": "tab:green"}
 
 selected_sites = ("M", "C", "V")
 selected_long_sites = ("Mouth", "Cervix", "Vagina")
