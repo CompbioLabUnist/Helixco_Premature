@@ -44,6 +44,8 @@ if __name__ == "__main__":
     metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), :].replace(to_replace=-1, value=None).sort_values("Detail Gestational Week")
     print(metadata)
 
+    input_data = input_data.loc[sorted(set(input_data.index) & set(metadata.index)), :]
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -57,7 +59,7 @@ if __name__ == "__main__":
         fig, axs = matplotlib.pyplot.subplots(figsize=(32, 24), nrows=2, gridspec_kw={"height_ratios": [3, 1]})
 
         for i, (color, taxon) in tqdm.tqdm(list(enumerate(zip(itertools.cycle(matplotlib.colors.XKCD_COLORS), taxa)))):
-            if i < 5:
+            if i < 20:
                 try:
                     label = step00.simplified_taxonomy(taxon)
                 except IndexError:
@@ -69,7 +71,7 @@ if __name__ == "__main__":
         axs[0].set_xticks(range(tmp_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(tmp_data.index))), fontsize="xx-small", rotation="vertical")
         axs[0].set_xlabel(f"{tmp_data.shape[0]} {site} samples")
         axs[0].set_ylabel(f"{len(taxa)} bacteria")
-        axs[0].legend(loc="lower left")
+        axs[0].legend(loc="lower left", ncols=4)
         axs[0].grid(True)
 
         axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(tmp_data.index))), color="tab:red", linewidth=0, label="PTB")
