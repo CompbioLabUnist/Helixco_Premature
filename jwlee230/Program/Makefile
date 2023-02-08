@@ -1200,18 +1200,22 @@ step52: step52-DADA2-gg step52-DADA2-silva step52-DADA2-homd step52-Deblur-gg st
 Output/Step53 Output/Step53_Proportion:
 	mkdir -p $@
 
-Output/Step53/%.pdf: Python/step53.py Output/TSV/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+Output/Step53/everything.%.pdf: Python/step53.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step53_Proportion/%.pdf: Python/step53-2.py Output/TSV_Proportion/%.tsv Output/Metadata/everything.tsv | build.log Output/Step53_Proportion
+Output/Step53_Proportion/everything.%.pdf: Python/step53-2.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step53_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step53-uncorrected: Output/Step53/everything.DADA2.gg.uncorrected.pdf Output/Step53/everything.DADA2.silva.uncorrected.pdf Output/Step53/everything.DADA2.homd.uncorrected.pdf Output/Step53/everything.Deblur.gg.uncorrected.pdf Output/Step53/everything.Deblur.silva.uncorrected.pdf Output/Step53/everything.Deblur.homd.uncorrected.pdf
-step53-corrected: Output/Step53/everything.DADA2.gg.pdf Output/Step53/everything.DADA2.silva.pdf Output/Step53/everything.DADA2.homd.pdf Output/Step53/everything.Deblur.gg.pdf Output/Step53/everything.Deblur.silva.pdf Output/Step53/everything.Deblur.homd.pdf
-step53-uncorrected-Proportion: Output/Step53_Proportion/everything.DADA2.gg.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.silva.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.homd.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.gg.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.silva.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.homd.uncorrected.pdf
-step53-corrected-Proportion: Output/Step53_Proportion/everything.DADA2.gg.pdf Output/Step53_Proportion/everything.DADA2.silva.pdf Output/Step53_Proportion/everything.DADA2.homd.pdf Output/Step53_Proportion/everything.Deblur.gg.pdf Output/Step53_Proportion/everything.Deblur.silva.pdf Output/Step53_Proportion/everything.Deblur.homd.pdf
-step53: step53-uncorrected step53-corrected step53-uncorrected-Proportion step53-corrected-Proportion
-.PHONY: step53-uncorrected step53-corrected step53-uncorrected-Proportion step53-corrected-Proportion step53
+Output/Step53/singleton.%.pdf: Python/step53.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step53
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step53_Proportion/singleton.%.pdf: Python/step53-2.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step53_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step53-uncorrected: Output/Step53/everything.DADA2.gg.uncorrected.pdf Output/Step53/everything.DADA2.silva.uncorrected.pdf Output/Step53/everything.DADA2.homd.uncorrected.pdf Output/Step53/everything.Deblur.gg.uncorrected.pdf Output/Step53/everything.Deblur.silva.uncorrected.pdf Output/Step53/everything.Deblur.homd.uncorrected.pdf Output/Step53/singleton.DADA2.gg.uncorrected.pdf Output/Step53/singleton.DADA2.silva.uncorrected.pdf Output/Step53/singleton.DADA2.homd.uncorrected.pdf Output/Step53/singleton.Deblur.gg.uncorrected.pdf Output/Step53/singleton.Deblur.silva.uncorrected.pdf Output/Step53/singleton.Deblur.homd.uncorrected.pdf
+step53-uncorrected-Proportion: Output/Step53_Proportion/everything.DADA2.gg.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.silva.uncorrected.pdf Output/Step53_Proportion/everything.DADA2.homd.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.gg.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.silva.uncorrected.pdf Output/Step53_Proportion/everything.Deblur.homd.uncorrected.pdf Output/Step53_Proportion/singleton.DADA2.gg.uncorrected.pdf Output/Step53_Proportion/singleton.DADA2.silva.uncorrected.pdf Output/Step53_Proportion/singleton.DADA2.homd.uncorrected.pdf Output/Step53_Proportion/singleton.Deblur.gg.uncorrected.pdf Output/Step53_Proportion/singleton.Deblur.silva.uncorrected.pdf Output/Step53_Proportion/singleton.Deblur.homd.uncorrected.pdf
+step53: step53-uncorrected step53-uncorrected-Proportion
+.PHONY: step53-uncorrected step53-uncorrected-Proportion step53
 
 # Step 54 (LEfSe analysis after batch correction)
 Output/Step54 Output/Step54/Default Output/Step54/Cladogram:
@@ -1270,11 +1274,9 @@ Output/Step55_Proportion/%.pdf: Python/step55-2.py Output/TSV_Proportion/%.tsv |
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step55-uncorrected: Output/Step55/everything.DADA2.gg.uncorrected.pdf Output/Step55/everything.DADA2.silva.uncorrected.pdf Output/Step55/everything.DADA2.homd.uncorrected.pdf Output/Step55/everything.Deblur.gg.uncorrected.pdf Output/Step55/everything.Deblur.silva.uncorrected.pdf Output/Step55/everything.Deblur.homd.uncorrected.pdf
-step55-corrected: Output/Step55/everything.DADA2.gg.pdf Output/Step55/everything.DADA2.silva.pdf Output/Step55/everything.DADA2.homd.pdf Output/Step55/everything.Deblur.gg.pdf Output/Step55/everything.Deblur.silva.pdf Output/Step55/everything.Deblur.homd.pdf
 step55-uncorrected-Proportion: Output/Step55_Proportion/everything.DADA2.gg.uncorrected.pdf Output/Step55_Proportion/everything.DADA2.silva.uncorrected.pdf Output/Step55_Proportion/everything.DADA2.homd.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.gg.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.silva.uncorrected.pdf Output/Step55_Proportion/everything.Deblur.homd.uncorrected.pdf
-step55-corrected-Proportion: Output/Step55_Proportion/everything.DADA2.gg.pdf Output/Step55_Proportion/everything.DADA2.silva.pdf Output/Step55_Proportion/everything.DADA2.homd.pdf Output/Step55_Proportion/everything.Deblur.gg.pdf Output/Step55_Proportion/everything.Deblur.silva.pdf Output/Step55_Proportion/everything.Deblur.homd.pdf
-step55: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55-corrected-Proportion
-.PHONY: step55-uncorrected step55-corrected step55-uncorrected-Proportion step55-corrected-Proportion step55
+step55: step55-uncorrected step55-uncorrected-Proportion
+.PHONY: step55-uncorrected step55-uncorrected-Proportion step55
 
 # Step 56 (K-Nearest Neighbors Classifier)
 Output/Step56 Output/Step56_Proportion:

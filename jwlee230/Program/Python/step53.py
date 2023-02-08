@@ -44,6 +44,10 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
+    ids = sorted(set(data.index) & set(metadata.index))
+    data = data.loc[ids, :]
+    metadata = metadata.loc[ids, :]
+
     with multiprocessing.Pool(args.cpus) as pool:
         output_data = pandas.DataFrame(pool.starmap(run, itertools.product(list(data.index), list(data.columns))), columns=["Site", "Abundance"])
 
