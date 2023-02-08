@@ -851,14 +851,23 @@ step41: step41-everything-DADA2 step41-everything-Deblur
 .PHONY: step41-everything-DADA2 step41-everything-Deblur step41
 
 # Step 42 (Violin plot for taxonomy with clinical data)
-Output/Step42:
+Output/Step42 Output/Step42_Proportion:
 	mkdir -p $@
 
 Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step42 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar
-step42-Deblur: Output/Step42/everything.Deblur.gg.tar Output/Step42/everything.Deblur.silva.tar Output/Step42/everything.Deblur.homd.tar
+Output/Step42/singleton.%.tar: Python/step42.py Output/TSV/everything.%.tar.gz Output/Metadata/singleton.tsv | Output/Step42 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step42_Proportion/everything.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step42 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step42_Proportion/singleton.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tar.gz Output/Metadata/singleton.tsv | Output/Step42 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar Output/Step42/singleton.DADA2.gg.tar Output/Step42/singleton.DADA2.silva.tar Output/Step42/singleton.DADA2.homd.tar Output/Step42_Proportion/everything.DADA2.gg.tar Output/Step42_Proportion/everything.DADA2.silva.tar Output/Step42_Proportion/everything.DADA2.homd.tar Output/Step42_Proportion/singleton.DADA2.gg.tar Output/Step42_Proportion/singleton.DADA2.silva.tar Output/Step42_Proportion/singleton.DADA2.homd.tar
+step42-Deblur: Output/Step42/everything.Deblur.gg.tar Output/Step42/everything.Deblur.silva.tar Output/Step42/everything.Deblur.homd.tar Output/Step42/singleton.Deblur.gg.tar Output/Step42/singleton.Deblur.silva.tar Output/Step42/singleton.Deblur.homd.tar Output/Step42_Proportion/everything.Deblur.gg.tar Output/Step42_Proportion/everything.Deblur.silva.tar Output/Step42_Proportion/everything.Deblur.homd.tar Output/Step42_Proportion/singleton.Deblur.gg.tar Output/Step42_Proportion/singleton.Deblur.silva.tar Output/Step42_Proportion/singleton.Deblur.homd.tar
 step42: step42-DADA2 step42-Deblur
 .PHONY: step42-DADA2 step42-Deblur step42
 

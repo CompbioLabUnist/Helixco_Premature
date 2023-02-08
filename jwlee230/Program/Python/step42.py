@@ -43,8 +43,9 @@ def draw(taxo: str, disease: str, site: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=drawing_data, x=disease, y=taxo, order=order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=taxo, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=drawing_data, x=disease, y=taxo, order=order, inner="box", linewidth=5, cut=1, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=taxo, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(drawing_data.loc[(drawing_data[disease] == d), taxo]) for d in order], marker="*", c="white", s=400, zorder=10)
 
     matplotlib.pyplot.title(site)
     matplotlib.pyplot.ylabel(step00.consistency_taxonomy(taxo, number=1))
@@ -79,8 +80,9 @@ def draw_all(taxo: str, disease: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=data, x=disease, y=taxo, order=order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=taxo, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=data, x=disease, y=taxo, order=order, inner="box", linewidth=5, cut=1, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=taxo, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(data.loc[(data[disease] == d), taxo]) for d in order], marker="*", c="white", s=400, zorder=10)
 
     matplotlib.pyplot.ylabel(step00.consistency_taxonomy(taxo, number=1))
     matplotlib.pyplot.tight_layout()
@@ -119,7 +121,7 @@ if __name__ == "__main__":
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(input_data.index), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[list(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))
