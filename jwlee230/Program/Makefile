@@ -248,8 +248,8 @@ Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stool.tsv Data/Met
 Output/Metadata/singleton.tsv: Python/step07-5.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
-step07: Output/Metadata/everything.tsv Output/Metadata/Stool.tsv
-.PHONY: step07
+step07: Output/Metadata/everything.tsv Output/Metadata/Stool.tsv Output/Metadata/singleton.tsv
+PHONY: step07
 
 # Step 08 (Run ANCOM)
 Output/ANCOM:
@@ -854,16 +854,16 @@ step41: step41-everything-DADA2 step41-everything-Deblur
 Output/Step42 Output/Step42_Proportion:
 	mkdir -p $@
 
-Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step42 build.log
+Output/Step42/everything.%.tar: Python/step42.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | Output/Step42 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step42/singleton.%.tar: Python/step42.py Output/TSV/everything.%.tar.gz Output/Metadata/singleton.tsv | Output/Step42 build.log
+Output/Step42/singleton.%.tar: Python/step42.py Output/TSV/everything.%.tsv Output/Metadata/singleton.tsv | Output/Step42 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step42_Proportion/everything.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tar.gz Output/Metadata/everything.tsv | Output/Step42 build.log
+Output/Step42_Proportion/everything.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step42_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Step42_Proportion/singleton.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tar.gz Output/Metadata/singleton.tsv | Output/Step42 build.log
+Output/Step42_Proportion/singleton.%.tar: Python/step42.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | Output/Step42_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step42-DADA2: Output/Step42/everything.DADA2.gg.tar Output/Step42/everything.DADA2.silva.tar Output/Step42/everything.DADA2.homd.tar Output/Step42/singleton.DADA2.gg.tar Output/Step42/singleton.DADA2.silva.tar Output/Step42/singleton.DADA2.homd.tar Output/Step42_Proportion/everything.DADA2.gg.tar Output/Step42_Proportion/everything.DADA2.silva.tar Output/Step42_Proportion/everything.DADA2.homd.tar Output/Step42_Proportion/singleton.DADA2.gg.tar Output/Step42_Proportion/singleton.DADA2.silva.tar Output/Step42_Proportion/singleton.DADA2.homd.tar
@@ -1454,6 +1454,9 @@ Output/Step63/metadata.%.LF.tsv: Python/step63-1.py Output/Metadata/everything.t
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --LF 1> $@.stdout 2> $@.stderr
 
 Output/Step63/metadata.%.PTB.tsv: Python/step63-1.py Output/Metadata/everything.tsv | build.log Output/Step63
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --PTB 1> $@.stdout 2> $@.stderr
+
+Output/Step63/metadata-singleton.%.PTB.tsv: Python/step63-1.py Output/Metadata/singleton.tsv | build.log Output/Step63
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "$*" --PTB 1> $@.stdout 2> $@.stderr
 
 Output/Step63/%.Mouth.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Mouth.tsv | build.log

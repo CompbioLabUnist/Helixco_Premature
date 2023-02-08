@@ -104,7 +104,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.input.endswith(".tar.gz"):
-        raise ValueError("Input file must end with .TAR.gz!!")
+        raise ValueError("Input file must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".tar"):
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    input_data = step00.read_pickle(args.input).T
+    input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby("taxonomy").sum().T
     taxonomy_list = list(input_data.columns)
     print(input_data)
 

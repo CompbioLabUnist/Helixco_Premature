@@ -1,5 +1,5 @@
 """
-step07-5.py: make metadata for no-twin
+step07-5.py: make metadata for singleton
 """
 import argparse
 import pandas
