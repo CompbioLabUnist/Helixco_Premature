@@ -31,7 +31,10 @@ def draw(metric: str, column: str, site: str) -> str:
     for c in ["tSNE1", "tSNE2"]:
         selected_tsne_data[c] = sklearn.preprocessing.scale(selected_tsne_data[c])
 
-    palette = dict(zip(sorted(set(selected_tsne_data[column])), matplotlib.colors.TABLEAU_COLORS))
+    if column == "Premature":
+        palette = step00.PTB_two_colors
+    else:
+        palette = dict(zip(sorted(set(selected_tsne_data[column])), matplotlib.colors.TABLEAU_COLORS))
 
     try:
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
@@ -62,7 +65,10 @@ def draw_all(metric: str, column: str) -> str:
     for c in ["tSNE1", "tSNE2"]:
         data[c] = sklearn.preprocessing.scale(data[c])
 
-    palette = dict(zip(sorted(set(data[column])), matplotlib.colors.TABLEAU_COLORS))
+    if column == "Premature":
+        palette = step00.PTB_two_colors
+    else:
+        palette = dict(zip(sorted(set(data[column])), matplotlib.colors.TABLEAU_COLORS))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
