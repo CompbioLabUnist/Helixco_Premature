@@ -63,6 +63,7 @@ if __name__ == "__main__":
         except ValueError:
             pass
 
+        matplotlib.pyplot.xlabel()
         matplotlib.pyplot.ylabel(step00.simplified_taxonomy(index))
         matplotlib.pyplot.tight_layout()
 

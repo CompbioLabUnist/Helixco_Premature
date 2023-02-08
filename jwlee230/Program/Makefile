@@ -1391,10 +1391,12 @@ Output/Step61:
 Output/Step61/everything.%.tar: Python/step61.py Output/Step44/everything.%.tsv Output/Step44/everything.%.DAT.tsv Output/Step44/everything.%.coldata | build.log Output/Step61
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step61-uncorrected: $(addprefix Output/Step61/everything.DADA2.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
-step61-corrected: $(addprefix Output/Step61/everything.DADA2.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.gg.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.silva.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
-step61: step61-uncorrected step61-corrected
-.PHONY: step61-uncorrected step61-corrected step61
+Output/Step61/singleton.%.tar: Python/step61.py Output/Step44/singleton.%.tsv Output/Step44/singleton.%.DAT.tsv Output/Step44/singleton.%.coldata | build.log Output/Step61
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step61-abundance: $(addprefix Output/Step61/everything.DADA2.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/everything.Deblur.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.DADA2.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.DADA2.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.DADA2.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.Deblur.gg.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.Deblur.silva.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step61/singleton.Deblur.homd.uncorrected.,$(addsuffix .tar,Cervix Mouth Vagina))
+step61: step61-abundance
+.PHONY: step61-abundance step61
 
 # Step 62 (RandomForest Classifier with DAT)
 Output/Step62 Output/Step62_Proportion:
