@@ -245,6 +245,9 @@ Output/Metadata/everything.tsv: Python/step07-4.py Output/Manifest/everything.ts
 Output/Metadata/Stool.tsv: Python/step07-4.py Output/Manifest/Stool.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
 
+Output/Metadata/singleton.tsv: Python/step07-5.py Output/Manifest/everything.tsv Data/Metadata/metadata.xlsx | Output/Metadata build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^) > $@
+
 step07: Output/Metadata/everything.tsv Output/Metadata/Stool.tsv
 .PHONY: step07
 
