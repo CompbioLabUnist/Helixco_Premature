@@ -32,7 +32,7 @@ if __name__ == "__main__":
     DAT_set = set()
     for file in tqdm.tqdm(args.DAT):
         DAT_data = pandas.read_csv(file, sep="\t", index_col=0)
-        DAT_data = DAT_data.loc[((DAT_data["log2FoldChange"] > numpy.log2(ratio_threshold)) | (DAT_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["pvalue"] < p_threshold)]
+        DAT_data = DAT_data.loc[((DAT_data["log2FoldChange"] > numpy.log2(ratio_threshold)) | (DAT_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["padj"] < p_threshold)]
         DAT_set |= set(DAT_data.index)
 
     DAT = sorted(DAT_set)

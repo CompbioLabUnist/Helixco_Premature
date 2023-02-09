@@ -1823,14 +1823,20 @@ Output/Step76/everything.%.Mouth.tsv: Python/step66.py Output/Step63/everything.
 Output/Step76/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step76/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step76_Proportion/everything.%.Mouth.tsv: Python/step66.py Output/Step63_Proportion/everything.%.uncorrected.tsv Output/Step63/everything.%.Mouth.PTB.tsv | Output/Step76_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step76_Proportion/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step76-abundance: Output/Step76/everything.DADA2.homd.Mouth.tsv Output/Step76/RF-PTB.DADA2.homd.Mouth.tar
-step76-proportion: Output/Step76_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step76_Proportion/RF-PTB.DADA2.homd.Mouth.tar
+Output/Step76_Proportion/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step76-abundance: Output/Step76/everything.DADA2.homd.Mouth.tsv Output/Step76/RF-PTB.DADA2.homd.Mouth.tar Output/Step76/singleton-RF.DADA2.homd.Mouth.tar
+step76-proportion: Output/Step76_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step76_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step76_Proportion/singleton-RF.DADA2.homd.Mouth.tar
 step76: step76-abundance step76-proportion
 .PHONY: step76-abundance step76-proportion step76
 
@@ -1902,8 +1908,14 @@ Output/Step81/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step81/everything.%.
 Output/Step81_Proportion/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step81_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF-PTB.DADA2.homd.Mouth.tar
-step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar
+Output/Step81/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step81/everything.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step81_Proportion/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step81_Proportion/everything.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF-PTB.DADA2.homd.Mouth.tar Output/Step81/singleton-RF.DADA2.homd.Mouth.tar
+step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step81_Proportion/singleton-RF.DADA2.homd.Mouth.tar
 step81: step81-abundance step81-proportion
 .PHONY: step81-abundance step81-proportion step81
 
