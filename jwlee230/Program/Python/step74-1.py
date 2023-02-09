@@ -39,6 +39,9 @@ if __name__ == "__main__":
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
+    input_data = input_data.loc[sorted(set(input_data.index) & set(metadata.index))]
+    print(input_data)
+
     corr_mat = input_data.corr().stack().reset_index(name="correlation")
     print(corr_mat)
 

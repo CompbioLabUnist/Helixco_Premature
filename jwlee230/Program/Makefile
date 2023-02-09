@@ -1771,20 +1771,32 @@ step73: Output/Step73/mother.tex Output/Step73/newborn.tex Output/Step73/singlet
 Output/Step74 Output/Step74_Proportion:
 	mkdir -p $@
 
-Output/Step74/pairplot.%.pdf: Python/step74.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
+Output/Step74/pairplot.%.pdf: Python/step74.py Output/Step44/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step74_Proportion/pairplot.%.pdf: Python/step74.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
+Output/Step74_Proportion/pairplot.%.pdf: Python/step74.py Output/Step44_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step74/relplot.%.pdf: Python/step74-1.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
+Output/Step74/singleton-pairplot.%.pdf: Python/step74.py Output/Step44/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step74
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step74_Proportion/relplot.%.pdf: Python/step74-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
+Output/Step74_Proportion/singleton-pairplot.%.pdf: Python/step74.py Output/Step44_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step74_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step74-abundance: Output/Step74/pairplot.DADA2.homd.Mouth.pdf Output/Step74/relplot.DADA2.homd.Mouth.pdf
-step74-proportion: Output/Step74_Proportion/pairplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/relplot.DADA2.homd.Mouth.pdf
+Output/Step74/relplot.%.pdf: Python/step74-1.py Output/Step44/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74_Proportion/relplot.%.pdf: Python/step74-1.py Output/Step4_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step74_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74/singleton-relplot.%.pdf: Python/step74-1.py Output/Step44/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step74
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step74_Proportion/singleton-relplot.%.pdf: Python/step74-1.py Output/Step44_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step74_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step74-abundance: Output/Step74/pairplot.DADA2.homd.Mouth.pdf Output/Step74/relplot.DADA2.homd.Mouth.pdf Output/Step74/singleton-pairplot.DADA2.homd.Mouth.pdf Output/Step74/singleton-relplot.DADA2.homd.Mouth.pdf
+step74-proportion: Output/Step74_Proportion/pairplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/relplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/singleton-pairplot.DADA2.homd.Mouth.pdf Output/Step74_Proportion/singleton-relplot.DADA2.homd.Mouth.pdf
 step74: step74-abundance step74-proportion
 .PHONY: step74-abundance step74-proportion step74
 
