@@ -32,6 +32,9 @@ if __name__ == "__main__":
     input_data["simple_name"] = list(map(step00.consistency_taxonomy, list(input_data.index)))
     print(input_data)
 
+    ceil = numpy.ceil(max(numpy.absolute(input_data["log2FoldChange"])))
+    input_data.to_csv(args.output.replace(".pdf", ".list.tsv"), sep="\t")
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     warnings.filterwarnings("error")
@@ -65,6 +68,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
+    matplotlib.pyplot.xlim((-ceil, ceil))
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
     matplotlib.pyplot.tight_layout()

@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
-CPUS = 20
-MEMS = 200G
+CPUS = 50
+MEMS = 500G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 step82 step83 step84 step85
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 #step82 step83 step84 step85
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -1504,13 +1504,22 @@ Output/Step63/%.Cervix.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrecte
 Output/Step63/%.Vagina.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/%.uncorrected.tsv Output/Step63/metadata.Vagina.PTB.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/Step63/singleton.%.Mouth.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/everything.%.uncorrected.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step63/singleton.%.Cervix.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/everything.%.uncorrected.tsv Output/Step63/metadata-singleton.Cervix.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Step63/singleton.%.Vagina.PTB.tsv: R/run_metagenomeSeq.R Output/Step63/everything.%.uncorrected.tsv Output/Step63/metadata-singleton.Vagina.PTB.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(word 1,$(filter %.tsv,$^))) --metadata $(addprefix /,$(word 2,$(filter %.tsv,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/Step63/%.pdf: Python/step63.py Output/Step63/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step63-biom: Output/Step63/everything.DADA2.gg.uncorrected.tsv Output/Step63/everything.DADA2.silva.uncorrected.tsv Output/Step63/everything.DADA2.homd.uncorrected.tsv Output/Step63/everything.Deblur.gg.uncorrected.tsv Output/Step63/everything.Deblur.silva.uncorrected.tsv Output/Step63/everything.Deblur.homd.uncorrected.tsv
-step63-metadata: Output/Step63/metadata.Mouth.tsv Output/Step63/metadata.Cervix.tsv Output/Step63/metadata.Vagina.tsv Output/Step63/metadata.Mouth.EL.tsv Output/Step63/metadata.Cervix.EL.tsv Output/Step63/metadata.Vagina.EL.tsv Output/Step63/metadata.Mouth.EF.tsv Output/Step63/metadata.Cervix.EF.tsv Output/Step63/metadata.Vagina.EF.tsv Output/Step63/metadata.Mouth.LF.tsv Output/Step63/metadata.Cervix.LF.tsv Output/Step63/metadata.Vagina.LF.tsv Output/Step63/metadata.Mouth.PTB.tsv Output/Step63/metadata.Cervix.PTB.tsv Output/Step63/metadata.Vagina.PTB.tsv
-step63-tsv: Output/Step63/everything.DADA2.homd.Mouth.tsv Output/Step63/everything.DADA2.homd.Cervix.tsv Output/Step63/everything.DADA2.homd.Vagina.tsv Output/Step63/everything.DADA2.homd.Mouth.EL.tsv Output/Step63/everything.DADA2.homd.Cervix.EL.tsv Output/Step63/everything.DADA2.homd.Vagina.EL.tsv Output/Step63/everything.DADA2.homd.Mouth.EF.tsv Output/Step63/everything.DADA2.homd.Cervix.EF.tsv Output/Step63/everything.DADA2.homd.Vagina.EF.tsv Output/Step63/everything.DADA2.homd.Mouth.LF.tsv Output/Step63/everything.DADA2.homd.Cervix.LF.tsv Output/Step63/everything.DADA2.homd.Vagina.LF.tsv Output/Step63/everything.DADA2.homd.Mouth.PTB.tsv Output/Step63/everything.DADA2.homd.Cervix.PTB.tsv Output/Step63/everything.DADA2.homd.Vagina.PTB.tsv
-step63-pdf: Output/Step63/everything.DADA2.homd.Mouth.pdf Output/Step63/everything.DADA2.homd.Cervix.pdf Output/Step63/everything.DADA2.homd.Vagina.pdf Output/Step63/everything.DADA2.homd.Mouth.EL.pdf Output/Step63/everything.DADA2.homd.Cervix.EL.pdf Output/Step63/everything.DADA2.homd.Vagina.EL.pdf Output/Step63/everything.DADA2.homd.Mouth.EF.pdf Output/Step63/everything.DADA2.homd.Cervix.EF.pdf Output/Step63/everything.DADA2.homd.Vagina.EF.pdf Output/Step63/everything.DADA2.homd.Mouth.LF.pdf Output/Step63/everything.DADA2.homd.Cervix.LF.pdf Output/Step63/everything.DADA2.homd.Vagina.LF.pdf Output/Step63/everything.DADA2.homd.Mouth.PTB.pdf Output/Step63/everything.DADA2.homd.Cervix.PTB.pdf Output/Step63/everything.DADA2.homd.Vagina.PTB.pdf
+step63-metadata: $(addprefix Output/Step63/metadata.,$(addsuffix .tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/metadata.,$(addsuffix .EL.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/metadata.,$(addsuffix .EF.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/metadata.,$(addsuffix .LF.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/metadata.,$(addsuffix .PTB.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/metadata-singleton.,$(addsuffix .PTB.tsv,Mouth Cervix Vagina))
+step63-tsv: $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .EL.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .EF.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .LF.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .PTB.tsv,Mouth Cervix Vagina)) $(addprefix Output/Step63/singleton.DADA2.homd.,$(addsuffix .PTB.tsv,Mouth Cervix Vagina))
+step63-pdf: $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .pdf,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .EL.pdf,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .EF.pdf,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .LF.pdf,Mouth Cervix Vagina)) $(addprefix Output/Step63/everything.DADA2.homd.,$(addsuffix .PTB.pdf,Mouth Cervix Vagina)) $(addprefix Output/Step63/singleton.DADA2.homd.,$(addsuffix .PTB.pdf,Mouth Cervix Vagina))
 step63: step63-biom step63-metadata step63-tsv step63-pdf
 .PHONY: step63-biom step63-metadata step63-tsv step63-pdf step63
 
