@@ -127,6 +127,8 @@ if __name__ == "__main__":
     print(metadata)
     print(sorted(columns))
 
+    input_data = input_data.loc[sorted(set(input_data.index) & set(metadata.index)), :]
+
     for metric in tqdm.tqdm(step00.pdist_list):
         try:
             distance_data[metric] = skbio.diversity.beta_diversity(metric, input_data.to_numpy(), list(input_data.index)).to_data_frame()
@@ -137,6 +139,7 @@ if __name__ == "__main__":
 
         tsne_data[metric]["index"] = list(distance_data[metric].index)
         tsne_data[metric].set_index(keys="index", inplace=True, verify_integrity=True)
+        print(tsne_data[metric])
 
         for column in columns:
             tsne_data[metric][column] = list(map(lambda x: metadata.loc[x, column], list(tsne_data[metric].index)))
