@@ -39,11 +39,8 @@ if __name__ == "__main__":
     for column in tqdm.tqdm(sorted(metadata.columns)):
         print(column, collections.Counter(metadata[column]).most_common())
 
-    metadata.drop_duplicates(subset=["Data", "Mother"], keep="first", inplace=True)
-    print(metadata)
-
-    PTB_data = metadata.loc[(metadata["Gestational Week"] < 34)]
-    normal_data = metadata.loc[(metadata["Gestational Week"] >= 34)]
+    PTB_data = metadata.loc[(metadata["Premature"] == "PTB")]
+    normal_data = metadata.loc[(metadata["Premature"] == "Normal")]
 
     raw_output_data = list()
     for column in tqdm.tqdm(["Cholesterol", "DBP", "Glucose", "HDL", "Hb", "Hct", "LDL", "Mother Age", "SBP", "Weight gain"]):
@@ -63,7 +60,7 @@ if __name__ == "__main__":
         p = scipy.stats.fisher_exact([[len(PTB), len(PTB_data) - len(PTB)], [len(normal), len(normal_data) - len(normal)]])[1]
         raw_output_data.append([column, f"{len(PTB)} ({len(PTB) / len(PTB_data) * 100:.1f}%)", f"{len(normal)} ({len(normal) / len(normal_data) * 100:.1f}%)", f"{p:.3f}", "*" if (p < 0.05) else ""])
 
-    output_data = pandas.DataFrame(data=raw_output_data, columns=["Clinical", f"<34 GW (n={len(PTB_data)})", f"≥34 GW (n={len(normal_data)})", "p-value", "Remarks"]).set_index("Clinical")
+    output_data = pandas.DataFrame(data=raw_output_data, columns=["Clinical", f"<37 GW (n={len(PTB_data)})", f"≥37 GW (n={len(normal_data)})", "p-value", "Remarks"]).set_index("Clinical")
     print(output_data)
 
     output_data.to_csv(args.output.replace(".tex", ".tsv"), sep="\t")

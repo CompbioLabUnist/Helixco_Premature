@@ -1758,7 +1758,13 @@ Output/Step73/mother.tex: Python/step73.py Data/Metadata/metadata.xlsx Output/Me
 Output/Step73/newborn.tex: Python/step73-1.py Data/Metadata/metadata.xlsx Output/Metadata/everything.tsv | build.log Output/Step73
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step73: Output/Step73/mother.tex Output/Step73/newborn.tex
+Output/Step73/singleton-mother.tex: Python/step73.py Data/Metadata/metadata.xlsx Output/Metadata/singleton.tsv | build.log Output/Step73
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step73/singleton-newborn.tex: Python/step73-1.py Data/Metadata/metadata.xlsx Output/Metadata/singleton.tsv | build.log Output/Step73
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step73: Output/Step73/mother.tex Output/Step73/newborn.tex Output/Step73/singleton-mother.tex Output/Step73/singleton-newborn.tex
 .PHONY: step73
 
 # Step 74 (Correlations within DAT)

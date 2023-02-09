@@ -36,16 +36,13 @@ if __name__ == "__main__":
     metadata = metadata.loc[(metadata["Site"].isin({"Neonate-1day", "Neonate-3day", "Neonate-5day"}))]
     print(metadata)
 
-    metadata.drop_duplicates(subset=["Data", "Mother", "Neonate"], keep="first", inplace=True)
-    print(metadata)
-
-    metadata["Gender"] = list(map(lambda x: {"Male": True, "Female": False}[x], metadata["Gender"]))
-
     for column in tqdm.tqdm(sorted(metadata.columns)):
         print(column, collections.Counter(metadata[column]).most_common())
 
-    PTB_data = metadata.loc[(metadata["Gestational Week"] < 34)]
-    normal_data = metadata.loc[(metadata["Gestational Week"] >= 34)]
+    metadata["Gender"] = list(map(lambda x: {"Male": True, "Female": False}[x], metadata["Gender"]))
+
+    PTB_data = metadata.loc[(metadata["Premature"] == "PTB")]
+    normal_data = metadata.loc[(metadata["Premature"] == "Normal")]
 
     raw_output_data = list()
     for column in tqdm.tqdm(["Apgar Score", "Gestational Week", "Hospitalized Day", "Weight"]):
