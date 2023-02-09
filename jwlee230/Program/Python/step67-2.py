@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     taxa = list(input_data.columns)
 
-    metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1]).dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
+    metadata = pandas.read_csv(args.metadata, sep="\t").dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
     print(metadata)
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
