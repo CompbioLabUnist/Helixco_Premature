@@ -5,7 +5,6 @@ import argparse
 import itertools
 import tarfile
 import typing
-import imblearn.over_sampling
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -68,21 +67,16 @@ if __name__ == "__main__":
 
     classifier = sklearn.ensemble.RandomForestClassifier(max_features=None, n_jobs=args.cpus, random_state=0, verbose=1)
     k_fold = sklearn.model_selection.StratifiedKFold(n_splits=args.split)
-    oversampler = imblearn.over_sampling.SMOTE(random_state=42, k_neighbors=3, n_jobs=args.cpus)
 
-    X, y = oversampler.fit_resample(input_data[taxa].to_numpy(), input_data[target])
-    tmp_data = pandas.DataFrame(X, columns=taxa)
-    tmp_data[target] = y
-
-    classifier.fit(tmp_data[taxa], tmp_data[target])
+    classifier.fit(input_data[taxa], input_data[target])
     feature_importances = list(classifier.feature_importances_)
     best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, taxa), reverse=True)))
 
     test_scores = list()
     for i in tqdm.trange(1, len(best_features) + 1):
-        for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[best_features[:i]], tmp_data[target])):
-            x_train, x_test = tmp_data.iloc[train_index][best_features[:i]], tmp_data.iloc[test_index][best_features[:i]]
-            y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
+        for j, (train_index, test_index) in enumerate(k_fold.split(input_data[best_features[:i]], input_data[target])):
+            x_train, x_test = input_data.iloc[train_index][best_features[:i]], input_data.iloc[test_index][best_features[:i]]
+            y_train, y_test = input_data.iloc[train_index][target], input_data.iloc[test_index][target]
 
             classifier.fit(x_train, y_train)
 
@@ -121,9 +115,9 @@ if __name__ == "__main__":
 
     # Heatmap
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
-    for j, (train_index, test_index) in enumerate(k_fold.split(tmp_data[tmp_features], tmp_data[target])):
-        x_train, x_test = tmp_data.iloc[train_index][tmp_features], tmp_data.iloc[test_index][tmp_features]
-        y_train, y_test = tmp_data.iloc[train_index][target], tmp_data.iloc[test_index][target]
+    for j, (train_index, test_index) in enumerate(k_fold.split(input_data[tmp_features], input_data[target])):
+        x_train, x_test = input_data.iloc[train_index][tmp_features], input_data.iloc[test_index][tmp_features]
+        y_train, y_test = input_data.iloc[train_index][target], input_data.iloc[test_index][target]
 
         classifier.fit(x_train, y_train)
 
@@ -161,11 +155,11 @@ if __name__ == "__main__":
     matplotlib.pyplot.close(fig)
 
     # Draw bar
-    tmp_data = score_data.loc[(score_data["Features"] == len(tmp_features))]
+    bar_data = score_data.loc[(score_data["Features"] == len(tmp_features))]
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.barplot(data=tmp_data, x="Metrics", y="Values", order=step00.derivations, ax=ax)
+    seaborn.barplot(data=bar_data, x="Metrics", y="Values", order=step00.derivations, ax=ax)
 
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel("Evaluations")
@@ -181,8 +175,8 @@ if __name__ == "__main__":
     for i in range(1, len(best_features) + 1):
         tmp = list()
         for derivation in step00.derivations:
-            d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation)]
-            tmp.append(f"{numpy.mean(d)}±{numpy.std(d)}")
+            d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation), "Values"]
+            tmp.append(f"{numpy.mean(d):.3f}±{numpy.std(d):.3f}")
         raw_evaluation_data.append(tmp)
     evaluation_data = pandas.DataFrame(raw_evaluation_data, columns=step00.derivations)
     print(evaluation_data)
@@ -200,7 +194,9 @@ if __name__ == "__main__":
             statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
         except ValueError:
             pass
+        matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
 
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)}")
         matplotlib.pyplot.tight_layout()
 

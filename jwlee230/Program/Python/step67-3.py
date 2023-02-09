@@ -184,8 +184,8 @@ if __name__ == "__main__":
     for i in range(1, len(best_features) + 1):
         tmp = list()
         for derivation in step00.derivations:
-            d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation)]
-            tmp.append(f"{numpy.mean(d)}±{numpy.std(d)}")
+            d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation), "Values"]
+            tmp.append(f"{numpy.mean(d):.3f}±{numpy.std(d):.3f}")
         raw_evaluation_data.append(tmp)
     evaluation_data = pandas.DataFrame(raw_evaluation_data, columns=step00.derivations)
     print(evaluation_data)
@@ -203,7 +203,9 @@ if __name__ == "__main__":
             statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
         except ValueError:
             pass
+        matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
 
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)}")
         matplotlib.pyplot.tight_layout()
 
