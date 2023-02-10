@@ -27,7 +27,9 @@ def change_index(ID: str) -> str:
     if a == "First":
         return "-".join((a, b, c))
     elif a in ["Second", "Third"]:
-        return "-".join(metadata.loc[(metadata["Mother"] == b) & (metadata["Neonate"] == c), ["Data", "Mother", "Neonate"]].to_numpy()[0])
+        d = metadata.loc[(metadata["Data"] == a) & (metadata["Mother"] == b) & (metadata["Neonate"] == c), ["Data", "Mother", "Neonate"]].to_numpy()
+        assert len(d) == 1
+        return "-".join(d[0])
     else:
         raise Exception("Something went wrong!!")
 
