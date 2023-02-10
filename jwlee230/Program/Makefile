@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 #step82 step83 step84 step85
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 step82 step83 step84 step85
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -370,20 +370,22 @@ Output/Step22/everything.%.tsv: Python/step11.py Output/TSV/everything.%.tsv Out
 Output/Step22_Proportion/everything.%.tsv: Python/step11.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/everything.tsv | Output/Step22_Proportion build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step22/singleton.%.tsv: Python/step11.py Output/TSV/everything.%.tsv Output/Metadata/singleton.tsv | Output/Step22 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step22_Proportion/singleton.%.tsv: Python/step11.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | Output/Step22_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Step22/%.tar: Python/step22-3.py Output/Step22/%.tsv | Output/Step22 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step22_Proportion/%.tar: Python/step22-3.py Output/Step22_Proportion/%.tsv | Output/Step22 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step22-uncorrected: Output/Step22/everything.DADA2.gg.uncorrected.tsv Output/Step22/everything.DADA2.gg.uncorrected.tar Output/Step22/everything.DADA2.silva.uncorrected.tsv Output/Step22/everything.DADA2.silva.uncorrected.tar Output/Step22/everything.DADA2.homd.uncorrected.tsv Output/Step22/everything.DADA2.homd.uncorrected.tar Output/Step22/everything.Deblur.gg.uncorrected.tsv Output/Step22/everything.Deblur.gg.uncorrected.tar Output/Step22/everything.Deblur.silva.uncorrected.tsv Output/Step22/everything.Deblur.silva.uncorrected.tar Output/Step22/everything.Deblur.homd.uncorrected.tsv Output/Step22/everything.Deblur.homd.uncorrected.tar
-step22-log: Output/Step22/everything.DADA2.gg.log.tsv Output/Step22/everything.DADA2.gg.log.tar Output/Step22/everything.DADA2.silva.log.tsv Output/Step22/everything.DADA2.silva.log.tar Output/Step22/everything.DADA2.homd.log.tsv Output/Step22/everything.DADA2.homd.log.tar Output/Step22/everything.Deblur.gg.log.tsv Output/Step22/everything.Deblur.gg.log.tar Output/Step22/everything.Deblur.silva.log.tsv Output/Step22/everything.Deblur.silva.log.tar Output/Step22/everything.Deblur.homd.log.tsv Output/Step22/everything.Deblur.homd.log.tar
-step22-corrected: Output/Step22/everything.DADA2.gg.tsv Output/Step22/everything.DADA2.gg.tar Output/Step22/everything.DADA2.silva.tsv Output/Step22/everything.DADA2.silva.tar Output/Step22/everything.DADA2.homd.tsv Output/Step22/everything.DADA2.homd.tar Output/Step22/everything.Deblur.gg.tsv Output/Step22/everything.Deblur.gg.tar Output/Step22/everything.Deblur.silva.tsv Output/Step22/everything.Deblur.silva.tar Output/Step22/everything.Deblur.homd.tsv Output/Step22/everything.Deblur.homd.tar
-step22-uncorrected-proportion: Output/Step22_Proportion/everything.DADA2.gg.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step22_Proportion/everything.DADA2.silva.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step22_Proportion/everything.DADA2.homd.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step22_Proportion/everything.Deblur.gg.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step22_Proportion/everything.Deblur.silva.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step22_Proportion/everything.Deblur.homd.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.homd.uncorrected.tar
-step22-log-proportion: Output/Step22_Proportion/everything.DADA2.gg.log.tsv Output/Step22_Proportion/everything.DADA2.gg.log.tar Output/Step22_Proportion/everything.DADA2.silva.log.tsv Output/Step22_Proportion/everything.DADA2.silva.log.tar Output/Step22_Proportion/everything.DADA2.homd.log.tsv Output/Step22_Proportion/everything.DADA2.homd.log.tar Output/Step22_Proportion/everything.Deblur.gg.log.tsv Output/Step22_Proportion/everything.Deblur.gg.log.tar Output/Step22_Proportion/everything.Deblur.silva.log.tsv Output/Step22_Proportion/everything.Deblur.silva.log.tar Output/Step22_Proportion/everything.Deblur.homd.log.tsv Output/Step22_Proportion/everything.Deblur.homd.log.tar
-step22-corrected-proportion: Output/Step22_Proportion/everything.DADA2.gg.tsv Output/Step22_Proportion/everything.DADA2.gg.tar Output/Step22_Proportion/everything.DADA2.silva.tsv Output/Step22_Proportion/everything.DADA2.silva.tar Output/Step22_Proportion/everything.DADA2.homd.tsv Output/Step22_Proportion/everything.DADA2.homd.tar Output/Step22_Proportion/everything.Deblur.gg.tsv Output/Step22_Proportion/everything.Deblur.gg.tar Output/Step22_Proportion/everything.Deblur.silva.tsv Output/Step22_Proportion/everything.Deblur.silva.tar Output/Step22_Proportion/everything.Deblur.homd.tsv Output/Step22_Proportion/everything.Deblur.homd.tar
-step22: step22-uncorrected step22-log step22-corrected step22-uncorrected-proportion step22-log-proportion step22-corrected-proportion
-.PHONY: step22-uncorrected step22-log step22-corrected step22-uncorrected-proportion step22-log-proportion step22-corrected-proportion step22
+step22-uncorrected: Output/Step22/everything.DADA2.gg.uncorrected.tsv Output/Step22/everything.DADA2.gg.uncorrected.tar Output/Step22/everything.DADA2.silva.uncorrected.tsv Output/Step22/everything.DADA2.silva.uncorrected.tar Output/Step22/everything.DADA2.homd.uncorrected.tsv Output/Step22/everything.DADA2.homd.uncorrected.tar Output/Step22/everything.Deblur.gg.uncorrected.tsv Output/Step22/everything.Deblur.gg.uncorrected.tar Output/Step22/everything.Deblur.silva.uncorrected.tsv Output/Step22/everything.Deblur.silva.uncorrected.tar Output/Step22/everything.Deblur.homd.uncorrected.tsv Output/Step22/everything.Deblur.homd.uncorrected.tar Output/Step22/singleton.DADA2.gg.uncorrected.tsv Output/Step22/singleton.DADA2.gg.uncorrected.tar Output/Step22/singleton.DADA2.silva.uncorrected.tsv Output/Step22/singleton.DADA2.silva.uncorrected.tar Output/Step22/singleton.DADA2.homd.uncorrected.tsv Output/Step22/singleton.DADA2.homd.uncorrected.tar Output/Step22/singleton.Deblur.gg.uncorrected.tsv Output/Step22/singleton.Deblur.gg.uncorrected.tar Output/Step22/singleton.Deblur.silva.uncorrected.tsv Output/Step22/singleton.Deblur.silva.uncorrected.tar Output/Step22/singleton.Deblur.homd.uncorrected.tsv Output/Step22/singleton.Deblur.homd.uncorrected.tar
+step22-uncorrected-proportion: Output/Step22_Proportion/everything.DADA2.gg.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.gg.uncorrected.tar Output/Step22_Proportion/everything.DADA2.silva.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.silva.uncorrected.tar Output/Step22_Proportion/everything.DADA2.homd.uncorrected.tsv Output/Step22_Proportion/everything.DADA2.homd.uncorrected.tar Output/Step22_Proportion/everything.Deblur.gg.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.gg.uncorrected.tar Output/Step22_Proportion/everything.Deblur.silva.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.silva.uncorrected.tar Output/Step22_Proportion/everything.Deblur.homd.uncorrected.tsv Output/Step22_Proportion/everything.Deblur.homd.uncorrected.tar Output/Step22_Proportion/singleton.DADA2.gg.uncorrected.tsv Output/Step22_Proportion/singleton.DADA2.gg.uncorrected.tar Output/Step22_Proportion/singleton.DADA2.silva.uncorrected.tsv Output/Step22_Proportion/singleton.DADA2.silva.uncorrected.tar Output/Step22_Proportion/singleton.DADA2.homd.uncorrected.tsv Output/Step22_Proportion/singleton.DADA2.homd.uncorrected.tar Output/Step22_Proportion/singleton.Deblur.gg.uncorrected.tsv Output/Step22_Proportion/singleton.Deblur.gg.uncorrected.tar Output/Step22_Proportion/singleton.Deblur.silva.uncorrected.tsv Output/Step22_Proportion/singleton.Deblur.silva.uncorrected.tar Output/Step22_Proportion/singleton.Deblur.homd.uncorrected.tsv Output/Step22_Proportion/singleton.Deblur.homd.uncorrected.tar
+step22: step22-uncorrected step22-uncorrected-proportion
+.PHONY: step22-uncorrected step22-uncorrected-proportion step22
 
 # Step 26 (RandomForest Classifier)
 Output/Step26 Output/Step26_Proportion:
@@ -889,7 +891,7 @@ step43-everything-Deblur: Output/Step43/everything.Deblur.gg.pearson.tar Output/
 step43: step43-everything-DADA2 step43-everything-Deblur
 .PHONY: step43-everything-DADA2 step43-everything-Deblur step43
 
-# Step 44 (Volcano plot with differetially abundant taxa)
+# Step 44 (Volcano plot with differetially abundant taxa: DESeq2)
 Output/Step44 Output/Step44_Proportion:
 	mkdir -p $@
 

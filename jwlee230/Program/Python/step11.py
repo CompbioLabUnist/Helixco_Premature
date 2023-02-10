@@ -36,6 +36,9 @@ if __name__ == "__main__":
     metadata = metadata.loc[sorted(set(raw_data.index) & set(metadata.index)), :].replace(to_replace=-1, value=None)
     print(metadata)
 
+    raw_data = raw_data.loc[sorted(set(raw_data.index) & set(metadata.index))]
+    print(raw_data)
+
     tsne_data = pandas.DataFrame(sklearn.manifold.TSNE(n_components=2, init="pca", random_state=42, method="exact", n_jobs=args.cpus, perplexity=50, n_iter=step00.big, verbose=1).fit_transform(raw_data), columns=["tSNE1", "tSNE2"])
 
     for column in tqdm.tqdm(list(tsne_data.columns)):
