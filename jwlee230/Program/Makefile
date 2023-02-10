@@ -52,7 +52,7 @@ run: | log Output
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81 step82 step83 step84 step85
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step21 step22 step26 step28 step29 step30 step31 step32 step33 step35 step36 step37 step38 step39 step40 step41 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step65 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81
 .PHONY: latest
 
 # Step 01 (Make manifest files)
@@ -958,8 +958,8 @@ Output/Step44_Proportion/everything.%.Vagina.DAT.tsv: R/run_DESeq.R Output/Step4
 Output/Step44_Proportion/everything.%.pdf: Python/step44.py Output/Step44_Proportion/everything.%.DAT.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step44-uncorrected: Output/Step44/everything.DADA2.homd.uncorrected.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.EL.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EL.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EL.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.EF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.LF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.LF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.LF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.homd.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.homd.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.homd.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina))
-step44-corrected: Output/Step44/everything.DADA2.homd.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.EL.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.EL.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.EL.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.EF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.EF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.EF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.LF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.LF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.LF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.homd.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.homd.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Vagina))
+step44-uncorrected: Output/Step44/everything.DADA2.homd.uncorrected.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.EL.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EL.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EL.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.EF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.EF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.uncorrected.LF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.LF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.uncorrected.LF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.gg.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.gg.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.gg.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.silva.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.silva.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.silva.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.homd.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.homd.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.homd.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.gg.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.gg.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.gg.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.silva.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.silva.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.silva.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.homd.uncorrected.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.homd.uncorrected.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.homd.uncorrected.,$(addsuffix .pdf,Cervix Mouth Vagina))
+step44-corrected: Output/Step44/everything.DADA2.homd.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.EL.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.EL.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.EL.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.EF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.EF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.EF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/everything.DADA2.homd.LF.Cervix.coldata $(addprefix Output/Step44/everything.DADA2.homd.LF.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/everything.DADA2.homd.LF.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.gg.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.gg.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.gg.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.silva.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.silva.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.silva.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.DADA2.homd.Cervix.coldata $(addprefix Output/Step44/singleton.DADA2.homd.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.DADA2.homd.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.gg.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.gg.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.gg.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.silva.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.silva.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.silva.,$(addsuffix .pdf,Cervix Mouth Vagina)) Output/Step44/singleton.Deblur.homd.Cervix.coldata $(addprefix Output/Step44/singleton.Deblur.homd.,$(addsuffix .DAT.tsv,Cervix Mouth Vagina)) $(addprefix Output/Step44/singleton.Deblur.homd.,$(addsuffix .pdf,Cervix Mouth Vagina))
 step44: step44-uncorrected step44-corrected
 .PHONY: step44-uncorrected step44-corrected step44
 
@@ -1932,55 +1932,3 @@ step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF
 step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step81_Proportion/singleton.DADA2.homd.Mouth.tsv Output/Step81_Proportion/singleton-RF.DADA2.homd.Mouth.tar
 step81: step81-abundance step81-proportion
 .PHONY: step81-abundance step81-proportion step81
-
-# Step 82 (K-Nearest Neighbors for PTB with DESeq2)
-Output/Step82 Output/Step82_Proportion:
-	mkdir -p $@
-
-Output/Step82/KNN-PTB.%.Mouth.tar: Python/step82.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step82
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step82_Proportion/KNN-PTB.%.Mouth.tar: Python/step82.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step82_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step82: Output/Step82/KNN-PTB.DADA2.homd.Mouth.tar Output/Step82_Proportion/KNN-PTB.DADA2.homd.Mouth.tar
-.PHONY: step82
-
-# Step 83 (Gaussian Process for PTB with DESeq2)
-Output/Step83 Output/Step83_Proportion:
-	mkdir -p $@
-
-Output/Step83/GP-PTB.%.Mouth.tar: Python/step83.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step83
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step83_Proportion/GP-PTB.%.Mouth.tar: Python/step83.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step83_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step83: Output/Step83/GP-PTB.DADA2.homd.Mouth.tar Output/Step83_Proportion/GP-PTB.DADA2.homd.Mouth.tar
-.PHONY: step83
-
-# Step 84 (Neural Network for PTB with DESeq2)
-Output/Step84 Output/Step84_Proportion:
-	mkdir -p $@
-
-Output/Step84/NN-PTB.%.Mouth.tar: Python/step84.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step84
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step84_Proportion/NN-PTB.%.Mouth.tar: Python/step84.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step84_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step84: Output/Step84/NN-PTB.DADA2.homd.Mouth.tar Output/Step84_Proportion/NN-PTB.DADA2.homd.Mouth.tar
-.PHONY: step84
-
-# Step 85 (Support Vector Classifier for PTB with DESeq2)
-Output/Step85 Output/Step85_Proportion:
-	mkdir -p $@
-
-Output/Step85/SVC-PTB.%.Mouth.tar: Python/step85.py Output/Step76/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step85
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Step85_Proportion/SVC-PTB.%.Mouth.tar: Python/step85.py Output/Step76_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log Output/Step85_Proportion
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step85: Output/Step85/SVC-PTB.DADA2.homd.Mouth.tar Output/Step85_Proportion/SVC-PTB.DADA2.homd.Mouth.tar
-.PHONY: step85

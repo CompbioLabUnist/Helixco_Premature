@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     tar_files = list()
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0).dropna()
     print(input_data)
 
     columns = set(input_data.columns)
