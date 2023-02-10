@@ -27,6 +27,8 @@ def change_index(ID: str) -> str:
     if a == "First":
         return "-".join((a, b, c))
     elif a in ["Second", "Third"]:
+        if a == "Third" and (b in ["034", "035"]):
+            a = "Second"
         d = metadata.loc[(metadata["Data"] == a) & (metadata["Mother"] == b) & (metadata["Neonate"] == c), ["Data", "Mother", "Neonate"]].to_numpy()
         assert len(d) == 1
         return "-".join(d[0])
