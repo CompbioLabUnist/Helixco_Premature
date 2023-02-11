@@ -946,6 +946,9 @@ Output/Step44_Proportion/everything.%.EF.Cervix.tsv Output/Step44_Proportion/eve
 Output/Step44_Proportion/everything.%.LF.Cervix.tsv Output/Step44_Proportion/everything.%.LF.Mouth.tsv Output/Step44_Proportion/everything.%.LF.Vagina.tsv Output/Step44_Proportion/everything.%.LF.Cervix.coldata Output/Step44_Proportion/everything.%.LF.Mouth.coldata Output/Step44_Proportion/everything.%.LF.Vagina.coldata: Python/step44-2.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --compare "Detail Premature" "Normal" "Late PTB" 1> $@.stdout 2> $@.stderr
 
+Output/Step44_Proportion/singleton.%.Cervix.tsv Output/Step44_Proportion/singleton.%.Mouth.tsv Output/Step44_Proportion/singleton.%.Vagina.tsv Output/Step44_Proportion/singleton.%.Cervix.coldata Output/Step44_Proportion/singleton.%.Mouth.coldata Output/Step44_Proportion/singleton.%.Vagina.coldata: Python/step44-2.py Output/TSV_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step44_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) 1> $@.stdout 2> $@.stderr
+
 Output/Step44_Proportion/everything.%.Cervix.DAT.tsv: R/run_DESeq.R Output/Step44_Proportion/everything.%.Cervix.tsv Output/Step44_Proportion/everything.%.Cervix.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -1723,7 +1726,13 @@ Output/Step71/everything.%.tar: Python/step71.py Output/Step69/everything.%.tsv 
 Output/Step71_Proportion/everything.%.tar: Python/step71.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step71_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step71: $(addprefix Output/Step71/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71_Proportion/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
+Output/Step71/singleton.%.tar: Python/step71-1.py Output/Step44/singleton.%.tsv Output/Metadata/singleton.tsv Output/Step44/singleton.%.DAT.tsv | build.log Output/Step71
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step71_Proportion/singleton.%.tar: Python/step71-1.py Output/Step44_Proportion/singleton.%.tsv Output/Metadata/singleton.tsv Output/Step44/singleton.%.DAT.tsv | build.log Output/Step71_Proportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step71: $(addprefix Output/Step71/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71_Proportion/everything.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71/singleton.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina)) $(addprefix Output/Step71_Proportion/singleton.DADA2.homd.,$(addsuffix .tar,Cervix Mouth Vagina))
 .PHONY: step71
 
 # Step 72 (PICRUSt2)
