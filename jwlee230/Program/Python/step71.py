@@ -7,6 +7,7 @@ import tarfile
 import typing
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
 import seaborn
 import statannotations.Annotator
@@ -64,6 +65,8 @@ if __name__ == "__main__":
             statannotations.Annotator.Annotator(ax, list(itertools.combinations(step00.detailed_PTB, r=2)), data=input_data, x="Detail Premature", y=taxon, order=step00.detailed_PTB).configure(test=None, text_format="simple", loc="inside", comparisons_correction=None, verbose=0).set_pvalues_and_annotate([EL_data.loc[taxon, "pvalues"], EF_data.loc[taxon, "pvalues"], LF_data.loc[taxon, "pvalues"]])
         except ValueError:
             pass
+
+        matplotlib.pyplot.scatter(x=range(len(step00.detailed_PTB)), y=[numpy.mean(input_data.loc[(input_data["Detail Premature"] == d), taxon]) for d in step00.detailed_PTB], marker="*", c="white", s=400, zorder=10)
 
         matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(step00.simplified_taxonomy(taxon))

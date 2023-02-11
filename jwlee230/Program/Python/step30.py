@@ -35,7 +35,7 @@ def draw(alpha: str, disease: str, site: str) -> str:
         seaborn.violinplot(data=drawing_data, x=disease, y=alpha, order=order, inner="box", linewidth=5, ax=ax)
 
     if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=drawing_data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(drawing_data.loc[(drawing_data[disease] == d), alpha]) for d in order], marker="*", c="white", s=400, zorder=10)
 
@@ -63,7 +63,7 @@ def draw_all(alpha: str, disease: str) -> str:
         seaborn.violinplot(data=data, x=disease, y=alpha, order=order, inner="box", linewidth=5, ax=ax)
 
     if len(order) > 1:
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=alpha, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(data.loc[(data[disease] == d), alpha]) for d in order], marker="*", c="white", s=400, zorder=10)
 

@@ -189,9 +189,9 @@ if __name__ == "__main__":
         print(feature)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.violinplot(data=input_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
+        seaborn.violinplot(data=input_data, x=target, y=feature, order=orders, inner="box", cut=1, linewidth=5, palette=step00.PTB_two_colors, ax=ax)
         try:
-            statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
         except ValueError:
             pass
         matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
