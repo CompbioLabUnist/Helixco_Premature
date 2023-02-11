@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     tar_files = list()
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col=0).dropna()
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0).dropna(axis="columns")
     print(input_data)
 
     columns = set(input_data.columns)
@@ -65,18 +65,27 @@ if __name__ == "__main__":
             matplotlib.pyplot.close(fig)
 
         for c in tqdm.tqdm(categorical_columns):
-            palette = dict(zip(sorted(set(data[c])), matplotlib.colors.XKCD_COLORS))
+            orders = sorted(set(data[c]))
+            if c == "Premature":
+                palette = step00.PTB_two_colors
+            else:
+                palette = dict(zip(orders, matplotlib.colors.XKCD_COLORS))
 
             fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-            seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="brief", markers={x: y for x, y in zip(sorted(set(data[c])), itertools.cycle(step00.markers))}, s=40 ** 2, style_order=sorted(set(data[c])), palette=palette)
+            seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=c, style=c, legend="brief", markers={x: y for x, y in zip(orders, itertools.cycle(step00.markers))}, s=40 ** 2, style_order=orders, palette=palette)
 
             for item, color in palette.items():
                 if len(data.loc[(data[c] == item)]) < 2:
                     continue
                 step00.confidence_ellipse(data.loc[(data[c] == item), "tSNE1"], data.loc[(data[c] == item), "tSNE2"], ax, facecolor=color, alpha=0.3)
 
-            matplotlib.pyplot.tight_layout()
+            try:
+                matplotlib.pyplot.tight_layout()
+            except ValueError:
+                matplotlib.pyplot.close(fig)
+                continue
+
             tar_files.append("{0}+{1}.pdf".format(site, c.replace(" ", "_")))
             fig.savefig(tar_files[-1])
             matplotlib.pyplot.close(fig)

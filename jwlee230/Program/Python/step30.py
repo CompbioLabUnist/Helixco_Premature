@@ -117,7 +117,7 @@ if __name__ == "__main__":
     print(sorted(alphas))
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[sorted(set(raw_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(raw_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None).dropna(axis="columns")
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))

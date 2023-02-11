@@ -122,12 +122,12 @@ if __name__ == "__main__":
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None).dropna(axis="columns")
     columns = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Gestational Week", "Detail Gestational Week"}
     print(metadata)
     print(sorted(columns))
 
-    input_data = input_data.loc[sorted(set(input_data.index) & set(metadata.index)), :]
+    input_data = input_data.loc[sorted(set(input_data.index) & set(metadata.index)), :].dropna()
 
     for metric in tqdm.tqdm(step00.pdist_list):
         try:

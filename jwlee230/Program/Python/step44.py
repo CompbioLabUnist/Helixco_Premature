@@ -64,7 +64,7 @@ if __name__ == "__main__":
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
 
     matplotlib.pyplot.xlabel("log2(FoldChange)")
-    matplotlib.pyplot.ylabel("-log10(p)")
+    matplotlib.pyplot.ylabel("-log10(adjusted p)")
     matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
     matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
