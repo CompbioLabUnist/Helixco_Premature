@@ -134,13 +134,6 @@
             \item Normal $\ge$ 37 GW
         \end{enumerate}
 
-        Detailed PTB:
-        \begin{enumerate}
-            \item Early PTB $<$ 34 GW
-            \item 34 GW $\le$ Late PTB $<$ 37 GW
-            \item Normal $\ge$ 37 GW
-        \end{enumerate}
-
         \cite{premature1, premature2}
     \end{frame}
 
@@ -167,8 +160,8 @@
 
         \begin{block}{PTB}
             \begin{itemize}
-                \item Mother $\Rightarrow$ Early PTB: 17 \& Late PTB: 22 \& Normal: 29
-                \item Newborn $\Rightarrow$ Early PTB: 13 \& Late PTB: 24 \& Normal: 22
+                \item Mother $\Rightarrow$ PTB: 30 \& Normal: 29
+                \item Newborn $\Rightarrow$ PTB: 25 \& Normal: 30
             \end{itemize}
         \end{block}
         \pagebreak
@@ -177,14 +170,14 @@
             \centering
             \caption{Clinical characteristics of mothers}
             \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
-            {\input{tables/mother.tex}}
+            {\input{tables/singleton-mother.tex}}
         \end{table}
 
         \begin{table}
             \centering
             \caption{Clinical characteristics of newborns}
             \resizebox{!}{\ifdimcomp{\height}{<}{0.25 \textheight}{\height}{0.25 \textheight}}
-            {\input{tables/newborn.tex}}
+            {\input{tables/singleton-newborn.tex}}
         \end{table}
 
         \begin{exampleblock}{Statistical tests}
@@ -208,59 +201,11 @@
     \section{Results}
     \subsection{Taxonomy Overview}
     \begin{frame}
-        \frametitle{Proportion Distribution}
-
-        \begin{columns}
-            \begin{column}{0.4 \linewidth}
-                \begin{block}{Proportion}
-                    \begin{itemize}
-                        \item Minimum: 0.0
-                        \item Mean: 0.00008
-                        \item Median: 0.0
-                        \item Maximum: 0.793
-                    \end{itemize}
-                \end{block}
-            \end{column}
-
-            \begin{column}{0.4 \linewidth}
-                \begin{block}{Proportion without Zero}
-                    \begin{itemize}
-                        \item Minimum: 0.00002
-                        \item Mean: 0.00008
-                        \item Median: 0.00153
-                        \item Maximum: 0.793
-                    \end{itemize}
-                \end{block}
-            \end{column}
-        \end{columns}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/Step53_Proportion/everything.DADA2.homd.uncorrected.pdf}
-            \caption{Proportion distribution}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
         \frametitle{Microbial community with Proportion}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Step60_Proportion/everything.DADA2.homd.uncorrected/Mouth.pdf}
+            \includegraphics[width=0.7 \linewidth]{figures/Step60_Proportion/singleton.DADA2.homd.uncorrected/Mouth.pdf}
             \caption{Microbial community with Proportion}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{t-SNE with Proportion}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/All+Detail_Premature.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/tSNE_Proportion/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{t-SNE plot of Proportion with PTB}
         \end{figure}
     \end{frame}
 
@@ -332,51 +277,12 @@
     \end{frame}
 
     \subsubsection{Alpha-diversity}
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Violin Plot with Alpha-diversity}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+faith_pd.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+faith_pd.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{Detail premature \& Faith's PD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+observed_otus.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+observed_otus.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{Detail premature \& Observed OTUs}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/All+Detail_Premature+pielou_e.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+pielou_e.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{Detail premature \& Pielou Evenness}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+shannon.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/AlphaDiversity/everything.DADA2/Mouth+Detail_Premature+shannon.pdf}
-                \\
-                \mbox{(a) All} & \mbox{(b) Mother Mouth} \\
-            \end{array}$
-            \caption{Detail premature \& Shannon Entropy}
+            \includegraphics[width=0.5 \linewidth]{figures/AlphaDiversity/singleton.DADA2/Mouth+Premature+faith_pd.pdf}
+            \caption{Premature \& Faith's PD}
         \end{figure}
     \end{frame}
 
@@ -385,58 +291,20 @@
         \frametitle{Beta-diversity t-SNE plots}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+braycurtis.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/BetaDiversity/everything.DADA2.homd.uncorrected/Mouth+Detail_Premature+hamming.pdf}
-                \\
-                \mbox{(a) Bray-Curtis} & \mbox{(b) Hamming} \\
-            \end{array}$
-            \caption{Beta-diversity t-SNE plots}
+            \includegraphics[width=0.5 \linewidth]{figures/BetaDiversity/singleton.DADA2.homd.uncorrected/Mouth+Premature+hamming.pdf}
+            \caption{Hamming distance index t-SNE plot}
         \end{figure}
     \end{frame}
 
     \subsection{Taxonomy Analyses}
     \subsubsection{Differentially Abundant Taxa}
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Volcano plots}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Step63/everything.DADA2.homd.Mouth.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Step63/everything.DADA2.homd.Mouth.PTB.pdf}
-                \\
-                \mbox{(a) Early PTB vs. other} & \mbox{(b) PTB vs. Normal} \\
-            \end{array}$
+            \includegraphics[width=0.5 \linewidth]{figures/Step44/singleton.DADA2.homd.uncorrected.Mouth.pdf}
             \caption{DAT in Mouth}
         \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/Step63/everything.DADA2.homd.Mouth.EL.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step63/everything.DADA2.homd.Mouth.EF.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/Step63/everything.DADA2.homd.Mouth.LF.pdf}
-                \\
-                \mbox{(a) Early vs. Late} & \mbox{(b) Early vs. Normal} & \mbox{(c) Late vs. Normal} \\
-            \end{array}$
-            \caption{DAT in Mouth}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Venn Diagrams}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Step68_Updown/everything.DADA2.homd.Mouth.pdf}
-            \caption{DAT Upset plot}
-        \end{figure}
-
-        \begin{block}{Union of DAT}
-            A total of 20 taxa selected as DAT.
-        \end{block}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
@@ -536,93 +404,22 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Oversampling}
-
-        \begin{block}{SMOTE \cite{SMOTE1}}
-            \begin{itemize}
-                \item Synthetic Minority Oversampling Technique
-                \item An algorithm that makes pseudo-sample
-                \item Using $K$-Nearest Neighbor algorithm
-            \end{itemize}
-        \end{block}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/SMOTE.png}
-            \caption{Workflow of SMOTE}
-        \end{figure}
-    \end{frame}
-
     \subsubsection{Random Forest Classifier on Proportion}
-    \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest with (Early vs. Late vs. Normal)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/metrics.pdf}
-            \caption{RF evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/heatmap.pdf}
-            \caption{RF confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF.DADA2.homd.Mouth/importances.pdf}
-            \caption{RF importances}
-        \end{figure}
-
-        \begin{block}{Highest Importances}
-            \begin{enumerate}
-                \item \textit{L. umeaense}
-                \item \textit{S.} sp. \textit{HMT 442}
-                \item \textit{V. dispar}
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Random Forest with (Early vs. Late + Normal)}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/metrics.pdf}
-            \caption{RF evaluations with feature counts}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/heatmap.pdf}
-            \caption{RF confusion matrix}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-two.DADA2.homd.Mouth/importances.pdf}
-            \caption{RF importances}
-        \end{figure}
-
-        \begin{block}{Highest Importances}
-            \begin{enumerate}
-                \item \textit{L. umeaense}
-                \item \textit{S.} sp. \textit{HMT 442}
-                \item \textit{C. durum}
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
     \begin{frame}[allowframebreaks]
         \frametitle{Random Forest with (PTB vs. Normal)}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/metrics.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/singleton-RF.DADA2.homd.Mouth/metrics.pdf}
             \caption{RF evaluations with feature counts}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/heatmap.pdf}
+            \includegraphics[width=0.5 \linewidth]{figures/RandomForest_Proportion/singleton-RF.DADA2.homd.Mouth/heatmap.pdf}
             \caption{RF confusion matrix}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/RF-PTB.DADA2.homd.Mouth/importances.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/RandomForest_Proportion/singleton-RF.DADA2.homd.Mouth/importances.pdf}
             \caption{RF importances}
         \end{figure}
 
@@ -632,156 +429,6 @@
                 \item \textit{P. gingivalis}
                 \item \textit{B.} sp. \textit{HMT 931}
             \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \subsection{Pathway Enrichment Prediction}
-    \begin{frame}
-        \frametitle{PICRUSt2}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PICRUSt2.png}
-            \caption{PICRUSt2 flowchart \protect\cite{PICRUSt2-1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Pathway Predictions: Early PTB vs. Late PTB}
-
-        \begin{figure}
-            \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/EL.pdf}
-            \caption{Early PTB vs. Late PTB}
-        \end{figure}
-
-        \begin{block}{L-arginine biosynthesis III (via N-acetyl-L-citrulline) (PWY-5154)}
-            \begin{itemize}
-                \item PWY-5154 is enriched in late PTB than early PTB.
-                \item PWY-5154 is enriched in normal than early PTB.
-                \item PWY-5154 is enriched in other than early PTB.
-                \item PWY-5154 is increased with age in rats \cite{PWY-5154-1}.
-                \item Arginine deficiency $\Rightarrow$ PTB \cite{PWY-5154-3, PWY-5154-4, PWY-5154-2}.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Octane oxidation (P221-PWY)}
-            \begin{itemize}
-                \item P221-PWY is enriched in late PTB than early PTB.
-                \item P221-PWY is enriched in normal than early PTB.
-                \item P221-PWY is enriched in other than early PTB.
-                \item P221-PWY is important for classifying the PTB \cite{P221-PWY-1}: \\
-                    higher at PTB than normal ?
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Norspermidine biosynthesis (PWY-6562)}
-            \begin{itemize}
-                \item PWY-6562 is enriched in late PTB than early PTB.
-                \item PWY-6562 is enriched in other than early PTB.
-                \item Norspermidine has antitumor activity via regulating DNA \cite{PWY-6562-1}.
-                \item Norspermidine is used as a biofilm disassembly trigger \cite{PWY-6562-2}.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Superpathway of N-acetylneuraminate degradation (P441-PWY)}
-            \begin{itemize}
-                \item P441-PWY is enriched in late PTB than early PTB.
-                \item P441-PWY is enriched in late PTB than normal.
-                \item NPL gene $\Rightarrow$ N-acetylneuraminate $\Uparrow$ \\
-                    $\therefore$ Viral pathogenicity $\Uparrow$ \cite{P441-PWY-2}.
-                \item N-acetylneuraminate level increased at 24-28 GW in PTB women \cite{P441-PWY-1} ??
-            \end{itemize}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Pathway Predictions: Early PTB vs. Normal}
-
-        \begin{figure}
-            \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/EF.pdf}
-            \caption{Early PTB vs. Normal}
-        \end{figure}
-
-        \begin{block}{S-adenosyl-L-methionine cycle (PWY-6151)}
-            \begin{itemize}
-                \item PWY-6151 is enriched in early PTB than normal.
-                \item PWY-6151 is enriched in early PTB than other.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{L-lysine biosynthesis VI (PWY-5097)}
-            \begin{itemize}
-                \item PWY-5097 is enriched in normal than early PTB.
-                \item PWY-5097 is enriched in normal than late PTB.
-                \item PWY-5097 negatively associated with severity of multiple sclerosis \cite{PWY-5097-1}.
-                \item Lysine level in serum was higher in term deliveries with PTB symptoms than without PTB symptoms \cite{PWY-5097-2}.
-                \item Lysine level in the first trimester are associated with adverse birth outcomes in Rhea cohort \cite{PWY-5097-3}.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Superpathway of glucose and xylose degradation (PWY-6901)}
-            \begin{itemize}
-                \item PWY-6901 is enriched in normal than early PTB.
-                \item PWY-6901 is enriched in other than early PTB.
-                \item PWY-6901 associated with \textit{zonulin} level \cite{PWY-6901-1} \\
-                    $\Leftarrow$ a marker of small intestinal paracellular permeability \\
-                    $\therefore$ Development of immunity during early life.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{L-tyrosine degradation I (TYRFUMCAT-PWY)}
-            \begin{itemize}
-                \item TYRFUMCAT-PWY is enriched in normal than early PTB.
-                \item Oral antibiotics $\Rightarrow$ microbiome alteration \\
-                    $\therefore$ Promote oral squamous cell carcinoma \cite{TYRFUMCAT-PWY-1}.
-                \item TYRFUMCAT-PWY was depleted in moderate \& high activity rheumatoid arthritis patients \cite{TYRFUMCAT-PWY-2}.
-                \item A tyrosine-related gene mutation impresses to PTB \cite{TYRFUMCAT-PWY-3}. \\
-                    $\because$ Alteration in inflammation response
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Fatty acid $\beta$-oxidation I (FAO-PWY)}
-            \begin{itemize}
-                \item FAO-PWY is enriched in normal than early PTB.
-                \item FAO-PWY is enriched in other than early PTB.
-                \item FAO-PWY is associated with fecal calprotectin level and IL12 \cite{FAO-PWY-2}.
-                \item $\Omega$-3 fatty acid $\Rightarrow$ Prevent recurrent PTB \cite{FAO-PWY-1}.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{L-glutamate degradation VIII (to propanoate) (PWY-5088)}
-            \begin{itemize}
-                \item PWY-5088 is enriched in normal than early PTB.
-                \item PWY-5088 is enriched in other than early PTB.
-                \item PWY-5088 is enriched in gut microbiome of Parkinson's disease \cite{PWY-5088-1}.
-                \item GABA \& glutamate play a major role in fetal neonatal brain development \cite{PWY-5088-2}.
-            \end{itemize}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Pathway Predictions: Early PTB vs. Other}
-
-        \begin{figure}
-            \includegraphics[width=0.9 \linewidth]{figures/PICRUSt2/Early.pdf}
-            \caption{Early PTB vs. Late PTB + Normal}
-        \end{figure}
-
-        \begin{block}{Fucose degradation (FUCCAT-PWY)}
-            \begin{itemize}
-                \item FUCCAT-PWY is enriched in other than early PTB.
-                \item Fucose have a linkage with intestinal health \& disease \cite{FUCCAT-PWY-2}.
-                \item FUCCAT-PWY is enriched in upper respiratory microbiome of pregnant women \cite{FUCCAT-PWY-1}.
-                \item Porous cervical mucus plug $\Rightarrow$ Vaginal infection $\Rightarrow$ Fucose pathway \\
-                    $\therefore$ PTB in mice \cite{FUCCAT-PWY-3}.
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{Methanogenesis from acetate (METH-ACETATE-PWY)}
-            \begin{itemize}
-                \item METH-ACETATE-PWY is enriched in other than early PTB.
-                \item METH-ACETATE-PWY is enriched in upper respiratory microbiome of pregnant women \cite{FUCCAT-PWY-1}.
-                \item Methanogenesis have a major role in preventing acid accumulation \cite{METH-ACETATE-PWY-1}.
-            \end{itemize}
         \end{block}
     \end{frame}
 
