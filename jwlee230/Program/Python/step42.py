@@ -48,10 +48,10 @@ def draw(taxo: str, disease: str, site: str) -> str:
     matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(drawing_data.loc[(drawing_data[disease] == d), taxo]) for d in order], marker="*", c="white", s=400, zorder=10)
 
     matplotlib.pyplot.title(site)
-    matplotlib.pyplot.ylabel(step00.consistency_taxonomy(taxo, number=1))
+    matplotlib.pyplot.ylabel(step00.simplified_taxonomy(taxo))
     matplotlib.pyplot.tight_layout()
 
-    file_name = "{2}+{1}+{0}.pdf".format(step00.consistency_taxonomy(taxo).replace(";", "_"), disease.replace(" ", "_"), site)
+    file_name = "{2}+{1}+{0}.pdf".format(step00.simplified_taxonomy(taxo), disease.replace(" ", "_"), site)
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -84,10 +84,10 @@ def draw_all(taxo: str, disease: str) -> str:
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=data, x=disease, y=taxo, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
     matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(data.loc[(data[disease] == d), taxo]) for d in order], marker="*", c="white", s=400, zorder=10)
 
-    matplotlib.pyplot.ylabel(step00.consistency_taxonomy(taxo, number=1))
+    matplotlib.pyplot.ylabel(step00.simplified_taxonomy(taxo))
     matplotlib.pyplot.tight_layout()
 
-    file_name = "{2}+{1}+{0}.pdf".format(step00.consistency_taxonomy(taxo).replace(";", "_"), disease.replace(" ", "_"), "All")
+    file_name = "{2}+{1}+{0}.pdf".format(step00.simplified_taxonomy(taxo), disease.replace(" ", "_"), "All")
     fig.savefig(file_name)
     matplotlib.pyplot.close(fig)
     return file_name
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.input.endswith(".tar.gz"):
+    if not args.input.endswith(".tsv"):
         raise ValueError("Input file must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
@@ -117,11 +117,11 @@ if __name__ == "__main__":
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col=0).groupby("taxonomy").sum().T
-    taxonomy_list = list(input_data.columns)
+    taxonomy_list = list(filter(step00.filtering_taxonomy, list(input_data.columns)))
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[list(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[list(set(input_data.index) & set(metadata.index)), sorted(set(metadata.columns) - step00.numeric_columns)].replace(to_replace=-1, value=None).dropna(axis="columns")
     diseases = set(metadata.columns) - step00.numeric_columns - {"Mother", "Neonate", "Site"}
     print(metadata)
     print(sorted(diseases))
