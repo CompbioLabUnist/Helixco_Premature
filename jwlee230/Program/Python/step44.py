@@ -50,30 +50,26 @@ if __name__ == "__main__":
     print(down_results.sort_values("simple_name"))
 
     matplotlib.pyplot.scatter(ns_results["log2FoldChange"], ns_results["-log10(p)"], s=400, c="gray", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=400, c="red", marker="o", edgecolors=None)
-    matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=400, c="blue", marker="o", edgecolors=None)
-
-    matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), 0, f"log2(FC)={numpy.log2(1 / ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
-    matplotlib.pyplot.text(numpy.log2(ratio_threshold), 0, f"log2(FC)={numpy.log2(ratio_threshold)}", c="k", fontsize="xx-small", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
-    matplotlib.pyplot.text(numpy.log2(1 / ratio_threshold), -1 * numpy.log10(p_threshold), f"p={p_threshold:.2f}", c="k", fontsize="xx-small", horizontalalignment="left", verticalalignment="baseline")
+    matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=400, c=step00.PTB_two_colors["PTB"], marker="o", edgecolors=None)
+    matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=400, c=step00.PTB_two_colors["Normal"], marker="o", edgecolors=None)
 
     for index, row in down_results.iterrows():
-        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
+        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color=step00.PTB_two_colors["Normal"], fontsize="xx-small"))
 
     for index, row in up_results.iterrows():
-        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="small"))
+        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color=step00.PTB_two_colors["PTB"], fontsize="xx-small"))
 
-    matplotlib.pyplot.xlabel("log2(FoldChange)")
-    matplotlib.pyplot.ylabel("-log10(adjusted p)")
-    matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--")
-    matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--")
-    matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--")
+    matplotlib.pyplot.xlabel("log2(PTB/Normal)")
+    matplotlib.pyplot.ylabel("-log10(adj. p)")
+    matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--", linewidth=5)
+    matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--", linewidth=5)
+    matplotlib.pyplot.axhline(-1 * numpy.log10(p_threshold), color="k", linestyle="--", linewidth=5)
     matplotlib.pyplot.xlim((-ceil, ceil))
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
     matplotlib.pyplot.tight_layout()
 
-    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.big, ax=ax)
+    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=10 ** 9, ax=ax)
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
