@@ -101,7 +101,6 @@ if __name__ == "__main__":
     seaborn.histplot(data=feature_importances, stat="count", kde=True, ax=ax)
 
     matplotlib.pyplot.xlabel("Importances")
-    matplotlib.pyplot.title("PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("importances.pdf")
@@ -142,11 +141,11 @@ if __name__ == "__main__":
     matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
     matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
-    matplotlib.pyplot.xticks(range(1, len(taxa) + 1), range(1, len(taxa) + 1))
+    matplotlib.pyplot.xticks(range(1, len(taxa) + 1), range(1, len(taxa) + 1), rotation=90)
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
-    matplotlib.pyplot.ylabel("Evaluations")
-    matplotlib.pyplot.title("PTB vs. Normal")
+    matplotlib.pyplot.xlabel("Number of features")
+    matplotlib.pyplot.ylabel("Value")
     ax.invert_xaxis()
     matplotlib.pyplot.tight_layout()
 
@@ -162,9 +161,8 @@ if __name__ == "__main__":
     seaborn.barplot(data=bar_data, x="Metrics", y="Values", order=step00.derivations, ax=ax)
 
     matplotlib.pyplot.xlabel("")
-    matplotlib.pyplot.ylabel("Evaluations")
+    matplotlib.pyplot.ylabel("Value")
     matplotlib.pyplot.ylim(0, 1)
-    matplotlib.pyplot.title("PTB vs. Normal")
     matplotlib.pyplot.tight_layout()
 
     tar_files.append("bar.pdf")
@@ -197,7 +195,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
 
         matplotlib.pyplot.xlabel("")
-        matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)}")
+        matplotlib.pyplot.ylabel(f"{step00.consistency_taxonomy(feature)}".replace(";", " "))
         matplotlib.pyplot.tight_layout()
 
         tar_files.append(f"Violin_{i}.pdf")

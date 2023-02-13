@@ -111,14 +111,17 @@ def remove_preceding_underscores(x: str) -> str:
         return x
 
 
-def consistency_taxonomy(taxonomy: str, number: int = 2) -> str:
+def consistency_taxonomy(taxonomy: str, numuber: int = 2) -> str:
     """
     consistency_taxonomy: make taxonomy information with consistency
     """
-    if taxonomy == "Unassigned":
-        return taxonomy
+    taxonomy_list = list(map(lambda x: x.strip(), taxonomy.split(";")))
+    if (len(taxonomy_list) == 6):
+        return remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ") + " spp."
+    elif (taxonomy_list[-1] == "__") or (taxonomy_list[-1] == "s__"):
+        return remove_preceding_underscores(taxonomy_list[-2]).replace("_", " ") + " spp."
     else:
-        return ";".join(list(filter(lambda x: len(x) > 3, list(map(lambda x: remove_preceding_underscores(x), taxonomy.split(";")))))[-number:]).replace("_", " ")
+        return remove_preceding_underscores(taxonomy_list[-2]) + " " + remove_preceding_underscores(taxonomy_list[-1]).replace("_", " ")
 
 
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:
@@ -208,4 +211,4 @@ def simplified_taxonomy(taxonomy: str) -> str:
 
 if __name__ == "__main__":
     taxo = "k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Prevotellaceae; g__Prevotella; __"
-    print(consistency_taxonomy(taxo, 1))
+    print(consistency_taxonomy(taxo))
