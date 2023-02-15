@@ -69,7 +69,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.title(f"Up: {up_results.shape[0]}; Down: {down_results.shape[0]}")
     matplotlib.pyplot.tight_layout()
 
-    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=10 ** 9, ax=ax)
+    adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color="black", alpha=0.3), lim=step00.big, ax=ax)
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

@@ -25,7 +25,7 @@ def draw_all(meta: str, alpha: str) -> str:
     order = sorted(set(metadata[meta]))
 
     try:
-        seaborn.violinplot(data=metadata, x=meta, y=alpha, ax=ax, order=order, linewidth=5, cut=1, ax=ax)
+        seaborn.violinplot(data=metadata, x=meta, y=alpha, order=order, linewidth=5, cut=1, ax=ax)
     except TypeError:
         matplotlib.pyplot.close(fig)
         return ""

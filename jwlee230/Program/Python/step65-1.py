@@ -48,5 +48,4 @@ if __name__ == "__main__":
             elif taxon in input_dict[annot + "-Down"]:
                 output_data.loc[taxon, annot] = "Down"
 
-    print(output_data)
     output_data.to_csv(args.output, sep="\t")
