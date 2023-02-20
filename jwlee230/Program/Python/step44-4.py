@@ -55,7 +55,7 @@ if __name__ == "__main__":
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(len(taxa_list) * 1.5, 24))
-    seaborn.boxplot(data=violin_data, x="Feature", y="Value", hue="Premature", order=taxa_list, hue_order=("PTB", "Normal"), palette=step00.PTB_two_colors, ax=ax)
+    seaborn.boxplot(data=violin_data, x="Feature", y="Value", hue="Premature", order=taxa_list, hue_order=("PTB", "Normal"), palette=step00.PTB_two_colors, showfliers=False, ax=ax)
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.xticks(range(len(taxa_list)), list(map(step00.simplified_taxonomy, taxa_list)), rotation=90)
     matplotlib.pyplot.tight_layout()
