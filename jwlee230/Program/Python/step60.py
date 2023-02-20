@@ -36,7 +36,7 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .TAR!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", skiprows=1, index_col="#OTU ID")
-    input_data["taxonomy"] = list(map(lambda x: step00.simplified_taxonomy(x) if step00.filtering_taxonomy(x) else x, input_data["taxonomy"]))
+    input_data["taxonomy"] = list(map(lambda x: step00.simplified_taxonomy(x) if step00.filtering_taxonomy(x) else "Unclassified", input_data["taxonomy"]))
     input_data = input_data.groupby("taxonomy").sum().T
     print(input_data)
 
@@ -60,11 +60,7 @@ if __name__ == "__main__":
 
         for i, (color, taxon) in tqdm.tqdm(list(enumerate(zip(itertools.cycle(matplotlib.colors.XKCD_COLORS), taxa)))):
             if i < 20:
-                try:
-                    label = step00.simplified_taxonomy(taxon)
-                except IndexError:
-                    label = step00.consistency_taxonomy(taxon, 1)
-                axs[0].bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, linewidth=0, label=label)
+                axs[0].bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, linewidth=0, label=taxon)
             else:
                 axs[0].bar(range(tmp_data.shape[0]), tmp_data.iloc[:, i], bottom=numpy.sum(tmp_data.iloc[:, :i], axis=1), color=color, linewidth=0)
 
@@ -77,12 +73,14 @@ if __name__ == "__main__":
         axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(tmp_data.index))), color="tab:red", linewidth=0, label="PTB")
         axs[1].bar(range(tmp_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(tmp_data.index))), color="tab:green", linewidth=0, label="Normal")
 
-        matplotlib.pyplot.tight_layout()
         axs[1].set_xticks(range(tmp_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(tmp_data.index))), fontsize="xx-small", rotation="vertical")
         axs[1].set_xlabel(f"{tmp_data.shape[0]} {site} samples")
         axs[1].set_ylabel("GW")
         axs[1].legend(loc="lower left")
         axs[1].grid(True)
+        axs[1].axhline(37, linestyle="--", color="black", linewidth=4)
+
+        matplotlib.pyplot.tight_layout()
 
         figures.append(f"{site}.pdf")
         fig.savefig(figures[-1])
