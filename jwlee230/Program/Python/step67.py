@@ -14,7 +14,6 @@ import sklearn.ensemble
 import sklearn.manifold
 import sklearn.model_selection
 import sklearn.tree
-import statannotations.Annotator
 import pandas
 import tqdm
 import step00
@@ -189,24 +188,20 @@ if __name__ == "__main__":
     for derivation in step00.derivations:
         print("--", derivation, numpy.mean(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]), numpy.std(score_data.loc[(score_data["Features"] == len(tmp_features)) & (score_data["Metrics"] == derivation), "Values"]))
 
-    for i, feature in enumerate(best_features):
-        print(feature)
+    raw_violin_data: typing.List[typing.Tuple[str, str, float]] = list()
+    for feature in tqdm.tqdm(best_features):
+        raw_violin_data.extend(zip(itertools.cycle([feature]), input_data[target], input_data[feature]))
+    violin_data = pandas.DataFrame(raw_violin_data, columns=["Feature", target, "Proportion"])
+    print(violin_data)
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.violinplot(data=input_data, x=target, y=feature, order=orders, ax=ax, inner="box", cut=1, linewidth=5)
-        try:
-            statannotations.Annotator.Annotator(ax, list(itertools.combinations(orders, 2)), data=input_data, x=target, y=feature, order=orders).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
-        except ValueError:
-            pass
-        matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
-
-        matplotlib.pyplot.xlabel("")
-        matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)}")
-        matplotlib.pyplot.tight_layout()
-
-        tar_files.append(f"Violin_{i}.pdf")
-        fig.savefig(tar_files[-1])
-        matplotlib.pyplot.close(fig)
+    fig, ax = matplotlib.pyplot.subplots(figsize=(len(best_features) * 1.5, 24))
+    seaborn.boxplot(data=violin_data, x="Feature", y="Proportion", hue=target, order=best_features, hue_order=orders, palette=step00.PTB_two_colors, ax=ax)
+    matplotlib.pyplot.xlabel("")
+    matplotlib.pyplot.xticks(range(len(best_features)), list(map(step00.simplified_taxonomy, best_features)), rotation=90)
+    matplotlib.pyplot.tight_layout()
+    tar_files.append("box.pdf")
+    fig.savefig(tar_files[-1])
+    matplotlib.pyplot.close(fig)
 
     # Save data
     with tarfile.open(args.output, "w") as tar:
