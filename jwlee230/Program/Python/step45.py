@@ -53,7 +53,7 @@ def draw_alpha(site: str, meta: str, alpha: str) -> str:
     order = sorted(set(output_data[meta]))
 
     try:
-        seaborn.violinplot(data=output_data, x=meta, y=alpha, ax=ax, order=order, linewidth=5, cut=1, ax=ax)
+        seaborn.violinplot(data=output_data, x=meta, y=alpha, order=order, linewidth=5, cut=1, ax=ax)
     except TypeError:
         matplotlib.pyplot.close(fig)
         return ""
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         tree = skbio.TreeNode.read(io.StringIO(f.readline()))
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], dtype=str).dropna(axis="columns", how="all").set_index(keys=["#SampleID"], verify_integrity=True)
-    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), :].replace(to_replace=-1, value=None)
+    metadata = metadata.loc[sorted(set(input_data.index) & set(metadata.index)), :].replace(to_replace=-1, value=None).dropna(axis="columns")
     metadata_columns = sorted(set(metadata.columns) - step00.numeric_columns - {"Mother", "Too much weight gain", "Site"})
     print(metadata)
     print(metadata_columns)
