@@ -44,7 +44,8 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         input_data["multiple"] = pool.starmap(multiply, zip(input_data["log2FoldChange"], input_data["-log10(p)"]))
     input_data.sort_values("multiple", ascending=False, inplace=True)
-    taxa = list(input_data.index)
+    taxa = list(filter(step00.filtering_taxonomy, list(input_data.index)))
+    input_data = input_data.loc[taxa, :]
     print(input_data)
 
     metadata = pandas.read_csv(args.metadata, sep="\t", skiprows=[1], index_col=0)
@@ -65,11 +66,11 @@ if __name__ == "__main__":
     matplotlib.pyplot.scatter(up_results["log2FoldChange"], up_results["-log10(p)"], s=100, c="red", marker="o", edgecolors=None, label="Up")
     matplotlib.pyplot.scatter(down_results["log2FoldChange"], down_results["-log10(p)"], s=100, c="blue", marker="o", edgecolors=None, label="Down")
 
-    for index, row in down_results.iloc[:5, :].iterrows():
-        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.consistency_taxonomy(index.split(":")[0], 2), color="black", fontsize="xx-small"))
+    for index, row in down_results.iterrows():
+        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="xx-small"))
 
-    for index, row in up_results.iloc[:5, :].iterrows():
-        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.consistency_taxonomy(index.split(":")[0], 2), color="black", fontsize="xx-small"))
+    for index, row in up_results.iterrows():
+        texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="black", fontsize="xx-small"))
 
     matplotlib.pyplot.xlabel("log2(EP/LP+F)")
     matplotlib.pyplot.ylabel("-log10(p)")
