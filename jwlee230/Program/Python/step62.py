@@ -162,7 +162,7 @@ if __name__ == "__main__":
             pass
         matplotlib.pyplot.scatter(x=range(len(orders)), y=[numpy.mean(input_data.loc[(input_data[target] == d), feature]) for d in orders], marker="*", c="white", s=400, zorder=10)
 
-        matplotlib.pyplot.xlabel()
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(f"{step00.simplified_taxonomy(feature)}")
         matplotlib.pyplot.tight_layout()
 
