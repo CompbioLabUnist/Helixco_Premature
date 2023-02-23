@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.scatter(x=range(len(order)), y=[numpy.mean(input_data.loc[(input_data["condition"] == d), index]) for d in order], marker="*", c="white", s=400, zorder=10)
 
-        matplotlib.pyplot.xlabel()
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel(step00.simplified_taxonomy(index))
         matplotlib.pyplot.tight_layout()
 

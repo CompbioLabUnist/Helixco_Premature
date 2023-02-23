@@ -1,5 +1,5 @@
 """
-step69.py: Select DAT of metagenomeSeq for classification
+step69.py: Select DAT of DESeq2 for classification
 """
 import argparse
 import numpy
@@ -30,14 +30,13 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
-    DAT_set = set()
+    DAT = list(input_data.index)
     for file in tqdm.tqdm(args.DAT):
         DAT_data = pandas.read_csv(file, sep="\t", index_col=0)
-        DAT_data = DAT_data.loc[list(map(step00.filtering_taxonomy, list(DAT_data.index))), ]
-        DAT_data = DAT_data.loc[((DAT_data["logFC"] > numpy.log2(ratio_threshold)) | (DAT_data["logFC"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["pvalues"] < p_threshold)]
-        DAT_set |= set(DAT_data.index)
+        DAT_data = DAT_data.loc[list(map(step00.filtering_taxonomy, list(DAT_data.index))), :]
+        DAT_data = DAT_data.loc[((DAT_data["log2FoldChange"] > numpy.log2(ratio_threshold)) | (DAT_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["padj"] < p_threshold)]
+        DAT = list(filter(lambda x: x in DAT, list(DAT_data.index)))
 
-    DAT = sorted(DAT_set & set(input_data.index))
     print("Union:", len(DAT))
 
     input_data = input_data.loc[DAT, :]

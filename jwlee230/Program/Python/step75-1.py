@@ -39,7 +39,7 @@ if __name__ == "__main__":
     print(metadata)
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True).sort_values("Detail Gestational Week")
-    col_colors = list(map(lambda x: step00.PTB_colors[input_data.loc[x, "Detail Premature"]], list(input_data.index)))
+    col_colors = list(map(lambda x: step00.PTB_two_colors[input_data.loc[x, "Premature"]], list(input_data.index)))
     input_data = input_data[taxa].T
     print(input_data)
 

@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
 CPUS = 30
-MEMS = 300G
+MEMS = 30G
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1685,14 +1685,14 @@ step68-tsv: Output/Step68_Updown/everything.DADA2.homd.Mouth.tsv Output/Step68_U
 step68: step68-volcano step68-upset step68-tsv
 .PHONY: step68-volcano step68-upset step68-tsv step68
 
-# Step 69 (Select DAT of metagenomeSeq for classification)
+# Step 69 (Select DAT of DESeq2 for classification)
 Output/Step69 Output/Step69_Proportion:
 	mkdir -p $@
 
-Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69
+Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step44/singleton.DADA2.homd.uncorrected.Mouth.DAT.tsv | build.log Output/Step69
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step63/everything.%.tsv Output/Step63/everything.%.PTB.tsv Output/Step63/everything.%.EL.tsv Output/Step63/everything.%.EF.tsv Output/Step63/everything.%.LF.tsv | build.log Output/Step69_Proportion
+Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step44/singleton.DADA2.homd.uncorrected.Mouth.DAT.tsv | build.log Output/Step69_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step69: Output/Step69/everything.DADA2.homd.Mouth.tsv Output/Step69/everything.DADA2.homd.Vagina.tsv Output/Step69/everything.DADA2.homd.Cervix.tsv Output/Step69_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step69_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step69_Proportion/everything.DADA2.homd.Cervix.tsv
@@ -1950,3 +1950,13 @@ step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF
 step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step81_Proportion/singleton.DADA2.homd.Mouth.tsv Output/Step81_Proportion/singleton-RF.DADA2.homd.Mouth.tar
 step81: step81-abundance step81-proportion
 .PHONY: step81-abundance step81-proportion step81
+
+# Step 82 (Correlation within DAT)
+Output/Step82:
+	mkdir -p $@
+
+Output/Step82/everything.%.pdf: Python/step82.py Output/Step69_Proportion/everything.%.tsv | build.log Output/Step82
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+
+step82: Output/Step82/everything.DADA2.homd.Mouth.pdf
+.PHONY: step82

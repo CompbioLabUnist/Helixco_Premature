@@ -54,9 +54,9 @@ if __name__ == "__main__":
     print(output_data)
 
     pathways = list(input_data.index)
-    for site, (PTB1, PTB2) in tqdm.tqdm(list(itertools.product(step00.selected_long_sites, itertools.combinations(step00.detailed_PTB, r=2)))):
-        a_list = list(metadata.loc[(metadata["Site"] == site) & (metadata["Detail Premature"] == PTB1)].index)
-        b_list = list(metadata.loc[(metadata["Site"] == site) & (metadata["Detail Premature"] == PTB2)].index)
+    for site, (PTB1, PTB2) in tqdm.tqdm(list(itertools.product(step00.selected_long_sites, itertools.combinations(("PTB", "Normal"), r=2)))):
+        a_list = list(metadata.loc[(metadata["Site"] == site) & (metadata["Premature"] == PTB1)].index)
+        b_list = list(metadata.loc[(metadata["Site"] == site) & (metadata["Premature"] == PTB2)].index)
 
         with multiprocessing.Pool(args.cpus) as pool:
             output_data[f"{site}: {PTB1}-{PTB2}"] = pool.starmap(test, [(pathway, a_list, b_list) for pathway in pathways])
