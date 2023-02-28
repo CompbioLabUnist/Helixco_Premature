@@ -34,7 +34,7 @@ if __name__ == "__main__":
     print(input_data)
 
     corr_data = input_data.corr().stack().reset_index(name="correlation")
-    corr_data.loc[(abs(corr_data["correlation"]) < 0.5), "correlation"] = 0
+    # corr_data.loc[(abs(corr_data["correlation"]) < 0.5), "correlation"] = 0
     print(corr_data)
 
     g = seaborn.relplot(data=corr_data, x="level_0", y="level_1", hue="correlation", size="correlation", palette="vlag", hue_norm=(-1, 1), edgecolor=".7", height=48, sizes=(800, 4000), size_norm=(-1, 1))

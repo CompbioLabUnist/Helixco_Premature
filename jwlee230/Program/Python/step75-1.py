@@ -6,6 +6,7 @@ import matplotlib
 import matplotlib.pyplot
 import seaborn
 import pandas
+import tqdm
 import step00
 
 
@@ -41,7 +42,9 @@ if __name__ == "__main__":
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True).sort_values("Detail Gestational Week")
     col_colors = list(map(lambda x: step00.PTB_two_colors[input_data.loc[x, "Premature"]], list(input_data.index)))
     input_data = input_data[taxa].T
+    for index in tqdm.tqdm(list(input_data.index)):
+        input_data.loc[index, :] = input_data.loc[index, :] / sum(input_data.loc[index, :])
     print(input_data)
 
-    g = seaborn.clustermap(data=input_data, figsize=(18, 32), xticklabels=False, yticklabels=True, row_cluster=True, col_cluster=False, col_colors=col_colors, cmap="YlOrRd", dendrogram_ratio=(0.2, 0.01), cbar_pos=(0.90, 0.8, 0.05, 0.18), vmin=0, vmax=1)
+    g = seaborn.clustermap(data=input_data, figsize=(18, 32), xticklabels=False, yticklabels=False, row_cluster=True, col_cluster=False, col_colors=col_colors, cmap="YlOrRd", dendrogram_ratio=(0.2, 0.01), cbar_pos=(0.90, 0.8, 0.05, 0.18), vmin=0, vmax=1)
     g.fig.savefig(args.output)

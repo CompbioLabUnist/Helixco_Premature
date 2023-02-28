@@ -41,8 +41,8 @@ if __name__ == "__main__":
 
     input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True).sort_values("Detail Gestational Week")
     col_colors = list(map(lambda x: step00.PTB_two_colors[input_data.loc[x, "Premature"]], list(input_data.index)))
-    input_data = numpy.log10(input_data[taxa].T + 1)
+    input_data = numpy.log10(input_data[taxa] + 1).T
     print(input_data)
 
-    g = seaborn.clustermap(data=input_data, figsize=(18, 32), xticklabels=False, yticklabels=True, row_cluster=True, col_cluster=False, col_colors=col_colors, cmap="YlOrRd", dendrogram_ratio=(0.2, 0.01), cbar_pos=(0.90, 0.85, 0.05, 0.13))
+    g = seaborn.clustermap(data=input_data, figsize=(24, 32), xticklabels=False, yticklabels=True, row_cluster=True, col_cluster=False, col_colors=col_colors, cmap="YlOrRd", dendrogram_ratio=(0.2, 0.01), cbar_pos=(0.90, 0.85, 0.05, 0.13))
     g.fig.savefig(args.output)

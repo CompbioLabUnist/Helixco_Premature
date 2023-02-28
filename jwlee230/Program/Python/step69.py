@@ -36,7 +36,6 @@ if __name__ == "__main__":
         DAT_data = DAT_data.loc[list(map(step00.filtering_taxonomy, list(DAT_data.index))), :]
         DAT_data = DAT_data.loc[((DAT_data["log2FoldChange"] > numpy.log2(ratio_threshold)) | (DAT_data["log2FoldChange"] < numpy.log2(1 / ratio_threshold))) & (DAT_data["padj"] < p_threshold)]
         DAT = list(filter(lambda x: x in DAT, list(DAT_data.index)))
-
     print("Union:", len(DAT))
 
     input_data = input_data.loc[DAT, :]
