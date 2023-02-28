@@ -1689,10 +1689,10 @@ step68: step68-volcano step68-upset step68-tsv
 Output/Step69 Output/Step69_Proportion:
 	mkdir -p $@
 
-Output/Step69/everything.%.tsv: Python/step69.py Output/Step44/everything.%.tsv Output/Step44/singleton.DADA2.homd.uncorrected.Mouth.DAT.tsv | build.log Output/Step69
+Output/Step69/everything.%.Mouth.tsv: Python/step69.py Output/Step44/everything.%.uncorrected.Mouth.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv | build.log Output/Step69
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/Step69_Proportion/everything.%.tsv: Python/step69.py Output/Step44_Proportion/everything.%.tsv Output/Step44/singleton.DADA2.homd.uncorrected.Mouth.DAT.tsv | build.log Output/Step69_Proportion
+Output/Step69_Proportion/everything.%.Mouth.tsv: Python/step69.py Output/Step44_Proportion/everything.%.uncorrected.Mouth.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv | build.log Output/Step69_Proportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step69: Output/Step69/everything.DADA2.homd.Mouth.tsv Output/Step69/everything.DADA2.homd.Vagina.tsv Output/Step69/everything.DADA2.homd.Cervix.tsv Output/Step69_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step69_Proportion/everything.DADA2.homd.Vagina.tsv Output/Step69_Proportion/everything.DADA2.homd.Cervix.tsv
@@ -1824,11 +1824,11 @@ step74: step74-abundance step74-proportion
 Output/Step75:
 	mkdir -p $@
 
-Output/Step75/Abundance.%.pdf: Python/step75.py Output/Step69/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step75
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step75/Abundance.%.pdf: Python/step75.py Output/Step69/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step75
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
 
-Output/Step75/Proportion.%.pdf: Python/step75-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step75
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/Step75/Proportion.%.pdf: Python/step75-1.py Output/Step69_Proportion/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step75
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
 
 step75: Output/Step75/Abundance.DADA2.homd.Mouth.pdf Output/Step75/Proportion.DADA2.homd.Mouth.pdf
 .PHONY: step75
@@ -1960,3 +1960,16 @@ Output/Step82/everything.%.pdf: Python/step82.py Output/Step69_Proportion/everyt
 
 step82: Output/Step82/everything.DADA2.homd.Mouth.pdf
 .PHONY: step82
+
+# Step 83 (Abundace/Proportion Distribtuion with DAT)
+Output/Step83 Output/Step83_Proportion:
+	mkdir -p $@
+
+Output/Step83/singleton.%.Mouth.pdf: Python/step83.py Output/TSV/everything.%.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Metadata/singleton.tsv | Output/Step83 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "Mouth" 1> $@.stdout 2> $@.stderr
+
+Output/Step83_Proportion/singleton.%.Mouth.pdf: Python/step83.py Output/TSV_Proportion/everything.%.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Metadata/singleton.tsv | Output/Step83_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "Mouth" 1> $@.stdout 2> $@.stderr
+
+step83: Output/Step83/singleton.DADA2.homd.Mouth.pdf Output/Step83_Proportion/singleton.DADA2.homd.Mouth.pdf
+.PHONY: step83
