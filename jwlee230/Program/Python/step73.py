@@ -11,14 +11,16 @@ import tqdm
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Input XSLX file", type=str)
+    parser.add_argument("input", help="Input XLSX file", type=str)
     parser.add_argument("metadata", help="Metadata TSV file", type=str)
     parser.add_argument("output", help="Output TEX file", type=str)
 
     args = parser.parse_args()
 
-    if not args.metadata.endswith(".tsv"):
-        raise ValueError("METADATA must end with .TSV!!")
+    if not args.input.endswith(".xlsx"):
+        raise ValueError("Input must end with .XLSX!!")
+    elif not args.metadata.endswith(".tsv"):
+        raise ValueError("Metadata must end with .TSV!!")
     elif not args.output.endswith(".tex"):
         raise ValueError("Output file must end with .TEX!!")
 

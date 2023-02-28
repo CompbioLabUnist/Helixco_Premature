@@ -17,8 +17,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.metadata.endswith(".tsv"):
-        raise ValueError("METADATA must end with .TSV!!")
+    if not args.input.endswith(".xlsx"):
+        raise ValueError("Input must end with .XLSX!!")
+    elif not args.metadata.endswith(".tsv"):
+        raise ValueError("Metadata must end with .TSV!!")
     elif not args.output.endswith(".tex"):
         raise ValueError("Output file must end with .TEX!!")
 
