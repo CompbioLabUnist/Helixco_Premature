@@ -2,14 +2,11 @@
 step83.py: Abundance/Proportion Distribution with DAT
 """
 import argparse
-import itertools
 import matplotlib
-import matplotlib.colors
 import matplotlib.pyplot
 import numpy
 import pandas
 import seaborn
-import tqdm
 import step00
 
 
@@ -57,7 +54,7 @@ if __name__ == "__main__":
     print(DAT_data)
 
     taxa = Normal_DAT + PTB_DAT + sorted(list(filter(lambda x: (x not in Normal_DAT) and (x not in PTB_DAT), list(input_data.columns))), key=lambda x: sum(input_data[x]), reverse=True)
-    input_data = input_data.loc[sorted(list(input_data.index), key=lambda x: sum(input_data.loc[x, Normal_DAT]) - sum(input_data.loc[x, PTB_DAT]), reverse=True), taxa]
+    input_data = input_data.loc[sorted(list(input_data.index), key=lambda x: (sum(input_data.loc[x, Normal_DAT]) - sum(input_data.loc[x, PTB_DAT]), metadata.loc[x, "Gestational Week"]), reverse=True), taxa]
     print(input_data)
 
     matplotlib.use("Agg")
@@ -66,16 +63,13 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(figsize=(32, 24), nrows=2, gridspec_kw={"height_ratios": [3, 1]})
 
-    for i, (color, taxon) in tqdm.tqdm(list(enumerate(zip(itertools.cycle(matplotlib.colors.XKCD_COLORS), taxa)))):
-        if (taxon in Normal_DAT) or (taxon in PTB_DAT):
-            axs[0].bar(range(input_data.shape[0]), input_data.iloc[:, i], bottom=numpy.sum(input_data.iloc[:, :i], axis=1), color=color, linewidth=0, label=taxon)
-        else:
-            axs[0].bar(range(input_data.shape[0]), input_data.iloc[:, i], bottom=numpy.sum(input_data.iloc[:, :i], axis=1), color=color, linewidth=0)
+    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color=step00.PTB_two_colors["Normal"], width=-0.4, align="edge", linewidth=0, label="Normal-enriched DAT")
+    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, PTB_DAT], axis=1), color=step00.PTB_two_colors["PTB"], width=0.4, align="edge", linewidth=0, label="PTB-enriched DAT")
 
     axs[0].set_xticks(range(input_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(input_data.index))), fontsize="xx-small", rotation="vertical")
     axs[0].set_xlabel(f"{input_data.shape[0]} samples")
-    axs[0].set_ylabel(f"{len(taxa)} bacteria")
-    axs[0].legend(loc="upper center", ncols=3, fontsize="xx-small")
+    axs[0].set_ylabel(f"Proportion of {len(PTB_DAT + Normal_DAT)} DAT")
+    axs[0].legend(loc="upper center", fontsize="xx-small")
     axs[0].grid(True)
 
     axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(input_data.index))), color="tab:red", linewidth=0, label="PTB")
@@ -84,6 +78,7 @@ if __name__ == "__main__":
     axs[1].set_xticks(range(input_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(input_data.index))), fontsize="xx-small", rotation="vertical")
     axs[1].set_xlabel(f"{input_data.shape[0]} samples")
     axs[1].set_ylabel("GW")
+    axs[1].set_ylim(20, 45)
     axs[1].legend(loc="lower left")
     axs[1].grid(True)
     axs[1].axhline(37, linestyle="--", color="black", linewidth=4)
