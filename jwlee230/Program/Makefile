@@ -1973,3 +1973,16 @@ Output/Step83_Proportion/singleton.%.Mouth.pdf: Python/step83.py Output/TSV_Prop
 
 step83: Output/Step83/singleton.DADA2.homd.Mouth.pdf Output/Step83_Proportion/singleton.DADA2.homd.Mouth.pdf
 .PHONY: step83
+
+# Step 84 (Abundance/Proportion Distribution with DAT - 2)
+Output/Step84 Output/Step84_Proportion:
+	mkdir -p $@
+
+Output/Step84/singleton.%.Mouth.pdf: Python/step84.py Output/TSV/everything.%.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Metadata/singleton.tsv | Output/Step84 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "Mouth" 1> $@.stdout 2> $@.stderr
+
+Output/Step84_Proportion/singleton.%.Mouth.pdf: Python/step84.py Output/TSV_Proportion/everything.%.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Metadata/singleton.tsv | Output/Step84_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "Mouth" 1> $@.stdout 2> $@.stderr
+
+step84: Output/Step84/singleton.DADA2.homd.Mouth.pdf Output/Step84_Proportion/singleton.DADA2.homd.Mouth.pdf
+.PHONY: step84
