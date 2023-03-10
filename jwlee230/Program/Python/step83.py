@@ -54,21 +54,21 @@ if __name__ == "__main__":
     print(DAT_data)
 
     taxa = Normal_DAT + PTB_DAT + sorted(list(filter(lambda x: (x not in Normal_DAT) and (x not in PTB_DAT), list(input_data.columns))), key=lambda x: sum(input_data[x]), reverse=True)
-    input_data = input_data.loc[sorted(list(input_data.index), key=lambda x: (sum(input_data.loc[x, Normal_DAT]) - sum(input_data.loc[x, PTB_DAT]), metadata.loc[x, "Gestational Week"]), reverse=True), taxa]
+    input_data = input_data.loc[sorted(list(input_data.index), key=lambda x: (sum(input_data.loc[x, PTB_DAT]) - sum(input_data.loc[x, Normal_DAT]), metadata.loc[x, "Gestational Week"]), reverse=True), taxa]
     print(input_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(figsize=(32, 24), nrows=2, gridspec_kw={"height_ratios": [3, 1]})
+    fig, axs = matplotlib.pyplot.subplots(figsize=(32, 18), nrows=2, gridspec_kw={"height_ratios": [2, 1]})
 
     axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color=step00.PTB_two_colors["Normal"], width=-0.4, align="edge", linewidth=0, label="Normal-enriched DAT")
     axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, PTB_DAT], axis=1), color=step00.PTB_two_colors["PTB"], width=0.4, align="edge", linewidth=0, label="PTB-enriched DAT")
 
-    axs[0].set_xticks(range(input_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(input_data.index))), fontsize="xx-small", rotation="vertical")
-    axs[0].set_xlabel(f"{input_data.shape[0]} samples")
-    axs[0].set_ylabel(f"Proportion of {len(PTB_DAT + Normal_DAT)} DAT")
+    axs[0].set_xticks([])
+    axs[0].set_xlabel("")
+    axs[0].set_ylabel("PTB-Normal DAT")
     axs[0].legend(loc="upper center", fontsize="xx-small")
     axs[0].grid(True)
 
