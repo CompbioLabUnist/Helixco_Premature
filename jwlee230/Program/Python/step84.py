@@ -70,11 +70,12 @@ if __name__ == "__main__":
     print(output_data)
 
     r, p = scipy.stats.pearsonr(output_data["GW"], output_data["PTB-Normal"])
+    print(r, p)
 
-    g = seaborn.jointplot(data=output_data, x="GW", y="PTB-Normal", kind="reg", height=24, ratio=5)
-    g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-    g.refline(x=37)
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    seaborn.regplot(data=output_data, x="GW", y="PTB-Normal", scatter_kws={"linewidth": 0, "s": 400}, ax=ax)
+    matplotlib.pyplot.axvline(x=37, color="k", linestyle="--")
 
-    g.fig.tight_layout()
-    g.fig.savefig(args.output)
-    matplotlib.pyplot.close(g.fig)
+    matplotlib.pyplot.tight_layout()
+    matplotlib.pyplot.savefig(args.output)
+    matplotlib.pyplot.close(fig)
