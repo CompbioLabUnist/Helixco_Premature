@@ -1986,3 +1986,16 @@ Output/Step84_Proportion/singleton.%.Mouth.pdf: Python/step84.py Output/TSV_Prop
 
 step84: Output/Step84/singleton.DADA2.homd.Mouth.pdf Output/Step84_Proportion/singleton.DADA2.homd.Mouth.pdf
 .PHONY: step84
+
+# Step 85 (Antibiotics effects)
+Output/Step85 Output/Step85_Proportion:
+	mkdir -p $@
+
+Output/Step85/everything.%.tar: Python/step85.py Output/TSV/everything.%.uncorrected.tsv Output/Metadata/everything.tsv | Output/Step85 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step85/singleton.%.tar: Python/step85.py Output/TSV/everything.%.uncorrected.tsv Output/Metadata/singleton.tsv | Output/Step85 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step85: Output/Step85/everything.DADA2.homd.tar Output/Step85/singleton.DADA2.homd.tar
+.PHONY: step85
