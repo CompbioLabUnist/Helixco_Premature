@@ -63,19 +63,20 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(figsize=(32, 18), nrows=2, gridspec_kw={"height_ratios": [2, 1]})
 
-    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color=step00.PTB_two_colors["Normal"], width=-0.4, align="edge", linewidth=0, label="Normal-enriched DAT")
-    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, PTB_DAT], axis=1), color=step00.PTB_two_colors["PTB"], width=0.4, align="edge", linewidth=0, label="PTB-enriched DAT")
+    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1) * -1, color=step00.PTB_two_colors["Normal"], align="edge", linewidth=0, label="Normal-enriched DAT")
+    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, PTB_DAT], axis=1), color=step00.PTB_two_colors["PTB"], align="edge", linewidth=0, label="PTB-enriched DAT")
+    axs[0].plot(numpy.array(range(input_data.shape[0])) + 0.5, numpy.sum(input_data.loc[:, PTB_DAT], axis=1) - numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color="black", linestyle="--", linewidth=4, label="PTB DAT - Normal DAT")
 
     axs[0].set_xticks([])
     axs[0].set_xlabel("")
-    axs[0].set_ylabel("PTB-Normal DAT")
+    axs[0].set_ylabel("DAT proportion")
     axs[0].legend(loc="upper center", fontsize="xx-small")
     axs[0].grid(True)
 
-    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(input_data.index))), color="tab:red", linewidth=0, label="PTB")
-    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(input_data.index))), color="tab:green", linewidth=0, label="Normal")
+    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(input_data.index))), color="tab:red", linewidth=0, label="PTB subject")
+    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(input_data.index))), color="tab:green", linewidth=0, label="Normal subject")
 
-    axs[1].set_xticks(range(input_data.shape[0]), list(map(lambda x: metadata.loc[x, "Gestational Week"], list(input_data.index))), fontsize="xx-small", rotation="vertical")
+    axs[1].set_xticks([])
     axs[1].set_xlabel(f"{input_data.shape[0]} samples")
     axs[1].set_ylabel("GW")
     axs[1].set_ylim(20, 45)
