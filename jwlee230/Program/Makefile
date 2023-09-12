@@ -916,6 +916,12 @@ Output/Step44/everything.%.Antibiotics.Cervix.tsv Output/Step44/everything.%.Ant
 Output/Step44/singleton.%.Antibiotics.Cervix.tsv Output/Step44/singleton.%.Antibiotics.Mouth.tsv Output/Step44/singleton.%.Antibiotics.Vagina.tsv Output/Step44/singleton.%.Antibiotics.Cervix.coldata Output/Step44/singleton.%.Antibiotics.Mouth.coldata Output/Step44/singleton.%.Antibiotics.Vagina.coldata: Python/step44-5.py Output/TSV/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step44
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --compare "Mother Antibiotics" 1> $@.stdout 2> $@.stderr
 
+Output/Step44/everything.%.PROM.Cervix.tsv Output/Step44/everything.%.PROM.Mouth.tsv Output/Step44/everything.%.PROM.Vagina.tsv Output/Step44/everything.%.PROM.Cervix.coldata Output/Step44/everything.%.PROM.Mouth.coldata Output/Step44/everything.%.PROM.Vagina.coldata: Python/step44-5.py Output/TSV/everything.%.tsv Output/Metadata/everything.tsv | build.log Output/Step44
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --compare "PROM" 1> $@.stdout 2> $@.stderr
+
+Output/Step44/singleton.%.PROM.Cervix.tsv Output/Step44/singleton.%.PROM.Mouth.tsv Output/Step44/singleton.%.PROM.Vagina.tsv Output/Step44/singleton.%.PROM.Cervix.coldata Output/Step44/singleton.%.PROM.Mouth.coldata Output/Step44/singleton.%.PROM.Vagina.coldata: Python/step44-5.py Output/TSV/everything.%.tsv Output/Metadata/singleton.tsv | build.log Output/Step44
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --compare "PROM"  1> $@.stdout 2> $@.stderr
+
 Output/Step44/everything.%.Cervix.DAT.tsv: R/run_DESeq.R Output/Step44/everything.%.Cervix.tsv Output/Step44/everything.%.Cervix.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -937,6 +943,9 @@ Output/Step44/singleton.%.Vagina.DAT.tsv: R/run_DESeq.R Output/Step44/singleton.
 Output/Step44/singleton.%.Antibiotics.Mouth.DAT.tsv: R/run_DESeq.R Output/Step44/singleton.%.Antibiotics.Mouth.tsv Output/Step44/singleton.%.Antibiotics.Mouth.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/Step44/singleton.%.PROM.Mouth.DAT.tsv: R/run_DESeq.R Output/Step44/singleton.%.PROM.Mouth.tsv Output/Step44/singleton.%.PROM.Mouth.coldata | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/Step44/everything.%.pdf: Python/step44.py Output/Step44/everything.%.DAT.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
@@ -945,6 +954,12 @@ Output/Step44/singleton.%.pdf: Python/step44.py Output/Step44/singleton.%.DAT.ts
 
 Output/Step44/singleton.%.Antibiotics.Mouth.pdf: Python/step44-6.py Output/Step44/singleton.%.Antibiotics.Mouth.DAT.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step44/singleton.%.PROM.Mouth.pdf: Python/step44-6.py Output/Step44/singleton.%.PROM.Mouth.DAT.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step44/singleton.%.PTB-PROM.Mouth.pdf: Python/step44-7.py Output/Step44/singleton.%.Mouth.DAT.tsv Output/Step44/singleton.%.PROM.Mouth.DAT.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "PTB" "PROM" 1> $@.stdout 2> $@.stderr
 
 Output/Step44/singleton.%.box.pdf: Python/step44-4.py Output/Step44/singleton.%.tsv Output/Step44/singleton.%.DAT.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr

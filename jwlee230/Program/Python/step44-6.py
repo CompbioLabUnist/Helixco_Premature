@@ -59,7 +59,7 @@ if __name__ == "__main__":
     for index, row in up_results.iterrows():
         texts.append(matplotlib.pyplot.text(row["log2FoldChange"], row["-log10(p)"], step00.simplified_taxonomy(index), color="tab:red", fontsize="xx-small"))
 
-    matplotlib.pyplot.xlabel("log2(PTB/Normal)")
+    matplotlib.pyplot.xlabel("log2(Disease/Normal)")
     matplotlib.pyplot.ylabel("-log10(adj. p)")
     matplotlib.pyplot.axvline(numpy.log2(1 / ratio_threshold), color="k", linestyle="--", linewidth=5)
     matplotlib.pyplot.axvline(numpy.log2(ratio_threshold), color="k", linestyle="--", linewidth=5)
