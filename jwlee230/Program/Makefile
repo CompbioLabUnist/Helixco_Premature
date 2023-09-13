@@ -1,5 +1,5 @@
 # Variables
-DATE := $(shell date "+%y%m%d")
+DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = premature:latest
 SHELL := /bin/bash
@@ -1967,8 +1967,11 @@ Output/Step81/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step81/singlet
 Output/Step81_Proportion/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step81_Proportion/singleton.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Step81_Proportion/RF-PTB-Validation.%.Mouth.tar: Python/step67-4.py Output/Step81_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 step81-abundance: Output/Step81/everything.DADA2.homd.Mouth.tsv Output/Step81/RF-PTB.DADA2.homd.Mouth.tar Output/Step81/singleton.DADA2.homd.Mouth.tsv Output/Step81/singleton-RF.DADA2.homd.Mouth.tar
-step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step81_Proportion/singleton.DADA2.homd.Mouth.tsv Output/Step81_Proportion/singleton-RF.DADA2.homd.Mouth.tar
+step81-proportion: Output/Step81_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step81_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step81_Proportion/singleton.DADA2.homd.Mouth.tsv Output/Step81_Proportion/singleton-RF.DADA2.homd.Mouth.tar Output/Step81_Proportion/RF-PTB-Validation.DADA2.homd.Mouth.tar
 step81: step81-abundance step81-proportion
 .PHONY: step81-abundance step81-proportion step81
 

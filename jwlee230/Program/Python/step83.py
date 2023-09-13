@@ -75,6 +75,7 @@ if __name__ == "__main__":
 
     axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(input_data.index))), color="tab:red", linewidth=0, label="PTB subject")
     axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(input_data.index))), color="tab:green", linewidth=0, label="Normal subject")
+    axs[1].scatter([i for i in range(input_data.shape[0]) if (metadata.loc[list(input_data.index)[i], "PROM"] == "True")], [40 for _ in list(filter(lambda x: x == "True", metadata["PROM"]))], marker="^", c="black", edgecolors=None, label="PROM")
 
     axs[1].set_xticks([])
     axs[1].set_xlabel(f"{input_data.shape[0]} samples")

@@ -1,5 +1,5 @@
 """
-step67-2.py: RandomForest Classifier with DAT-union
+step67-4.py: RandomForest Classifier with DAT
 """
 import argparse
 import itertools
@@ -13,16 +13,20 @@ import sklearn.ensemble
 import sklearn.manifold
 import sklearn.model_selection
 import sklearn.tree
+import statannotations.Annotator
 import pandas
 import tqdm
 import step00
 
+ratio_threshold = 2
+p_threshold = 0.05
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", type=str, help="Train TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
+    parser.add_argument("singleton", type=str, help="Metadata w/ singleton TSV file")
     parser.add_argument("output", type=str, help="Output basename")
     parser.add_argument("--cpus", type=int, default=1, help="CPUs to use")
     parser.add_argument("--split", type=int, default=5, help="K-fold split")
@@ -35,6 +39,8 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
+    elif not args.singleton.endswith(".tsv"):
+        raise ValueError("Singleton file must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output file must end with .tar!!")
     elif args.split < 2:
@@ -48,18 +54,23 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
     input_data = input_data.loc[:, list(filter(step00.filtering_taxonomy, list(input_data.columns)))]
+    taxa = list(input_data.columns)
     print(input_data)
 
     if input_data.empty:
         exit()
 
-    taxa = list(input_data.columns)
-
-    metadata = pandas.read_csv(args.metadata, sep="\t").dropna(axis="columns", how="all").set_index(keys="#SampleID", verify_integrity=True)
+    metadata = pandas.read_csv(args.metadata, sep="\t", index_col="#SampleID").dropna(axis="columns", how="all")
     print(metadata)
 
-    input_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
+    singleton_metadata = pandas.read_csv(args.singleton, sep="\t", index_col="#SampleID").dropna(axis="columns", how="all")
+    print(singleton_metadata)
+
+    validation_data = pandas.concat([input_data, metadata], axis="columns", join="inner", verify_integrity=True)
+    input_data = pandas.concat([input_data, singleton_metadata], axis="columns", join="inner", verify_integrity=True)
+    validation_data = validation_data.loc[list(filter(lambda x: x not in set(input_data.index), list(validation_data.index)))]
     print(input_data)
+    print(validation_data)
 
     target = "Premature"
     orders = ["PTB", "Normal"]
@@ -72,6 +83,7 @@ if __name__ == "__main__":
     best_features = list(map(lambda x: x[1], sorted(zip(feature_importances, taxa), reverse=True)))
 
     test_scores = list()
+    validation_scores = list()
     for i in tqdm.trange(1, len(best_features) + 1):
         for j, (train_index, test_index) in enumerate(k_fold.split(input_data[best_features[:i]], input_data[target])):
             x_train, x_test = input_data.iloc[train_index][best_features[:i]], input_data.iloc[test_index][best_features[:i]]
@@ -85,6 +97,13 @@ if __name__ == "__main__":
                 except ZeroDivisionError:
                     continue
 
+        classifier.fit(input_data[best_features[:i]], input_data[target])
+        for metric in step00.derivations:
+            try:
+                validation_scores.append((i, metric, step00.aggregate_confusion_matrix(sklearn.metrics.confusion_matrix(validation_data[target], classifier.predict(validation_data[best_features[:i]])), metric)))
+            except ZeroDivisionError:
+                continue
+
     score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])
     best_BA, tmp_features = -1.0, best_features[:]
 
@@ -93,6 +112,8 @@ if __name__ == "__main__":
         if best_BA < BA:
             best_BA = BA
             tmp_features = best_features[:i]
+
+    score_data = pandas.DataFrame.from_records(validation_scores, columns=["Features", "Metrics", "Values"])
 
     # Importances
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
@@ -111,16 +132,13 @@ if __name__ == "__main__":
     print(importance_data)
     importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
 
-    # Heatmap
+    # Heatmap - validation
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(orders), len(orders))), index=orders, columns=orders, dtype=int)
-    for j, (train_index, test_index) in enumerate(k_fold.split(input_data[tmp_features], input_data[target])):
-        x_train, x_test = input_data.iloc[train_index][tmp_features], input_data.iloc[test_index][tmp_features]
-        y_train, y_test = input_data.iloc[train_index][target], input_data.iloc[test_index][target]
 
-        classifier.fit(x_train, y_train)
+    classifier.fit(input_data[tmp_features], input_data[target])
 
-        for real, prediction in zip(y_test, classifier.predict(x_test)):
-            heatmap_data.loc[real, prediction] += 1
+    for real, prediction in zip(validation_data[target], classifier.predict(validation_data[tmp_features])):
+        heatmap_data.loc[real, prediction] += 1
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -129,7 +147,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xlabel("Prediction")
     matplotlib.pyplot.ylabel("Real")
     matplotlib.pyplot.tight_layout()
-    tar_files.append("heatmap.pdf")
+    tar_files.append("heatmap-validation.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
@@ -137,8 +155,6 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
     seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
-    matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
-    matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
     matplotlib.pyplot.xticks(range(1, len(taxa) + 1), range(1, len(taxa) + 1), rotation=90)
     matplotlib.pyplot.grid(True)
@@ -148,7 +164,7 @@ if __name__ == "__main__":
     ax.invert_xaxis()
     matplotlib.pyplot.tight_layout()
 
-    tar_files.append("metrics.pdf")
+    tar_files.append("metrics-validation.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
@@ -164,7 +180,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.tight_layout()
 
-    tar_files.append("bar.pdf")
+    tar_files.append("bar-validation.pdf")
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
