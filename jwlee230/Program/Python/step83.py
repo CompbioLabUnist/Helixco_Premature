@@ -21,7 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("DAT", type=str, help="DAT TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
-    parser.add_argument("output", type=str, help="Output TAR file")
+    parser.add_argument("output", type=str, help="Output PDF file")
     parser.add_argument("--site", type=str, help="Site to plot", required=True)
 
     args = parser.parse_args()

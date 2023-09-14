@@ -2023,3 +2023,13 @@ Output/Step85/singleton.%.tar: Python/step85.py Output/TSV/everything.%.uncorrec
 
 step85: Output/Step85/everything.DADA2.homd.tar Output/Step85/singleton.DADA2.homd.tar
 .PHONY: step85
+
+# Step 86 (DAT violin plot)
+Output/Step86 Output/Step86_Proportion:
+	mkdir -p $@
+
+Output/Step86/singleton.%.Mouth.tar: Python/step86.py Output/TSV/everything.%.uncorrected.tsv Output/Metadata/singleton.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Step44/singleton.%.uncorrected.PROM.Mouth.DAT.tsv | Output/Step86 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --site "Mouth" 1> $@.stdout 2> $@.stderr
+
+step86: Output/Step86/singleton.DADA2.homd.Mouth.tar
+.PHONY: step86
