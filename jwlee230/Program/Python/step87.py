@@ -40,7 +40,7 @@ if __name__ == "__main__":
     print(PROM_data)
 
     selected_DAT = sorted(set(FTB_data.index) - set(PROM_data.index))
-    print("DAT:", len(selected_DAT))
+    print("DAT:", sorted(set(FTB_data.index) & set(PROM_data.index)))
 
     input_data = input_data.loc[selected_DAT, :]
     print(input_data)

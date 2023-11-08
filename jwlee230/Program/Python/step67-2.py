@@ -86,12 +86,14 @@ if __name__ == "__main__":
                     continue
 
     score_data = pandas.DataFrame.from_records(test_scores, columns=["Features", "Metrics", "Values"])
-    best_BA, tmp_features = -1.0, best_features[:]
+    best_BA, best_BA_std, tmp_features = -1.0, 0.0, best_features[:]
 
     for i in sorted(set(score_data["Features"])):
         BA = numpy.mean(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "BA"), "Values"])
+        std = numpy.std(score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == "BA"), "Values"])
         if best_BA < BA:
             best_BA = BA
+            best_BA_std = std
             tmp_features = best_features[:i]
 
     # Importances
@@ -138,9 +140,9 @@ if __name__ == "__main__":
 
     seaborn.lineplot(data=score_data, x="Features", y="Values", hue="Metrics", style="Metrics", ax=ax, markers=True, markersize=20)
     matplotlib.pyplot.axvline(x=len(tmp_features), linestyle="--", color="k")
-    matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
+    matplotlib.pyplot.text(x=len(tmp_features), y=0.1, s=f"Best BA {best_BA:.3f}±{best_BA_std:.3f} with {len(tmp_features)} features", fontsize="xx-small", color="k", horizontalalignment="right", verticalalignment="baseline", rotation="vertical")
 
-    matplotlib.pyplot.xticks(range(1, len(taxa) + 1), range(1, len(taxa) + 1), rotation=90)
+    matplotlib.pyplot.xticks(range(1, len(taxa) + 1), list(map(str, range(1, len(taxa) + 1))), rotation=90)
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.ylim(0, 1)
     matplotlib.pyplot.xlabel("Number of features")
@@ -169,7 +171,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.close(fig)
 
     raw_evaluation_data: typing.List[typing.List[str]] = list()
-    for i in range(1, len(best_features) + 1):
+    for i in tqdm.trange(1, len(best_features) + 1):
         tmp = list()
         for derivation in step00.derivations:
             d = score_data.loc[(score_data["Features"] == i) & (score_data["Metrics"] == derivation), "Values"]
