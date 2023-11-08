@@ -2033,3 +2033,39 @@ Output/Step86/singleton.%.Mouth.tar: Python/step86.py Output/TSV/everything.%.un
 
 step86: Output/Step86/singleton.DADA2.homd.Mouth.tar
 .PHONY: step86
+
+# Step 87 (Random Forest for FTB-DAT & PROM-DAT)
+Output/Step87 Output/Step87_Proportion:
+	mkdir -p $@
+
+Output/Step87/everything.%.Mouth.tsv: Python/step87.py Output/Step44/everything.%.uncorrected.Mouth.tsv Output/Step44/everything.%.uncorrected.Mouth.DAT.tsv Output/Step44/everything.%.uncorrected.PROM.Mouth.DAT.tsv | Output/Step87 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step87/singleton.%.Mouth.tsv: Python/step87.py Output/Step44/singleton.%.uncorrected.Mouth.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Step44/singleton.%.uncorrected.PROM.Mouth.DAT.tsv | Output/Step87 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step87_Proportion/everything.%.Mouth.tsv: Python/step87.py Output/Step44_Proportion/everything.%.uncorrected.Mouth.tsv Output/Step44/everything.%.uncorrected.Mouth.DAT.tsv Output/Step44/everything.%.uncorrected.PROM.Mouth.DAT.tsv | Output/Step87_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step87_Proportion/singleton.%.Mouth.tsv: Python/step87.py Output/Step44_Proportion/singleton.%.uncorrected.Mouth.tsv Output/Step44/singleton.%.uncorrected.Mouth.DAT.tsv Output/Step44/singleton.%.uncorrected.PROM.Mouth.DAT.tsv | Output/Step87_Proportion build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Step87/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step87/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step87_Proportion/RF-PTB.%.Mouth.tar: Python/step67-2.py Output/Step87_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step87/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step87/singleton.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step87_Proportion/singleton-RF.%.Mouth.tar: Python/step67-2.py Output/Step87_Proportion/singleton.%.Mouth.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Step87_Proportion/RF-PTB-Validation.%.Mouth.tar: Python/step67-4.py Output/Step87_Proportion/everything.%.Mouth.tsv Output/Step63/metadata.Mouth.PTB.tsv Output/Step63/metadata-singleton.Mouth.PTB.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step87-abundance: Output/Step87/everything.DADA2.homd.Mouth.tsv Output/Step87/RF-PTB.DADA2.homd.Mouth.tar Output/Step87/singleton.DADA2.homd.Mouth.tsv Output/Step87/singleton-RF.DADA2.homd.Mouth.tar
+step87-proportion: Output/Step87_Proportion/everything.DADA2.homd.Mouth.tsv Output/Step87_Proportion/RF-PTB.DADA2.homd.Mouth.tar Output/Step87_Proportion/singleton.DADA2.homd.Mouth.tsv Output/Step87_Proportion/singleton-RF.DADA2.homd.Mouth.tar Output/Step87_Proportion/RF-PTB-Validation.DADA2.homd.Mouth.tar
+step87: step87-abundance step87-proportion
+.PHONY: step87-abundance step87-proportion step87
