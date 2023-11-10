@@ -2,8 +2,10 @@
 step87.py: Select DAT for FTB-DAT & PROM-DAT
 """
 import argparse
+import pprint
 import numpy
 import pandas
+import step00
 
 ratio_threshold = 2
 p_threshold = 0.05
@@ -40,7 +42,7 @@ if __name__ == "__main__":
     print(PROM_data)
 
     selected_DAT = sorted(set(FTB_data.index) - set(PROM_data.index))
-    print("DAT:", sorted(set(FTB_data.index) & set(PROM_data.index)))
+    pprint.pprint(list(map(step00.simplified_taxonomy, sorted(set(FTB_data.index) & set(PROM_data.index)))))
 
     input_data = input_data.loc[selected_DAT, :]
     print(input_data)
