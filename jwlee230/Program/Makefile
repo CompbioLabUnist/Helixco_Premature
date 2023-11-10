@@ -45,7 +45,7 @@ delete: build.log
 stop:
 	docker rm $(CONTAINER_NAME)
 
-# SGE
+# Slurm
 run: | log Output
 	echo -e "#!$(BASH)\nmake -C $(PWD) latest" > tmp.sh
 	sbatch --chdir=$(abspath .) --cpus-per-task=$(CPUS) --error="$(abspath log)/%x.e%A" --job-name="Premature_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(MEMS) --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
@@ -960,6 +960,9 @@ Output/Step44/singleton.%.PROM.Mouth.pdf: Python/step44-6.py Output/Step44/singl
 
 Output/Step44/singleton.%.PTB-PROM.Mouth.pdf: Python/step44-7.py Output/Step44/singleton.%.Mouth.DAT.tsv Output/Step44/singleton.%.PROM.Mouth.DAT.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "PTB" "PROM" 1> $@.stdout 2> $@.stderr
+
+Output/Step44/singleton.%.PTB-only.Mouth.pdf: Python/step44-8.py Output/Step44/singleton.%.Mouth.DAT.tsv Output/Step44/singleton.%.PROM.Mouth.DAT.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Step44/singleton.%.box.pdf: Python/step44-4.py Output/Step44/singleton.%.tsv Output/Step44/singleton.%.DAT.tsv Output/Metadata/everything.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
