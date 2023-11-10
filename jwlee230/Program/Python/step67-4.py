@@ -127,7 +127,7 @@ if __name__ == "__main__":
     fig.savefig(tar_files[-1])
     matplotlib.pyplot.close(fig)
 
-    importance_data = pandas.DataFrame(index=best_features, data=sorted(feature_importances, reverse=True), columns=["Importance"]).sort_index()
+    importance_data = pandas.DataFrame(index=list(map(step00.consistency_taxonomy, best_features)), data=sorted(feature_importances, reverse=True), columns=["Importance"]).sort_values("Importance", ascending=False)
     importance_data.index.name = "Taxonomy"
     print(importance_data)
     importance_data.to_csv(args.output.replace(".tar", ".importance.tsv"), sep="\t")
