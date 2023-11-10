@@ -20,6 +20,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("DAT", type=str, help="DAT TSV file")
+    parser.add_argument("exclude", type=str, help="Exclude TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output PDF file")
     parser.add_argument("--site", type=str, help="Site to plot", required=True)
@@ -30,6 +31,8 @@ if __name__ == "__main__":
         raise ValueError("Input must end with .TSV!!")
     elif not args.DAT.endswith(".tsv"):
         raise ValueError("DAT file must end with .TSV!!")
+    elif not args.exclude.endswith(".tsv"):
+        raise ValueError("Exclude file must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
@@ -49,6 +52,15 @@ if __name__ == "__main__":
     print(input_data)
 
     DAT_data = pandas.read_csv(args.DAT, sep="\t", index_col=0)
+    print(DAT_data)
+
+    exclude_data = pandas.read_csv(args.exclude, sep="\t", index_col=0)
+    exclude_data = exclude_data.loc[((exclude_data["log2FoldChange"] < -1) | (exclude_data["log2FoldChange"] > 1)) & (exclude_data["padj"] < 0.05)]
+    print(exclude_data)
+
+    DAT_data = DAT_data.loc[sorted(set(DAT_data.index) - set(exclude_data.index))]
+    print(DAT_data)
+
     PTB_DAT = list(map(step00.simplified_taxonomy, list(DAT_data.loc[(DAT_data["log2FoldChange"] > 1) & (DAT_data["padj"] < 0.05)].sort_values("log2FoldChange").index)))
     Normal_DAT = list(map(step00.simplified_taxonomy, list(DAT_data.loc[(DAT_data["log2FoldChange"] < -1) & (DAT_data["padj"] < 0.05)].sort_values("log2FoldChange").index)))
     print(DAT_data)
@@ -63,9 +75,9 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(figsize=(32, 18), nrows=2, gridspec_kw={"height_ratios": [2, 1]})
 
-    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1) * -1, color=step00.PTB_two_colors["Normal"], align="edge", linewidth=0, label="Normal-enriched DAT")
+    axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, Normal_DAT], axis=1) * -1, color=step00.PTB_two_colors["Normal"], align="edge", linewidth=0, label="FTB-enriched DAT")
     axs[0].bar(range(input_data.shape[0]), numpy.sum(input_data.loc[:, PTB_DAT], axis=1), color=step00.PTB_two_colors["PTB"], align="edge", linewidth=0, label="PTB-enriched DAT")
-    axs[0].plot(numpy.array(range(input_data.shape[0])) + 0.5, numpy.sum(input_data.loc[:, PTB_DAT], axis=1) - numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color="black", linestyle="--", linewidth=4, label="PTB DAT - Normal DAT")
+    axs[0].plot(numpy.array(range(input_data.shape[0])) + 0.5, numpy.sum(input_data.loc[:, PTB_DAT], axis=1) - numpy.sum(input_data.loc[:, Normal_DAT], axis=1), color="black", linestyle="--", linewidth=4, label="PTB DAT - FTB DAT")
 
     axs[0].set_xticks([])
     axs[0].set_xlabel("")
@@ -74,12 +86,12 @@ if __name__ == "__main__":
     axs[0].grid(True)
 
     axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "PTB") else 0, list(input_data.index))), color="tab:red", linewidth=0, label="PTB subject")
-    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(input_data.index))), color="tab:green", linewidth=0, label="Normal subject")
+    axs[1].bar(range(input_data.shape[0]), list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]) if (metadata.loc[x, "Premature"] == "Normal") else 0, list(input_data.index))), color="tab:green", linewidth=0, label="FTB subject")
     axs[1].scatter([i for i in range(input_data.shape[0]) if (metadata.loc[list(input_data.index)[i], "PROM"] == "True")], [40 for _ in list(filter(lambda x: x == "True", metadata["PROM"]))], marker="^", c="black", edgecolors=None, label="PROM")
 
     axs[1].set_xticks([])
     axs[1].set_xlabel(f"{input_data.shape[0]} samples")
-    axs[1].set_ylabel("GW")
+    axs[1].set_ylabel("GA (weeks)")
     axs[1].set_ylim(20, 45)
     axs[1].legend(loc="lower left")
     axs[1].grid(True)

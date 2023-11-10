@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", type=str, help="Input TSV file")
     parser.add_argument("DAT", type=str, help="DAT TSV file")
+    parser.add_argument("exclude", type=str, help="Exclude TSV file")
     parser.add_argument("metadata", type=str, help="Metadata TSV file")
     parser.add_argument("output", type=str, help="Output TAR file")
     parser.add_argument("--site", type=str, help="Site to plot", required=True)
@@ -31,6 +32,8 @@ if __name__ == "__main__":
         raise ValueError("Input must end with .TSV!!")
     elif not args.DAT.endswith(".tsv"):
         raise ValueError("DAT file must end with .TSV!!")
+    elif not args.exclude.endswith(".tsv"):
+        raise ValueError("Exclude file must end with .TSV!!")
     elif not args.metadata.endswith(".tsv"):
         raise ValueError("Metadata file must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
@@ -50,6 +53,15 @@ if __name__ == "__main__":
     print(input_data)
 
     DAT_data = pandas.read_csv(args.DAT, sep="\t", index_col=0)
+    print(DAT_data)
+
+    exclude_data = pandas.read_csv(args.exclude, sep="\t", index_col=0)
+    exclude_data = exclude_data.loc[((exclude_data["log2FoldChange"] < -1) | (exclude_data["log2FoldChange"] > 1)) & (exclude_data["padj"] < 0.05)]
+    print(exclude_data)
+
+    DAT_data = DAT_data.loc[sorted(set(DAT_data.index) - set(exclude_data.index))]
+    print(DAT_data)
+
     PTB_DAT = list(map(step00.simplified_taxonomy, list(DAT_data.loc[(DAT_data["log2FoldChange"] > 1) & (DAT_data["padj"] < 0.05)].sort_values("log2FoldChange").index)))
     Normal_DAT = list(map(step00.simplified_taxonomy, list(DAT_data.loc[(DAT_data["log2FoldChange"] < -1) & (DAT_data["padj"] < 0.05)].sort_values("log2FoldChange").index)))
     print(DAT_data)
@@ -65,15 +77,15 @@ if __name__ == "__main__":
     output_data = pandas.DataFrame(index=input_data.index)
     output_data["Normal_DAT"] = numpy.sum(input_data.loc[:, Normal_DAT], axis=1)
     output_data["PTB_DAT"] = numpy.sum(input_data.loc[:, PTB_DAT], axis=1)
-    output_data["PTB-Normal"] = output_data["PTB_DAT"] - output_data["Normal_DAT"]
-    output_data["GW"] = list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]), list(output_data.index)))
+    output_data["PTB-FTB"] = output_data["PTB_DAT"] - output_data["Normal_DAT"]
+    output_data["GA (weeks)"] = list(map(lambda x: GW_to_float(metadata.loc[x, "Detail Gestational Week"]), list(output_data.index)))
     print(output_data)
 
-    r, p = scipy.stats.pearsonr(output_data["GW"], output_data["PTB-Normal"])
+    r, p = scipy.stats.pearsonr(output_data["GA (weeks)"], output_data["PTB-FTB"])
     print(r, p)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    seaborn.regplot(data=output_data, x="GW", y="PTB-Normal", scatter_kws={"linewidth": 0, "s": 400}, ax=ax)
+    seaborn.regplot(data=output_data, x="GA (weeks)", y="PTB-FTB", scatter_kws={"linewidth": 0, "s": 400}, ax=ax)
     matplotlib.pyplot.axvline(x=37, color="k", linestyle="--")
 
     matplotlib.pyplot.tight_layout()
