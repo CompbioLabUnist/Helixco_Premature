@@ -37,7 +37,7 @@ def draw(metric: str, column: str, site: str) -> str:
         palette = dict(zip(sorted(set(selected_tsne_data[column])), matplotlib.colors.TABLEAU_COLORS))
 
     try:
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
         seaborn.scatterplot(data=selected_tsne_data, x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(selected_tsne_data[column])), s=40 ** 2, palette=palette)
 
         for item, color in palette.items():
@@ -49,6 +49,7 @@ def draw(metric: str, column: str, site: str) -> str:
             p_value = 1.0
 
         matplotlib.pyplot.title("{0} (p={1:.3f})".format(column, p_value))
+        matplotlib.pyplot.legend(title=None)
         matplotlib.pyplot.tight_layout()
 
         file_name = "{2}+{0}+{1}.pdf".format(column.replace(" ", "_"), metric, site)
@@ -70,7 +71,7 @@ def draw_all(metric: str, column: str) -> str:
     else:
         palette = dict(zip(sorted(set(data[column])), matplotlib.colors.TABLEAU_COLORS))
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.scatterplot(data=data, x="tSNE1", y="tSNE2", ax=ax, hue=column, hue_order=sorted(set(tsne_data[metric][column])), s=40 ** 2, palette=palette)
 
@@ -83,6 +84,7 @@ def draw_all(metric: str, column: str) -> str:
         p_value = 1.0
 
     matplotlib.pyplot.title("{0} (p={1:.3f})".format(column, p_value))
+    matplotlib.pyplot.legend(title=None)
     matplotlib.pyplot.tight_layout()
 
     file_name = "All+{0}+{1}.pdf".format(column.replace(" ", "_"), metric)

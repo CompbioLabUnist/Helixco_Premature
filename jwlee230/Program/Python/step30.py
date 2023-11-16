@@ -41,7 +41,6 @@ def draw(alpha: str, disease: str, site: str) -> str:
 
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
-    matplotlib.pyplot.title(disease)
     matplotlib.pyplot.tight_layout()
 
     file_name = "{2}+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"), site)
@@ -69,7 +68,6 @@ def draw_all(alpha: str, disease: str) -> str:
 
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel(alpha.replace("_", " "))
-    matplotlib.pyplot.title(disease)
     matplotlib.pyplot.tight_layout()
 
     file_name = "All+{1}+{0}.pdf".format(alpha, disease.replace(" ", "_"))
