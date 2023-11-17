@@ -48,7 +48,7 @@ stop:
 # Slurm
 run: | log Output
 	echo -e "#!$(BASH)\nmake -C $(PWD) latest" > tmp.sh
-	sbatch --chdir=$(abspath .) --cpus-per-task=$(CPUS) --error="$(abspath log)/%x.e%A" --job-name="Premature_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(MEMS) --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
+	sbatch --chdir=$(abspath .) --cpus-per-task=$(CPUS) --error="$(abspath log)/%x.e%A" --job-name="Premature_$(DATE)" --mail-type=ALL --mail-user="jwlee230@compbio.unist.ac.kr" --mem=$(MEMS) --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
 # Actual
